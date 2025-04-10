@@ -19,7 +19,7 @@ export default defineConfig({
                 target: 'http://localhost:8080/',
             },
             '^/attachment/': {
-                target: 'http://localhost:8899/public',
+                target: 'http://localhost:8080/static/',
             },
         },
     },
