@@ -7,7 +7,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>aiflowy-codegen</module>
         <module>aiflowy-commons</module>
         <module>aiflowy-modules</module>
         <module>aiflowy-starter</module>

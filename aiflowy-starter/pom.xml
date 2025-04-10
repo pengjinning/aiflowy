@@ -16,11 +16,6 @@
     <dependencies>
         <dependency>
             <groupId>tech.aiflowy</groupId>
-            <artifactId>aiflowy-module-codegen</artifactId>
-            <version>1.0.0-alpha.1</version>
-        </dependency>
-        <dependency>
-            <groupId>tech.aiflowy</groupId>
             <artifactId>aiflowy-module-ai</artifactId>
             <version>1.0.0-alpha.1</version>
         </dependency>
