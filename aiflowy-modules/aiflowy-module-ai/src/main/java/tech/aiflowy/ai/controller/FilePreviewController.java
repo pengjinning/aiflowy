@@ -2,12 +2,14 @@ package tech.aiflowy.ai.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
+import tech.aiflowy.common.util.StringUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -20,17 +22,15 @@ public class FilePreviewController {
     // 定义图片存储的基础路径
     @Value("${aiflowy.storage.local.root}")
     private  String fileUploadPath;
-    private static final String IMAGE_BASE_PATH = "C:/Users/YourName/Documents/images/";
 
     @SaIgnore
     @GetMapping("/api/images/**")
     public ResponseEntity<byte[]> getImage(HttpServletRequest request) throws IOException {
-//        String imagePath = fileUploadPath + "/attachment/2025/03-31/9C5540C33FC64FE95BE2E9B33D70C358.jpg";
         // 获取完整的路径
         String fullPath = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
         String basePath = "/api/images/";
         String filePath = fullPath.substring(basePath.length()-1);
-        String imagePath = fileUploadPath + filePath;
+        String imagePath = getRootPath() + filePath;
         File imageFile = new File(imagePath);
 
         if (!imageFile.exists()) {
@@ -57,5 +57,17 @@ public class FilePreviewController {
             return "image/gif";
         }
         return "application/octet-stream"; // 默认类型
+    }
+
+    public String getRootPath() {
+        if (StringUtil.hasText(this.fileUploadPath)) {
+            return this.fileUploadPath;
+        }
+        ClassPathResource fileResource = new ClassPathResource("/");
+        try {
+            return new File(fileResource.getFile(), "/public").getAbsolutePath();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

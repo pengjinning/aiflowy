@@ -1,5 +1,6 @@
 package tech.aiflowy.ai.controller;
 
+import org.springframework.core.io.ClassPathResource;
 import tech.aiflowy.ai.entity.AiDocument;
 import tech.aiflowy.ai.entity.AiDocumentChunk;
 import tech.aiflowy.ai.entity.AiKnowledge;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -225,7 +227,7 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
             Document document = Document.of(aiDocument.getContent());
             StoreResult result = documentStore.store(document, options);
             // 删除本地文件
-            AiDocumentServiceImpl.deleteFile(fileUploadPath + path);
+            AiDocumentServiceImpl.deleteFile(getRootPath() + path);
             Map res = new HashMap();
             res.put("data", previewList);
             res.put("userWillSave", false);
@@ -375,6 +377,18 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
 
         if (!result.isSuccess()) {
             LoggerFactory.getLogger(AiDocumentController.class).error("DocumentStore.store failed: " + result);
+        }
+    }
+
+    public String getRootPath() {
+        if (StringUtil.hasText(this.fileUploadPath)) {
+            return this.fileUploadPath;
+        }
+        ClassPathResource fileResource = new ClassPathResource("/");
+        try {
+            return new File(fileResource.getFile(), "/public").getAbsolutePath();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
