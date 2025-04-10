@@ -7,7 +7,6 @@ import {useParams} from 'react-router-dom';
 import {convertDatetimeUtil} from "../../../libs/changeDatetimeUtil";
 import Modal from "antd/es/modal/Modal";
 import FileImportPanel from "./FileImportPanel";
-import {AiDocumentSourceMaterial} from "./AiDocumentSourceMaterial";
 import TextArea from "antd/es/input/TextArea";
 
 const treeTableAlias = "aiDocument"
