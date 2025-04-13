@@ -16,6 +16,7 @@ import TextArea from "antd/es/input/TextArea";
 import {getSessionId} from "../../../libs/getSessionId.ts";
 import {AiProChat, ChatMessage} from "../../../components/AiProChat/AiProChat";
 import {PluginModal} from "./Plugins.tsx";
+
 const colStyle: React.CSSProperties = {
     background: '#fafafa',
     padding: '8px',
@@ -31,20 +32,21 @@ const text = (
 
 type CollapseLabelProps = {
     text: string,
-    onClick: () => void
+    onClick: () => void,
+    plusDisabled?: boolean
 }
 
-const CollapseLabel: React.FC<CollapseLabelProps> = ({text, onClick}) => {
+const CollapseLabel: React.FC<CollapseLabelProps> = ({text, onClick, plusDisabled = false}) => {
     return <div style={{
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
     }}>
         <span>{text}</span>
-        <PlusOutlined onClick={(event) => {
+        {!plusDisabled && <PlusOutlined onClick={(event) => {
             event.stopPropagation();
             onClick?.();
-        }}/>
+        }}/>}
     </div>
 }
 
@@ -145,10 +147,10 @@ const BotDesign: React.FC = () => {
     const {doRemove: doRemoveAiBotWorkflow} = useRemove("aiBotWorkflow");
     const [workflowOpen, setWorkflowOpen] = useState(false)
 
-    const {result:pluginResult,doGet: doGetPlugin} = useList("aiBotPlugins",{"botId": params.id});
-    const {doSave:doSavePlugin} = useSave("aiBotPlugins");
-    const {doRemove:doRemovePlugin} = useRemove("aiBotPlugins");
-    const [pluginOpen,setPluginOpen] = useState(false)
+    const {result: pluginResult, doGet: doGetPlugin} = useList("aiBotPlugins", {"botId": params.id});
+    const {doSave: doSavePlugin} = useSave("aiBotPlugins");
+    const {doRemove: doRemovePlugin} = useRemove("aiBotPlugins");
+    const [pluginOpen, setPluginOpen] = useState(false)
 
 
     const {result: knowledgeResult, doGet: doGetKnowledge} = useList("aiBotKnowledge", {"botId": params.id});
@@ -304,10 +306,29 @@ const BotDesign: React.FC = () => {
                                 </div>,
                             },
                             {
-                                key: 'trigger',
-                                label: <CollapseLabel text="触发器" onClick={() => {
+                                key: 'knowledge',
+                                label: <CollapseLabel text="知识库" onClick={() => {
+                                    setKnowledgeOpen(true)
                                 }}/>,
-                                children: text,
+                                children: <div>
+                                    {knowledgeResult?.data?.map((item: any) => {
+                                        return <ListItem key={item.id} title={item.knowledge.title}
+                                                         description={item.knowledge.description}
+                                                         icon={item.knowledge.icon}
+                                                         onButtonClick={() => {
+                                                             Modal.confirm({
+                                                                 title: '确定要删除该知识库吗？',
+                                                                 content: '删除后，该知识库将不再关联该机器人，但知识库本身不会被删除。',
+                                                                 onOk: () => {
+                                                                     doRemoveAiBotKnowledge({
+                                                                         data: {id: item.id}
+                                                                     }).then(doGetKnowledge)
+                                                                 }
+                                                             })
+                                                         }}
+                                        />
+                                    })}
+                                </div>,
                             },
                             {
                                 key: 'plugins',
@@ -337,47 +358,19 @@ const BotDesign: React.FC = () => {
                             },
                         ]} bordered={false}/>
 
-                        <div style={{margin: "20px 0 5px", color: "#666"}}>知识</div>
-                        <Collapse items={[
-                            {
-                                key: 'knowledge',
-                                label: <CollapseLabel text="知识库" onClick={() => {
-                                    setKnowledgeOpen(true)
-                                }}/>,
-                                children: <div>
-                                    {knowledgeResult?.data?.map((item: any) => {
-                                        return <ListItem key={item.id} title={item.knowledge.title}
-                                                         description={item.knowledge.description}
-                                                         icon={item.knowledge.icon}
-                                                         onButtonClick={() => {
-                                                             Modal.confirm({
-                                                                 title: '确定要删除该知识库吗？',
-                                                                 content: '删除后，该知识库将不再关联该机器人，但知识库本身不会被删除。',
-                                                                 onOk: () => {
-                                                                     doRemoveAiBotKnowledge({
-                                                                         data: {id: item.id}
-                                                                     }).then(doGetKnowledge)
-                                                                 }
-                                                             })
-                                                         }}
-                                        />
-                                    })}
-                                </div>,
-                            },
-                            {
-                                key: 'database',
-                                label: <CollapseLabel text="数据库" onClick={() => {
-                                }}/>,
-                                children: text,
-                            },
-                        ]} bordered={false}/>
 
                         <div style={{margin: "20px 0 5px", color: "#666"}}>对话设置</div>
                         <Collapse items={[
                             {
+                                key: 'questions',
+                                label: <CollapseLabel text="问题预设" onClick={() => {
+                                }}/>,
+                                children: text,
+                            },
+                            {
                                 key: 'welcomeMessage',
                                 label: <CollapseLabel text="欢迎语" onClick={() => {
-                                }}/>,
+                                }} plusDisabled/>,
                                 children: <div>
                                     <DebouncedTextArea
                                         value={welcomeMessage}
@@ -393,21 +386,21 @@ const BotDesign: React.FC = () => {
                                 </div>,
                             },
                             {
-                                key: 'database',
-                                label: <CollapseLabel text="问题预设" onClick={() => {
-                                }}/>,
-                                children: text,
-                            },
-                            {
                                 key: 'ui',
                                 label: <CollapseLabel text="UI 与 Logo" onClick={() => {
-                                }}/>,
+                                }} plusDisabled/>,
                                 children: text,
                             },
+
+                        ]} bordered={false}/>
+
+
+                        <div style={{margin: "20px 0 5px", color: "#666"}}>发布</div>
+                        <Collapse items={[
                             {
                                 key: 'embed',
                                 label: <CollapseLabel text="嵌入" onClick={() => {
-                                }}/>,
+                                }} plusDisabled/>,
                                 children: <div>
                                     <div>
                                         <span>
@@ -420,7 +413,14 @@ const BotDesign: React.FC = () => {
                                     </div>
                                 </div>,
                             },
+                            {
+                                key: 'api',
+                                label: <CollapseLabel text="API" onClick={() => {
+                                }} plusDisabled/>,
+                                children: text,
+                            },
                         ]} bordered={false}/>
+
                     </Col>
 
 
