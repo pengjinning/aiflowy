@@ -1,5 +1,8 @@
 package tech.aiflowy.ai.controller;
 
+import com.agentsflex.core.document.DocumentSplitter;
+import com.agentsflex.core.document.splitter.RegexDocumentSplitter;
+import com.agentsflex.core.document.splitter.SimpleTokenizeSplitter;
 import org.springframework.core.io.ClassPathResource;
 import tech.aiflowy.ai.entity.AiDocument;
 import tech.aiflowy.ai.entity.AiDocumentChunk;
@@ -178,8 +181,10 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
     @Transactional
     @PostMapping(value = "upload", produces = MediaType.APPLICATION_JSON_VALUE)
     public Result upload(@RequestParam("file") MultipartFile file, @RequestParam("knowledgeId") BigInteger knowledgeId,
+                         @RequestParam(name="splitterName", required = false) String splitterName,
                          @RequestParam(name="chunkSize", required = false) Integer chunkSize,
                          @RequestParam(name="overlapSize", required = false) Integer overlapSize,
+                         @RequestParam(name="regex", required = false) String regex,
                          @RequestParam(name="userWillSave") boolean userWillSave
     ) throws IOException {
 
@@ -212,7 +217,7 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
             documentStore.setEmbeddingModel(embeddingModel);
             StoreOptions options = StoreOptions.ofCollectionName(knowledge.getVectorStoreCollection());
             // 设置分割器 todo 未来可以通过参数来指定分割器，不同的文档使用不同的分割器效果更好
-            documentStore.setDocumentSplitter(new SimpleDocumentSplitter(chunkSize, overlapSize));
+            documentStore.setDocumentSplitter(getDocumentSplitter(splitterName, chunkSize, overlapSize, regex));
             AtomicInteger sort  = new AtomicInteger(1);
 
             documentStore.setDocumentIdGenerator(item -> {
@@ -390,4 +395,27 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
             throw new RuntimeException(e);
         }
     }
+
+    public DocumentSplitter getDocumentSplitter (String splitterName, int chunkSize, int overlapSize, String regex){
+
+        if (StringUtil.noText(splitterName)) {
+            return null;
+        }
+        switch (splitterName) {
+            case "SimpleDocumentSplitter":
+                return new SimpleDocumentSplitter(chunkSize, overlapSize);
+            case "RegexDocumentSplitter":
+                return new RegexDocumentSplitter(regex);
+            case "SimpleTokenizeSplitter":
+                if (overlapSize == 0){
+                    return new SimpleTokenizeSplitter(chunkSize);
+                } else {
+                    return new SimpleTokenizeSplitter(chunkSize, overlapSize);
+                }
+            default:
+                return null;
+        }
+
+    }
+
 }

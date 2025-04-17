@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import {Button, Input, List, message, Radio, Upload, UploadProps,} from "antd";
+import React, { useState} from "react";
+import {Button, Input, List, message, Radio, Select, Upload, UploadProps,} from "antd";
 import {InboxOutlined, MinusCircleTwoTone, PlusCircleTwoTone} from "@ant-design/icons";
 import "../style/FileImportPanel.less";
 import {isBrowser} from "../../../libs/ssr";
@@ -20,13 +20,23 @@ interface PreviewLoadingProps {
 interface AiDocumentType {
     chunkSize: string, // 分段大小
     overlapSize: string, // 分段重叠大小
+    regex: string,
+    splitterName: string
 }
 // 文件导入页面组件
 const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, action }) => {
+    const [disabledConfirm, setDisabledConfirm] = useState<boolean>(false);
+    const [dataPreView, setDataPreView] = useState<PreviewItem[]>([]);
+    const [confirmImport, setConfirmImport] = useState<boolean>(false);
+    const [selectedSplitter, setSelectedSplitter] = useState<string>('SimpleDocumentSplitter');
+    const [regex, setRegex] = useState<string>('');
+
     const token = isBrowser ? localStorage.getItem(authKey) : null;
     const [aiDocument, setAiDocument] = useState<AiDocumentType>({
         chunkSize: '200', // 分段大小
         overlapSize: '100', // 分段重叠大小
+        regex: '',
+        splitterName: selectedSplitter
     })
 
     const [previewListLoading, setPreviewListLoading] = useState<PreviewLoadingProps>({
@@ -40,9 +50,8 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
         content: string; // 内容
     }
 
-    const [disabledConfirm, setDisabledConfirm] = useState<boolean>(false);
-    const [dataPreView, setDataPreView] = useState<PreviewItem[]>([]);
-    const [confirmImport, setConfirmImport] = useState<boolean>(false);
+
+
     // 定义用户是预览还是保存上传的文件 true 用户保存当前分割的文档 false 用户当前的操作是预览文件分割的效果
     // const {userWillSave, setUserWillSave} = useState<boolean>(true);
     const headers = {
@@ -60,7 +69,9 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
         ...data,
         chunkSize: aiDocument.chunkSize,
         overlapSize: aiDocument.overlapSize,
-        userWillSave: 'false'
+        userWillSave: 'false',
+        regex: regex,
+        splitterName: selectedSplitter
     };
     const uploadData: Record<string, unknown> = {
         ...uploadProps
@@ -101,7 +112,7 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
     const handleFileChange = (newFileList: any[]) => {
         newFileList.forEach((file) => {
             // 如果用户是预览返回的分割效果
-            if (!file.response?.data.userWillSave && file.response){
+            if (!file.response?.data?.userWillSave && file.response){
                 setPreviewListLoading({
                     spinning: false
                 })
@@ -137,108 +148,147 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
                     <p className="section-description">
                         支持 txt, pdf, docx, md 格式文件，单次最多上传 {maxCount} 个文件，单个大小不超过 15M。
                     </p>
+
+
+
+
                     <div style={{display: "flex",  flexDirection:"column", width:"500px"}}>
-                        <div style={{display: "flex", flexDirection:"column"}}>
-                            <div>分段长度:</div>
-                            <Input
-                                addonBefore={
-                                    <MinusCircleTwoTone
-                                        onClick={() => {
-                                            // 更新输入框的值
-                                            const newValue = (parseInt(aiDocument.chunkSize) - 10).toString();
-                                            setAiDocument({ ...aiDocument, chunkSize: newValue}); // 确保输入的是数字
-                                        }}
-                                        style={{
-                                            fontSize: "18px",
-                                            cursor: "pointer", // 鼠标悬浮时显示小手
-                                        }}
-                                    />
-                                }
-                                addonAfter={
-                                    <PlusCircleTwoTone
-                                        onClick={() => {
-                                            // 更新输入框的值
-                                            const newValue = (parseInt(aiDocument.chunkSize) + 10).toString();
-                                            setAiDocument({ ...aiDocument, chunkSize: newValue}); // 确保输入的是数字
-                                        }}
-                                        style={{
-                                            fontSize: "18px",
-                                            cursor: "pointer", // 鼠标悬浮时显示小手
-                                        }}
-                                    />
-                                }
-                                value={aiDocument.chunkSize}
-                                onChange={(e) => {
-                                    // 更新输入框的值
-                                    const newValue = e.target.value;
-                                    setAiDocument({ ...aiDocument, chunkSize: newValue}); // 确保输入的是数字
+                        <div style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            width: "500px",
+                            gap: "10px"
+                        }}>
+                            <p style={{
+                                textAlign: "center",
+                                lineHeight: "32px"  // 匹配Select组件的高度
+                            }}>分割器:</p>
+                            <Select
+                                defaultValue="SimpleDocumentSplitter"
+                                style={{ width: 300 }}
+                                onChange={(value) => {
+                                    setSelectedSplitter(value)
                                 }}
-                                style={{
-                                    width: 200, // 设置输入框的宽度
-                                    textAlign: "center", // 值居中
-                                }}
+                                options={[
+                                    { value: 'SimpleDocumentSplitter', label: '简单文档分割器' },
+                                    { value: 'RegexDocumentSplitter', label: '正则文档分割器' },
+                                    { value: 'SimpleTokenizeSplitter', label: '简单分词器' }
+                                ]}
                             />
                         </div>
-                        <div style={{display: "flex", flexDirection:"column", marginTop:"10px"}}>
-                            <div style={{ userSelect: "none" }}>分段重叠长度:</div>
-                            <Input
-                                addonBefore={
-                                    <MinusCircleTwoTone
-                                        onClick={() => {
-                                            // 更新输入框的值
-                                            const newValue = (parseInt(aiDocument.overlapSize) - 10).toString();
-                                            setAiDocument({ ...aiDocument, overlapSize: newValue}); // 确保输入的是数字
-                                        }}
-                                        style={{
-                                            fontSize: "18px",
-                                            cursor: "pointer", // 鼠标悬浮时显示小手
-                                        }}
-                                    />
-                                }
-                                addonAfter={
-                                    <PlusCircleTwoTone
-                                        onClick={() => {
-                                            // 更新输入框的值
-                                            const newValue = (parseInt(aiDocument.overlapSize) + 10).toString();
-                                            setAiDocument({ ...aiDocument, overlapSize: newValue}); // 确保输入的是数字
-                                        }}
-                                        style={{
-                                            fontSize: "18px",
-                                            cursor: "pointer", // 鼠标悬浮时显示小手
-                                        }}
-                                    />
-                                }
-                                value={aiDocument.overlapSize}
-                                onChange={(e) => {
-                                    // 更新输入框的值
-                                    const newValue = e.target.value;
-                                    setAiDocument({ ...aiDocument, overlapSize: newValue}); // 确保输入的是数字
-                                }}
-                                style={{
-                                    width: 200, // 设置输入框的宽度
-                                    textAlign: "center", // 值居中
-                                }}
-                            />
-                            <Upload.Dragger
-                                name="file"
-                                multiple
-                                accept=".txt,.pdf,.md,.docx"
-                                beforeUpload={beforeUpload}
-                                fileList={fileList}
-                                onChange={(info) => handleFileChange(info.fileList)}
-                                maxCount={1}
-                                data={uploadData}
-                                action={action}
-                                headers={headers}
-                                className="upload-area"
-                            >
-                                <p className="upload-icon">
-                                    <InboxOutlined />
-                                </p>
-                                <p className="upload-text" style={{ userSelect: "none" }}> 点击或拖拽文件到此区域上传</p>
-                                <p className="upload-hint" style={{ userSelect: "none" }}>支持单次上传最多 {maxCount} 个文件。</p>
-                            </Upload.Dragger>
-                        </div>
+                        {selectedSplitter === 'SimpleDocumentSplitter' || selectedSplitter === 'SimpleTokenizeSplitter'  ?
+                        <div>
+                            <div style={{display: "flex", flexDirection:"column"}}>
+                                <div>分段长度:</div>
+                                <Input
+                                    addonBefore={
+                                        <MinusCircleTwoTone
+                                            onClick={() => {
+                                                // 更新输入框的值
+                                                const newValue = (parseInt(aiDocument.chunkSize) - 10).toString();
+                                                setAiDocument({ ...aiDocument, chunkSize: newValue}); // 确保输入的是数字
+                                            }}
+                                            style={{
+                                                fontSize: "18px",
+                                                cursor: "pointer", // 鼠标悬浮时显示小手
+                                            }}
+                                        />
+                                    }
+                                    addonAfter={
+                                        <PlusCircleTwoTone
+                                            onClick={() => {
+                                                // 更新输入框的值
+                                                const newValue = (parseInt(aiDocument.chunkSize) + 10).toString();
+                                                setAiDocument({ ...aiDocument, chunkSize: newValue}); // 确保输入的是数字
+                                            }}
+                                            style={{
+                                                fontSize: "18px",
+                                                cursor: "pointer", // 鼠标悬浮时显示小手
+                                            }}
+                                        />
+                                    }
+                                    value={aiDocument.chunkSize}
+                                    onChange={(e) => {
+                                        // 更新输入框的值
+                                        const newValue = e.target.value;
+                                        setAiDocument({ ...aiDocument, chunkSize: newValue}); // 确保输入的是数字
+                                    }}
+                                    style={{
+                                        width: 200, // 设置输入框的宽度
+                                        textAlign: "center", // 值居中
+                                    }}
+                                />
+                            </div>
+                            <div style={{display: "flex", flexDirection:"column", marginTop:"10px"}}>
+                                <div style={{ userSelect: "none" }}>分段重叠长度:</div>
+                                <Input
+                                    addonBefore={
+                                        <MinusCircleTwoTone
+                                            onClick={() => {
+                                                // 更新输入框的值
+                                                const newValue = (parseInt(aiDocument.overlapSize) - 10).toString();
+                                                setAiDocument({ ...aiDocument, overlapSize: newValue}); // 确保输入的是数字
+                                            }}
+                                            style={{
+                                                fontSize: "18px",
+                                                cursor: "pointer", // 鼠标悬浮时显示小手
+                                            }}
+                                        />
+                                    }
+                                    addonAfter={
+                                        <PlusCircleTwoTone
+                                            onClick={() => {
+                                                // 更新输入框的值
+                                                const newValue = (parseInt(aiDocument.overlapSize) + 10).toString();
+                                                setAiDocument({ ...aiDocument, overlapSize: newValue}); // 确保输入的是数字
+                                            }}
+                                            style={{
+                                                fontSize: "18px",
+                                                cursor: "pointer", // 鼠标悬浮时显示小手
+                                            }}
+                                        />
+                                    }
+                                    value={aiDocument.overlapSize}
+                                    onChange={(e) => {
+                                        // 更新输入框的值
+                                        const newValue = e.target.value;
+                                        setAiDocument({ ...aiDocument, overlapSize: newValue}); // 确保输入的是数字
+                                    }}
+                                    style={{
+                                        width: 200, // 设置输入框的宽度
+                                        textAlign: "center", // 值居中
+                                    }}
+                                />
+
+                            </div>
+                        </div> : selectedSplitter === 'RegexDocumentSplitter' ?
+                                <div style={{display: "flex", flexDirection:"row"}}>
+                                <Input size='large' placeholder="请输入文本分割的正则表达式" onChange={(e) => {setRegex(e.target.value)}} />
+                                </div>
+                                    : ''
+                        }
+
+                        <Upload.Dragger
+                            name="file"
+                            multiple
+                            accept=".txt,.pdf,.md,.docx"
+                            beforeUpload={beforeUpload}
+                            fileList={fileList}
+                            onChange={(info) => handleFileChange(info.fileList)}
+                            maxCount={1}
+                            data={uploadData}
+                            action={action}
+                            headers={headers}
+                            className="upload-area"
+                        >
+                            <p className="upload-icon">
+                                <InboxOutlined />
+                            </p>
+                            <p className="upload-text" style={{ userSelect: "none" }}> 点击或拖拽文件到此区域上传</p>
+                            <p className="upload-hint" style={{ userSelect: "none" }}>支持单次上传最多 {maxCount} 个文件。</p>
+                        </Upload.Dragger>
+
+
 
                     </div>
                 </div>
@@ -273,7 +323,9 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
                             setDataPreView([]);
                             setFileList([]);
                         }}>取消导入</Button>
-                        <Button type="dashed"  onClick={() => {
+                        <Button type="dashed"
+                                disabled={disabledConfirm}
+                                onClick={() => {
                             setPreviewListLoading({ spinning: true,tip: "正在保存文件..."})
                             setDisabledConfirm(true)
                             // 构造 FormData 对象
