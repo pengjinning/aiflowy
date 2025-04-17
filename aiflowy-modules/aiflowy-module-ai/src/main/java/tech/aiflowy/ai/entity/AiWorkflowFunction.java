@@ -1,5 +1,15 @@
 package tech.aiflowy.ai.entity;
 
+import com.agentsflex.core.document.Document;
+import com.agentsflex.core.llm.Llm;
+import com.agentsflex.core.store.DocumentStore;
+import com.agentsflex.core.store.SearchWrapper;
+import com.agentsflex.core.store.StoreOptions;
+import dev.tinyflow.core.Tinyflow;
+import dev.tinyflow.core.knowledge.Knowledge;
+import dev.tinyflow.core.node.KnowledgeNode;
+import dev.tinyflow.core.provider.KnowledgeProvider;
+import dev.tinyflow.core.provider.LlmProvider;
 import tech.aiflowy.ai.service.AiKnowledgeService;
 import tech.aiflowy.ai.service.AiLlmService;
 import tech.aiflowy.ai.service.AiWorkflowService;
@@ -37,7 +47,7 @@ public class AiWorkflowFunction extends BaseFunction {
         com.agentsflex.core.llm.functions.Parameter[] parameters = new com.agentsflex.core.llm.functions.Parameter[parameterDefs.size()];
         for (int i = 0; i < parameterDefs.size(); i++) {
             Parameter parameterDef = parameterDefs.get(i);
-            com.agentsflex.core.llm.functions.Parameter parameter = new  com.agentsflex.core.llm.functions.Parameter();
+            com.agentsflex.core.llm.functions.Parameter parameter = new com.agentsflex.core.llm.functions.Parameter();
             parameter.setName(parameterDef.getName());
             parameter.setDescription(parameterDef.getDescription());
             parameter.setType(parameterDef.getDataType().toString());
@@ -69,7 +79,8 @@ public class AiWorkflowFunction extends BaseFunction {
             throw new RuntimeException("can not find the workflow by id: " + this.workflowId);
         }
     }
-    private void setLlmProvider( Tinyflow tinyflow){
+
+    private void setLlmProvider(Tinyflow tinyflow) {
         AiLlmService aiLlmService = SpringContextUtil.getBean(AiLlmService.class);
         tinyflow.setLlmProvider(new LlmProvider() {
             @Override
@@ -80,22 +91,22 @@ public class AiWorkflowFunction extends BaseFunction {
         });
     }
 
-    private void setKnowledgeProvider( Tinyflow tinyflow){
+    private void setKnowledgeProvider(Tinyflow tinyflow) {
         AiLlmService aiLlmService = SpringContextUtil.getBean(AiLlmService.class);
-        AiKnowledgeService aiKnowledgeService= SpringContextUtil.getBean(AiKnowledgeService.class);
+        AiKnowledgeService aiKnowledgeService = SpringContextUtil.getBean(AiKnowledgeService.class);
         tinyflow.setKnowledgeProvider(new KnowledgeProvider() {
             @Override
             public Knowledge getKnowledge(Object o) {
                 AiKnowledge aiKnowledge = aiKnowledgeService.getById(new BigInteger(o.toString()));
-                return  new Knowledge() {
+                return new Knowledge() {
                     @Override
                     public List<Document> search(String keyword, int limit, KnowledgeNode knowledgeNode, Chain chain) {
                         DocumentStore documentStore = aiKnowledge.toDocumentStore();
-                        if (documentStore == null){
+                        if (documentStore == null) {
                             return null;
                         }
                         AiLlm aiLlm = aiLlmService.getById(aiKnowledge.getVectorEmbedLlmId());
-                        if (aiLlm == null){
+                        if (aiLlm == null) {
                             return null;
                         }
                         documentStore.setEmbeddingModel(aiLlm.toLlm());
@@ -112,6 +123,7 @@ public class AiWorkflowFunction extends BaseFunction {
         });
 
     }
+
     @Override
     public String toString() {
         return "AiWorkflowFunction{" +
