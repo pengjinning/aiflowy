@@ -210,9 +210,19 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
             List<AiDocumentChunk> previewList = new ArrayList<>();
             // 调用解析器进行文本分割
             AiKnowledge knowledge = knowledgeService.getById(knowledgeId);
+            if (knowledge == null) {
+                return Result.fail(1, "知识库配置失败");
+            }
             DocumentStore documentStore = knowledge.toDocumentStore();
+            if (documentStore == null){
+                return Result.fail(1, "向量数据库配置失败");
+            }
             // 设置向量模型
             AiLlm aiLlm = aiLlmService.getById(knowledge.getVectorEmbedLlmId());
+            if (aiLlm == null) {
+                return Result.fail(1, "大模型配置失败");
+
+            }
             Llm embeddingModel = aiLlm.toLlm();
             documentStore.setEmbeddingModel(embeddingModel);
             StoreOptions options = StoreOptions.ofCollectionName(knowledge.getVectorStoreCollection());
@@ -314,19 +324,19 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
 
         AiKnowledge knowledge = knowledgeService.getById(entity.getKnowledgeId());
         if (knowledge == null) {
-            return Result.fail();
+            return Result.fail(1, "知识库配置失败");
         }
 
         // 存储到知识库
         DocumentStore documentStore = knowledge.toDocumentStore();
         if (documentStore == null) {
-            return Result.fail();
+            return Result.fail(1, "数据库配置失败");
 
         }
 
         AiLlm aiLlm = aiLlmService.getById(knowledge.getVectorEmbedLlmId());
         if (aiLlm == null) {
-            return Result.fail();
+            return Result.fail(1, "大模型配置失败");
 
         }
         // 设置向量模型

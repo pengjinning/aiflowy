@@ -30,6 +30,9 @@ public class AiKnowledge extends AiKnowledgeBase {
 
     public DocumentStore toDocumentStore() {
         String storeType = this.getVectorStoreType();
+        if (storeType == null){
+            return null;
+        }
         switch (storeType.toLowerCase()) {
             case "redis":
                 return redisStore();

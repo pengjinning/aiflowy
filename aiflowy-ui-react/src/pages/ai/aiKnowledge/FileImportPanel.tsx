@@ -117,19 +117,24 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
                     spinning: false
                 })
                 //设置返回的分割别表
-                setDataPreView(file.response?.data.data);
-
-            } else {
-                if (file.status === "done" && file.response.errorCode === 0) {
-                    // 处理上传成功的文件
-                    message.success(`文件 ${file.name} 上传成功`);
-                } else if (file.status === "error") {
-                    // 处理上传失败的文件
-                    message.error(`文件 ${file.name} 上传失败`);
-                }
+                setDataPreView(file.response?.data?.data);
             }
 
         });
+        if (newFileList.length > 0) {
+            // 如果用户是预览返回的分割效果
+            if (!newFileList[0].response?.data?.userWillSave && newFileList[0].response){
+                setPreviewListLoading({
+                    spinning: false
+                })
+                //设置返回的分割别表
+                setDataPreView(newFileList[0].response?.data?.data);
+            }
+
+            if (newFileList[0]?.response?.errorCode === 1){
+                message.error(newFileList[0].response.message)
+            }
+        }
         setFileList(newFileList);
         setConfirmImport(true)
     };
@@ -352,13 +357,16 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
                                 },
                             }).then(res => {
                                 setPreviewListLoading({ spinning: false,tip: ''})
-                                if (res.data.errorCode === 0){
+                                console.log(res?.data)
+                                if (res?.data?.errorCode === 0){
                                     //保存成功，清除展现的分割文档
                                     setDataPreView([]);
                                     setFileList([]);
                                     message.success("上传成功");
                                     setConfirmImport(false);
                                     setDisabledConfirm(false)
+                                } else if (res.data?.errorCode === 1){
+                                    message.error(res.data?.errorMessage);
                                 }
                                });
 
