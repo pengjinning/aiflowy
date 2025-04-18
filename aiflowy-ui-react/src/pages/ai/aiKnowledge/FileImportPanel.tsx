@@ -131,7 +131,7 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
                 setDataPreView(newFileList[0].response?.data?.data);
             }
 
-            if (newFileList[0]?.response?.errorCode === 1){
+            if (newFileList[0]?.response?.errorCode >= 1){
                 message.error(newFileList[0].response.message)
             }
         }
@@ -357,7 +357,6 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
                                 },
                             }).then(res => {
                                 setPreviewListLoading({ spinning: false,tip: ''})
-                                console.log(res?.data)
                                 if (res?.data?.errorCode === 0){
                                     //保存成功，清除展现的分割文档
                                     setDataPreView([]);

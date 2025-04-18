@@ -211,16 +211,16 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
             // 调用解析器进行文本分割
             AiKnowledge knowledge = knowledgeService.getById(knowledgeId);
             if (knowledge == null) {
-                return Result.fail(1, "知识库配置失败");
+                return Result.fail(1, "知识库不存在");
             }
             DocumentStore documentStore = knowledge.toDocumentStore();
             if (documentStore == null){
-                return Result.fail(1, "向量数据库配置失败");
+                return Result.fail(2, "向量数据库类型未设置");
             }
             // 设置向量模型
             AiLlm aiLlm = aiLlmService.getById(knowledge.getVectorEmbedLlmId());
             if (aiLlm == null) {
-                return Result.fail(1, "大模型配置失败");
+                return Result.fail(3, "该知识库未配置大模型");
 
             }
             Llm embeddingModel = aiLlm.toLlm();
@@ -322,21 +322,19 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
         // 重新获取全数据内容
         entity = service.getById(entity.getId());
 
+        // 调用解析器进行文本分割
         AiKnowledge knowledge = knowledgeService.getById(entity.getKnowledgeId());
         if (knowledge == null) {
-            return Result.fail(1, "知识库配置失败");
+            return Result.fail(1, "知识库不存在");
         }
-
-        // 存储到知识库
         DocumentStore documentStore = knowledge.toDocumentStore();
-        if (documentStore == null) {
-            return Result.fail(1, "数据库配置失败");
-
+        if (documentStore == null){
+            return Result.fail(2, "向量数据库类型未设置");
         }
-
+        // 设置向量模型
         AiLlm aiLlm = aiLlmService.getById(knowledge.getVectorEmbedLlmId());
         if (aiLlm == null) {
-            return Result.fail(1, "大模型配置失败");
+            return Result.fail(3, "该知识库未配置大模型");
 
         }
         // 设置向量模型
