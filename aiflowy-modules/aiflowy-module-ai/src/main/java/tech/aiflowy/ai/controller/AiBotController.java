@@ -231,20 +231,23 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
                 .select("apiKey")
                 .from("tb_ai_bot_api_key")
                 .where("apikey = ? ", apiKey);
-        long count =  aiBotApiKeyMapper.selectCountByQuery(queryWrapper);
-        if (count <= 0){
+        AiBotApiKey aiBotApiKey =  aiBotApiKeyMapper.selectOneByQuery(queryWrapper);
+        if (aiBotApiKey == null ){
             return createResponse(stream, JSON.toJSONString(errorRespnseMsg(1,"该apiKey不存在")));
+        }
+        if (aiBotApiKey.getStatus() == 0 ){
+            return createResponse(stream, JSON.toJSONString(errorRespnseMsg(2,"该apiKey未启用")));
         }
 
         AiBot aiBot = service.getById(botId);
         if (aiBot == null) {
-            return createResponse(stream, JSON.toJSONString(errorRespnseMsg(2,"机器人不存在")));
+            return createResponse(stream, JSON.toJSONString(errorRespnseMsg(3,"机器人不存在")));
         }
 
         Map<String, Object> llmOptions = aiBot.getLlmOptions();
         AiLlm aiLlm = aiLlmService.getById(aiBot.getLlmId());
         if (aiLlm == null) {
-            return createResponse(stream, JSON.toJSONString(errorRespnseMsg(3, "LLM不存在")));
+            return createResponse(stream, JSON.toJSONString(errorRespnseMsg(4, "LLM不存在")));
         }
 
         Llm llm = aiLlm.toLlm();
@@ -386,7 +389,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
 
                 emitter.send(JSON.toJSONString(result, new SerializeConfig()));
             } else{
-                emitter.send(messageContent.toString());
+                emitter.send(JSON.toJSONString(messageContent));
             }
 
         }

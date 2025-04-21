@@ -21,7 +21,7 @@ public class AiBotApiKeyBase implements Serializable {
     /**
      * apiKey
      */
-    @Id(comment = "apiKey")@Column(value = "apiKey", comment = "apiKey")
+    @Column(comment = "apiKey")
     private String apiKey;
 
     /**
