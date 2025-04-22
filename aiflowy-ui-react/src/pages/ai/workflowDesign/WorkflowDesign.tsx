@@ -10,6 +10,8 @@ import {Tinyflow, TinyflowHandle} from '@tinyflow-ai/react';
 import '@tinyflow-ai/react/dist/index.css'
 
 
+
+
 export const WorkflowDesign = () => {
 
     const {message} = App.useApp()
@@ -20,6 +22,7 @@ export const WorkflowDesign = () => {
     const {result: llms} = useGet('/api/v1/aiLlm/list')
     const {result: knowledge} = useGet('/api/v1/aiKnowledge/list')
     const [parameters, setParameters] = useState<any[]>()
+
     const getOptions = (options: { id: any; title: any }[]): { value: any; label: any }[] => {
         if (options) {
             return options.map((item) => ({
@@ -202,16 +205,16 @@ export const WorkflowDesign = () => {
                     </div>
                     <Tinyflow ref={tinyflowRef} data={JSON.parse(workflow?.data?.content || '{}')}
                               provider={provider}
-                              onChange={(data: any) => {
-                                  console.log(data)
-                                  setWorkflow({
-                                      ...workflow,
-                                      data: {
-                                          ...workflow?.data,
-                                          content: JSON.stringify(data)
-                                      }
-                                  })
-                              }}
+                              // onChange={(data: any) => {
+                              //     console.log(data)
+                              //     setWorkflow({
+                              //         ...workflow,
+                              //         data: {
+                              //             ...workflow?.data,
+                              //             content: JSON.stringify(data)
+                              //         }
+                              //     })
+                              // }}
                               style={{height: 'calc(100vh - 110px)'}}/>
                 </div>
             </div>
