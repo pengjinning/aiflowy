@@ -94,7 +94,7 @@ npm config set registry https://registry.npmmirror.com
 
 ![npm_run_dev.png](resource/npm_run_dev.png)
 
-启动完成后，我们通过浏览器访问控制台显示的地址：http://localhost:8899 即可访问到 AIFlowy 的程序，如下图所示：
+启动完成后，我们通过浏览器访问控制台显示的地址：`http://localhost:8899` 即可访问到 AIFlowy 的程序，如下图所示：
 
 ![login_page.png](resource/login_page.png)
 

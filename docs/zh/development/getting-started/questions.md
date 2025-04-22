@@ -19,7 +19,7 @@ apiSecret=MWUzMzVjNmFhYjNkNDQ5N2E4OWVlpzQz
 
 ![not_find_model_ques.png](resource/not_find_model_ques.png)
 
-因为您没有配置大模型，您可以在[模型管理](http://localhost:8899/ai/llms)中查看大模型列表，并点击菜单 **大模型** 进行配置。在新增大模型的时候
+因为您没有配置大模型，您可以在 模型管理 `http://localhost:8899/ai/llms` 中查看大模型列表，并点击菜单 **大模型** 进行配置。在新增大模型的时候
 
 ![not_find_model_ques_first.png](resource/not_find_model_ques_first.png)
 
