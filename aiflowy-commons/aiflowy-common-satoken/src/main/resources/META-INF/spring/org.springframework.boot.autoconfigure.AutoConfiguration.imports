@@ -1,1 +1,1 @@
-tech.aiflowy.common.satoken.config.SaTokenDaoForRedisTemplate
+tech.aiflowy.common.satoken.config.SaTokenDaoRedisJackson
