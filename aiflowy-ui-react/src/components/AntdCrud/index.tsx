@@ -21,6 +21,7 @@ import {
     removeIf
 } from "../../libs/utils.ts";
 import {Key} from "rc-table/lib/interface";
+import {LabelTooltipType} from "antd/es/form/FormItemLabel";
 
 export type DictConfig = {
     url?: string,
@@ -33,7 +34,7 @@ export type DictConfig = {
 }
 
 
-export type FormConfig = {
+export type FormItemConfig = {
     //组件的类型
     type?: string,
 
@@ -48,6 +49,9 @@ export type FormConfig = {
 
     //备注说明
     extra?: string,
+
+    //提示信息，参考： https://ant-design.antgroup.com/components/form-cn#formitem
+    tooltip?: LabelTooltipType
 }
 
 
@@ -59,7 +63,7 @@ export type ColumnGroup = {
 
 export type ColumnConfig<RecordType = unknown> = ((ColumnGroupType<RecordType> | ColumnType<RecordType>) & {
     //编辑类型
-    form?: FormConfig,
+    form?: FormItemConfig,
 
     //数据字典，配置后，自动去请求后台的数据字典 url 来填充数据
     dict?: string | DictConfig,
