@@ -19,6 +19,7 @@ import tech.aiflowy.ai.node.*;
 import tech.aiflowy.ai.service.AiKnowledgeService;
 import tech.aiflowy.ai.service.AiLlmService;
 import tech.aiflowy.ai.service.AiWorkflowService;
+import tech.aiflowy.ai.utils.TinyFlowConfigService;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.filestorage.FileStorageService;
 import tech.aiflowy.common.util.SpringContextUtil;
@@ -45,10 +46,8 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
 
     @Resource
     private AiKnowledgeService aiKnowledgeService;
-    @Resource(name = "default")
-    FileStorageService storageService;
     @Resource
-    private ReaderManager readerManager;
+    private TinyFlowConfigService tinyFlowConfigService;
 
     public AiWorkflowController(AiWorkflowService service, AiLlmService aiLlmService) {
         super(service);
@@ -70,6 +69,9 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
         }
 
         Chain chain = tinyflow.toChain();
+        if (chain == null) {
+            return Result.fail(2, "节点配置错误，请检查! ");
+        }
         List<Parameter> chainParameters = chain.getParameters();
         return Result.success("parameters", chainParameters);
     }
@@ -84,50 +86,7 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
 
         Tinyflow tinyflow = workflow.toTinyflow();
 
-        ReadDocService readService = readerManager.getReader();
-        DocNodeParser docNodeParser = new DocNodeParser(readService);
-        MakeFileNodeParser makeFileNodeParser = new MakeFileNodeParser(storageService);
-
-        ChainParser chainParser = tinyflow.getChainParser();
-        chainParser.addNodeParser(docNodeParser.getNodeName(),docNodeParser);
-        chainParser.addNodeParser(makeFileNodeParser.getNodeName(),makeFileNodeParser);
-
-        tinyflow.setLlmProvider(new LlmProvider() {
-            @Override
-            public Llm getLlm(Object id) {
-                AiLlm aiLlm = aiLlmService.getById(new BigInteger(id.toString()));
-                return aiLlm.toLlm();
-            }
-        });
-
-        tinyflow.setKnowledgeProvider(new KnowledgeProvider() {
-            @Override
-            public Knowledge getKnowledge(Object o) {
-                AiKnowledge aiKnowledge = aiKnowledgeService.getById(new BigInteger(o.toString()));
-                return new Knowledge() {
-                    @Override
-                    public List<Document> search(String keyword, int limit, KnowledgeNode knowledgeNode, Chain chain) {
-                        DocumentStore documentStore = aiKnowledge.toDocumentStore();
-                        if (documentStore == null) {
-                            return null;
-                        }
-                        AiLlm aiLlm = aiLlmService.getById(aiKnowledge.getVectorEmbedLlmId());
-                        if (aiLlm == null) {
-                            return null;
-                        }
-                        documentStore.setEmbeddingModel(aiLlm.toLlm());
-                        SearchWrapper wrapper = new SearchWrapper();
-                        wrapper.setMaxResults(Integer.valueOf(limit));
-                        wrapper.setText(keyword);
-                        StoreOptions options = StoreOptions.ofCollectionName(aiKnowledge.getVectorStoreCollection());
-
-                        List<Document> results = documentStore.search(wrapper, options);
-                        return results;
-                    }
-                };
-            }
-        });
-
+        tinyFlowConfigService.setAll(tinyflow);
 
         Chain chain = tinyflow.toChain();
         chain.addEventListener(new ChainEventListener() {

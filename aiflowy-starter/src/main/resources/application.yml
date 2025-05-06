@@ -38,6 +38,9 @@ node:
   reader: 'defaultReader'
   gitee:
     appKey: 'xxx'
+  # 搜索引擎节点 - 目前只支持博查搜索
+  bochaai:
+    apiKey: 'xxx'
 jetcache:
   # 缓存类型，可选值：local/remote/both CacheConfig 类初始化
   cacheType: local

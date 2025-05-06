@@ -16,11 +16,26 @@ export const WorkflowDesign = () => {
     const {message} = App.useApp()
     const params = useParams();
 
-    const {result: workflow, doGet: reGetWorkflow} = useDetail("aiWorkflow", params.id);
+    const {result: workflow} = useDetail("aiWorkflow", params.id);
     const {doUpdate} = useUpdate("aiWorkflow");
     const {result: llms} = useGet('/api/v1/aiLlm/list')
     const {result: knowledge} = useGet('/api/v1/aiKnowledge/list')
     const [parameters, setParameters] = useState<any[]>()
+    const [workflowData, setWorkflowData] = useState<any>({})
+    const [saveLoading, setSaveLoading] = useState(false);
+    const [runLoading, setRunLoading] = useState(false);
+
+    // 添加 useEffect 监听 workflow 变化
+    useEffect(() => {
+        if (workflow?.data?.content) {
+            try {
+                setWorkflowData(JSON.parse(workflow.data.content))
+            } catch (e) {
+                setWorkflowData({})
+            }
+        }
+    }, [workflow])
+
     const getOptions = (options: { id: any; title: any }[]): { value: any; label: any }[] => {
         if (options) {
             return options.map((item) => ({
@@ -35,7 +50,11 @@ export const WorkflowDesign = () => {
 
     const provider = {
         llm: () => getOptions(llms?.data),
-        knowledge: (): any => getOptions(knowledge?.data)
+        knowledge: (): any => getOptions(knowledge?.data),
+        searchEngine: (): any => [{
+            value: 'bocha',
+            label: '博查搜索',
+        }]
     }
     const {setOptions} = useLayout();
     useEffect(() => {
@@ -47,15 +66,17 @@ export const WorkflowDesign = () => {
 
     const saveHandler = () => {
         console.log("data: ", tinyflowRef.current!.getData())
+        setSaveLoading(true)
         doUpdate({
             data: {
                 id: params.id,
                 content: tinyflowRef.current!.getData()
             }
-        }).then(reGetWorkflow)
-            .then(() => {
-                message.success('保存成功')
-            })
+        }).then(() => {
+            setSaveLoading(false)
+            // console.log("res: ", res)
+            message.success('保存成功')
+        })
     }
 
     const onKeydown = (event: KeyboardEvent) => {
@@ -82,15 +103,24 @@ export const WorkflowDesign = () => {
     const {doGet: getRunningParameters} = useGetManual("/api/v1/aiWorkflow/getRunningParameters");
     const {doPost: tryRunning} = usePostManual("/api/v1/aiWorkflow/tryRunning");
 
-    const showRunningParameters = () => {
+    const showRunningParameters = async () => {
+        setRunLoading(true)
+        await doUpdate({
+            data: {
+                id: params.id,
+                content: tinyflowRef.current!.getData()
+            }
+        })
         getRunningParameters({
             params: {
                 id: params.id,
             }
         }).then((resp) => {
-            console.log(resp)
-            setParameters(resp.data.parameters)
-            showDrawer()
+            if (resp.data.errorCode === 0) {
+                showDrawer()
+                setParameters(resp.data.parameters)
+            }
+            setRunLoading(false)
         })
     }
 
@@ -113,7 +143,9 @@ export const WorkflowDesign = () => {
                 variables: values
             }
         }).then((resp) => {
-            message.success("成功")
+            if (resp.data.errorCode === 0) {
+                message.success("成功")
+            }
             setSubmitLoading(false)
             setExecuteResult(JSON.stringify(resp.data))
         })
@@ -237,11 +269,11 @@ export const WorkflowDesign = () => {
                             <FormOutlined/>
                         </div>
                         <div style={{display: "flex", gap: "10px"}}>
-                            <Button type={"default"} onClick={showRunningParameters}> <SendOutlined/> 试运行</Button>
-                            <Button type={"primary"} onClick={saveHandler}>保存 (Ctrl + s)</Button>
+                            <Button type={"default"} loading={runLoading} onClick={showRunningParameters}> <SendOutlined/> 试运行</Button>
+                            <Button type={"primary"} loading={saveLoading} onClick={saveHandler}>保存 (Ctrl + s)</Button>
                         </div>
                     </div>
-                    <Tinyflow ref={tinyflowRef} data={JSON.parse(workflow?.data?.content || '{}')}
+                    <Tinyflow ref={tinyflowRef} data={workflowData}
                               provider={provider}
                               // onChange={(data: any) => {
                               //     console.log(data)
