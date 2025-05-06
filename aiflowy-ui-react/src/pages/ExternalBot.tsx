@@ -102,6 +102,7 @@ export const ExternalBot: React.FC = () => {
     const [activeKey, setActiveKey] = React.useState('');
     const [open, setOpen] = useState(false);
     const params = useParams();
+    const { doGet: doGetBotInfo} =useGetManual("/api/v1/aiBot/detail")
     const { start: startChat } = useSse("/api/v1/aiBot/chat");
     // 查询会话列表的数据
     const { doGet: getConversationManualGet } = useGetManual('/api/v1/conversation/externalList');
@@ -176,6 +177,14 @@ export const ExternalBot: React.FC = () => {
     }, [chats]);
 
     useEffect(() => {
+        const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement;
+        doGetBotInfo({params: {id: params?.id}}).then((r: any) => {
+            if (link) {
+                link.href = r?.data?.data?.icon || '/favicon.png';
+            }
+            document.title = r?.data?.data?.title;
+        });
+
         updateExternalSessionId(uuid())
         getConversationManualGet(
             {

@@ -53,7 +53,7 @@ Axios.interceptors.request.use((config) => {
 })
 Axios.interceptors.response.use(
     (response) => {
-        var path = window.location.pathname
+        const path = window.location.pathname
         if (response.data.message === '请登录'){
             if (path && "/login" !== path){
                 window.location.href = '/login?from='+path
