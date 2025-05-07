@@ -28,7 +28,7 @@ const Ollama: React.FC = () => {
     const handleRowAction = (record:any) => {
         doAddAiLlm({
             params:{
-                title: record.name,
+                title: 'ollama_'+record.name,
                 llmEndpoint: record.apiUrl,
                 llmModel: record.name,
                 brand: 'ollama'
