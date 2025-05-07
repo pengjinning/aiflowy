@@ -2,6 +2,8 @@ package tech.aiflowy.common.web.devlog;
 
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter;
+import com.alibaba.fastjson2.filter.PropertyFilter;
 import com.mybatisflex.core.util.ClassUtil;
 import com.mybatisflex.core.util.StringUtil;
 import org.apache.ibatis.javassist.*;
@@ -95,7 +97,18 @@ public class DevLogAspect {
             return originalText.substring(0, 100) + "...";
         }
 
-        return originalText;
+        try {
+            // 使用PropertyFilter过滤掉timeout字段
+            PropertyFilter filter = (object, name, value) -> !"timeout".equals(name);
+
+            String resultStr = JSON.toJSONString(result,
+                    filter,
+                    JSONWriter.Feature.WriteMapNullValue,
+                    JSONWriter.Feature.IgnoreNonFieldGetter);
+            return resultStr;
+        } catch (Exception e) {
+            return "[Serialization Error: " + e.getMessage() + "]";
+        }
     }
 
 
