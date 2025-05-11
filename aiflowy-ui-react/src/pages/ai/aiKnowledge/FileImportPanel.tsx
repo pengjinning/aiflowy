@@ -364,8 +364,8 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
                                     message.success("上传成功");
                                     setConfirmImport(false);
                                     setDisabledConfirm(false)
-                                } else if (res.data?.errorCode === 1){
-                                    message.error(res.data?.errorMessage);
+                                } else if (res.data?.errorCode >= 1){
+                                    message.error(res.data?.message);
                                 }
                                });
 

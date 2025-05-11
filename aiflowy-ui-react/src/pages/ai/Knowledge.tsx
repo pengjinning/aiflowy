@@ -101,6 +101,17 @@ const columnsColumns: ColumnsConfig<any> = [
         title: '向量数据库集合',
         dataIndex: 'vectorStoreCollection',
         key: 'vectorStoreCollection',
+        placeholder: '只能包含字母、数字和下划线,且长度在3-20个字符之间',
+        form: {
+            type: 'input',
+            rules: ([
+                {
+                    pattern: /^[a-zA-Z0-9_]{3,20}$/,  // 正则表达式
+                    message: '向量数据库集合只能包含字母、数字和下划线,且长度在3-20个字符之间',  // 校验失败提示
+                    validateTrigger: ['blur']
+                }
+            ])
+        }
     },
 
     {
