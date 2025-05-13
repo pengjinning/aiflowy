@@ -1,5 +1,6 @@
 package tech.aiflowy.ai.controller;
 
+import com.mybatisflex.core.query.QueryWrapper;
 import tech.aiflowy.ai.entity.AiKnowledge;
 import tech.aiflowy.ai.service.AiDocumentChunkService;
 import tech.aiflowy.ai.service.AiKnowledgeService;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 控制层。
@@ -35,7 +38,9 @@ public class AiKnowledgeController extends BaseCurdController<AiKnowledgeService
     @Override
     protected Result onSaveOrUpdateBefore(AiKnowledge entity, boolean isSave) {
         if (isSave){
-            entity.setCanUpdateEmbedding(true);
+            Map<String, Object> options =  new HashMap<>();
+            options.put("canUpdateEmbedding", true);
+            entity.setOptions(options);
         }
         return super.onSaveOrUpdateBefore(entity, isSave);
     }

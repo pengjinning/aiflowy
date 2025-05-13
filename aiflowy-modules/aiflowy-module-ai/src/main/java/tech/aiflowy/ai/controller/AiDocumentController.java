@@ -9,6 +9,7 @@ import tech.aiflowy.ai.entity.AiDocument;
 import tech.aiflowy.ai.entity.AiDocumentChunk;
 import tech.aiflowy.ai.entity.AiKnowledge;
 import tech.aiflowy.ai.entity.AiLlm;
+import tech.aiflowy.ai.entity.base.AiKnowledgeBase;
 import tech.aiflowy.ai.service.*;
 import tech.aiflowy.ai.service.impl.AiDocumentServiceImpl;
 import tech.aiflowy.common.ai.DocumentParserFactory;
@@ -247,18 +248,9 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
         aiDocument.setModifiedBy(BigInteger.valueOf(StpUtil.getLoginIdAsLong()));
         aiDocument.setModified(new Date());
 
-        if (chunkSize != null && chunkSize != 0){
-            aiDocument.setChunkSize(chunkSize);
-        } else {
-            aiDocument.setChunkSize(200);
-        }
-        if (overlapSize != null && overlapSize != 0){
-            aiDocument.setOverlapSize(overlapSize);
-        } else {
-            aiDocument.setOverlapSize(100);
-        }
+        aiDocument.setChunkSize(chunkSize);
+        aiDocument.setOverlapSize(overlapSize);
         aiDocument.setTitle(StringUtil.removeFileExtension(file.getOriginalFilename()));
-
         super.save(aiDocument);
         return storeDocument(aiDocument, splitterName, chunkSize, overlapSize, regex, rowsPerChunk);
     }
@@ -383,7 +375,15 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
         AiKnowledge aiKnowledge = new AiKnowledge();
         aiKnowledge.setId(entity.getKnowledgeId());
         // CanUpdateEmbedLlm false: 不能修改知识库的大模型 true: 可以修改
-        aiKnowledge.setCanUpdateEmbedding(false);
+        AiKnowledge knowledge1 = knowledgeService.getById(entity.getKnowledgeId());
+        Map<String, Object> knowledgeoptions =  new HashMap<>();
+        if (knowledge1.getOptions() == null){
+            knowledgeoptions.put("canUpdateEmbedding", false);
+        } else {
+            knowledgeoptions = knowledge.getOptions();
+            knowledgeoptions.put("canUpdateEmbedding", false);
+        }
+        aiKnowledge.setOptions(knowledgeoptions);
         knowledgeService.updateById(aiKnowledge);
         return Result.success();
     }
