@@ -1,8 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
-
-
 import {useLayout} from '../../../hooks/useLayout.tsx';
-import {App, Button, Drawer, Form, Input, Skeleton} from "antd";
+import {App, Button, Drawer, Form, Input, Skeleton, Spin} from "antd";
 import {useParams} from "react-router-dom";
 import {useDetail, useGet, useGetManual, usePostManual, useUpdate} from "../../../hooks/useApis.ts";
 import {FormOutlined, SendOutlined, UploadOutlined} from "@ant-design/icons";
@@ -10,6 +8,8 @@ import {Tinyflow, TinyflowHandle} from '@tinyflow-ai/react';
 import '@tinyflow-ai/react/dist/index.css'
 import {Uploader} from "../../../components/Uploader";
 import customNode from './customNode/index.ts'
+import {PluginNode} from './customNode/pluginNode.ts'
+import {PluginTools} from "../botDesign/PluginTools.tsx";
 
 export const WorkflowDesign = () => {
 
@@ -164,16 +164,47 @@ export const WorkflowDesign = () => {
         console.log('Failed:', errorInfo);
     };
 
+    const [changeNodeData, setChangeNodeData] = useState<any>()
+
+    const handleChosen = (updateNodeData: any) => {
+        setChangeNodeData(() => updateNodeData)
+        setPluginOpen(true)
+    }
     const customNodes: any = {
-        ...customNode
+        ...customNode,
+        'plugin-node': PluginNode({
+            onChosen: handleChosen
+        })
     };
 
     const [form] = Form.useForm();
 
     const [submitLoading, setSubmitLoading] = useState(false);
+    const [pluginOpen, setPluginOpen] = useState(false)
+    const [pageLoading, setPageLoading] = useState(false)
+    const {doGet: getTinyFlowData} = useGetManual("/api/v1/aiPluginTool/getTinyFlowData")
+
 
     return (
         <>
+            <PluginTools
+                open={pluginOpen} onClose={() => setPluginOpen(false)}
+                onCancel={() => setPluginOpen(false)}
+                onSelectedItem={item => {
+                    setPluginOpen(false)
+                    setPageLoading(true)
+                    // 调用保存的 updateNodeData 函数
+                    if (changeNodeData) {
+                        getTinyFlowData({
+                            params: {
+                                id: item.id
+                            }
+                        }).then(res => {
+                            setPageLoading(false)
+                            changeNodeData(res.data.data)
+                        })
+                    }
+                }}/>
             <Drawer
                 width={640}
                 title="请输入参数"
@@ -280,19 +311,22 @@ export const WorkflowDesign = () => {
                             <Button type={"primary"} loading={saveLoading} onClick={saveHandler}>保存 (Ctrl + s)</Button>
                         </div>
                     </div>
-                    {showTinyflow ? <Tinyflow ref={tinyflowRef} data={workflowData}
-                                            provider={provider}
-                        // onChange={(data: any) => {
-                        //     console.log(data)
-                        //     setWorkflow({
-                        //         ...workflow,
-                        //         data: {
-                        //             ...workflow?.data,
-                        //             content: JSON.stringify(data)
-                        //         }
-                        //     })
-                        // }}
-                                            style={{height: 'calc(100vh - 110px)'}} customNodes={customNodes}/>
+                    {showTinyflow ?
+                        <Spin spinning={pageLoading} >
+                            <Tinyflow ref={tinyflowRef} data={workflowData}
+                                      provider={provider}
+                                // onChange={(data: any) => {
+                                //     console.log(data)
+                                //     setWorkflow({
+                                //         ...workflow,
+                                //         data: {
+                                //             ...workflow?.data,
+                                //             content: JSON.stringify(data)
+                                //         }
+                                //     })
+                                // }}
+                                      style={{height: 'calc(100vh - 10px)'}} customNodes={customNodes}/>
+                        </Spin>
                         : <div style={{padding: '20px'}}><Skeleton active /></div>
                     }
 

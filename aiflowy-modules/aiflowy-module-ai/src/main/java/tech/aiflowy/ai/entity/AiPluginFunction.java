@@ -95,6 +95,9 @@ public class AiPluginFunction  implements Function {
     // 转换输入参数
     private List<Map<String, Object>> getDataList(String jsonArray){
         List<Map<String, Object>> dataList;
+        if (jsonArray == null) {
+            return new ArrayList<>();
+        }
         try {
             dataList = new ObjectMapper().readValue(
                     jsonArray,

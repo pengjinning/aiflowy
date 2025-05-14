@@ -1,5 +1,11 @@
 package tech.aiflowy.ai.controller;
 
+import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,5 +62,49 @@ public class AiPluginToolController extends BaseCurdController<AiPluginToolServi
     public Result getPluginToolList(@JsonBody(value = "botId", required = true) BigInteger botId){
 
         return aiPluginToolService.getPluginToolList(botId);
+    }
+
+    @GetMapping("/getTinyFlowData")
+    public Result getTinyFlowData(BigInteger id) {
+        JSONObject nodeData = new JSONObject();
+        AiPluginTool record = aiPluginToolService.getById(id);
+        if (record == null) {
+            return Result.success(nodeData);
+        }
+        nodeData.put("pluginId", record.getId().toString());
+        nodeData.put("pluginName", record.getName());
+
+        JSONArray parameters = new JSONArray();
+        JSONArray outputDefs = new JSONArray();
+        String inputData = record.getInputData();
+        if (StrUtil.isNotEmpty(inputData)) {
+            JSONArray array = JSON.parseArray(inputData);
+            handleArray(array);
+            parameters = array;
+        }
+        String outputData = record.getOutputData();
+        if (StrUtil.isNotEmpty(outputData)) {
+            JSONArray array = JSON.parseArray(outputData);
+            handleArray(array);
+            outputDefs = array;
+        }
+        nodeData.put("parameters", parameters);
+        nodeData.put("outputDefs", outputDefs);
+        return Result.success(nodeData);
+    }
+
+    private void handleArray(JSONArray array) {
+        for (Object o : array) {
+            JSONObject obj = (JSONObject) o;
+            obj.put("id", IdUtil.simpleUUID());
+            obj.put("nameDisabled", true);
+            obj.put("dataTypeDisabled", true);
+            obj.put("deleteDisabled", true);
+            obj.put("addChildDisabled", true);
+            JSONArray children = obj.getJSONArray("children");
+            if (children != null) {
+                handleArray(children);
+            }
+        }
     }
 }

@@ -18,10 +18,7 @@ import org.springframework.stereotype.Component;
 import tech.aiflowy.ai.config.BochaaiProps;
 import tech.aiflowy.ai.entity.AiKnowledge;
 import tech.aiflowy.ai.entity.AiLlm;
-import tech.aiflowy.ai.node.DocNodeParser;
-import tech.aiflowy.ai.node.MakeFileNodeParser;
-import tech.aiflowy.ai.node.ReadDocService;
-import tech.aiflowy.ai.node.ReaderManager;
+import tech.aiflowy.ai.node.*;
 import tech.aiflowy.ai.provider.BochaaiSearchEngine;
 import tech.aiflowy.ai.service.AiKnowledgeService;
 import tech.aiflowy.ai.service.AiLlmService;
@@ -59,10 +56,13 @@ public class TinyFlowConfigService {
         DocNodeParser docNodeParser = new DocNodeParser(readService);
         // 文件生成
         MakeFileNodeParser makeFileNodeParser = new MakeFileNodeParser(storageService);
+        // 插件
+        PluginToolNodeParser pluginToolNodeParser  = new PluginToolNodeParser();
 
         ChainParser chainParser = tinyflow.getChainParser();
         chainParser.addNodeParser(docNodeParser.getNodeName(), docNodeParser);
         chainParser.addNodeParser(makeFileNodeParser.getNodeName(), makeFileNodeParser);
+        chainParser.addNodeParser(pluginToolNodeParser.getNodeName(), pluginToolNodeParser);
     }
 
     public void setSearchEngineProvider(Tinyflow tinyflow) {
