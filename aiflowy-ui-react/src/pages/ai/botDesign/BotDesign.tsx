@@ -118,8 +118,6 @@ const BotDesign: React.FC = () => {
 
     const {setOptions} = useLayout();
     useEffect(() => {
-        console.log('detail')
-        console.log(detail)
         setOptions({
             leftMenuCollapsed: true, showBreadcrumb: false,
             headerLeftEl: <span style={{marginLeft: "20px"}}>{detail?.data?.title}</span>,
