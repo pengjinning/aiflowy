@@ -229,18 +229,6 @@ const BotDesign: React.FC = () => {
                             }}
             />
 
-            {/*<PluginsModal*/}
-            {/*    open={pluginOpen}*/}
-            {/*    onCancel={() => {*/}
-            {/*        setPluginOpen(false)*/}
-            {/*        doPostPluginTool({data: {botId: params.id}})*/}
-            {/*            .then(r =>{*/}
-            {/*            setPluginToolData(r?.data?.data)*/}
-            {/*        })*/}
-            {/*    }}*/}
-            {/*    params={params}*/}
-            {/*    onToolExecute={handleToolExecute}*/}
-            {/*/>*/}
             <PluginTools
                 selectedItem={pluginToolResult?.data}
                 goToPage="/ai/plugin"
