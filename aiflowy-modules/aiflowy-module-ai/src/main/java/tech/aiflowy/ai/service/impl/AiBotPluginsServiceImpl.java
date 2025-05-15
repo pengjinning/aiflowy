@@ -50,4 +50,12 @@ public class AiBotPluginsServiceImpl extends ServiceImpl<AiBotPluginsMapper, AiB
         }
         return Result.success();
     }
+
+    @Override
+    public Result getBotPluginToolIds(String botId) {
+        QueryWrapper queryWrapper = QueryWrapper.create().select("plugin_tool_id").where("bot_id = ?", botId);
+        List<BigInteger> pluginToolIds = aiBotPluginsMapper.selectListByQueryAs(queryWrapper, BigInteger.class);
+
+        return Result.success(pluginToolIds);
+    }
 }

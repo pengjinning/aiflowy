@@ -15,4 +15,6 @@ public interface AiBotPluginsService extends IService<AiBotPlugins> {
     Result getList(String botId);
 
     Result doRemove(String botId, String pluginId);
+
+    Result getBotPluginToolIds(String botId);
 }

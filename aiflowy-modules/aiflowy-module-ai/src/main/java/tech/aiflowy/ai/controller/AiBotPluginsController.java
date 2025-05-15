@@ -52,6 +52,11 @@ public class AiBotPluginsController extends BaseCurdController<AiBotPluginsServi
         return aiBotPluginsService.getList(botId);
     }
 
+    @PostMapping("/getBotPluginToolIds")
+    public Result getBotPluginToolIds(@JsonBody(value = "botId", required = true) String botId){
+        return aiBotPluginsService.getBotPluginToolIds(botId);
+    }
+
     @PostMapping("/doRemove")
     public Result doRemove(@JsonBody(value = "botId", required = true) String botId,
                            @JsonBody(value = "pluginToolId", required = true) String pluginToolId){

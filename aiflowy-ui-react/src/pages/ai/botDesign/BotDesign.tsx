@@ -24,7 +24,7 @@ import {KnowledgeModal} from "./Knowledge.tsx";
 import TextArea from "antd/es/input/TextArea";
 import {getSessionId} from "../../../libs/getSessionId.ts";
 import {AiProChat, ChatMessage} from "../../../components/AiProChat/AiProChat";
-import {PluginsModal} from "./PluginsModal.tsx";
+import {PluginTools} from "./PluginTools.tsx";
 const colStyle: React.CSSProperties = {
     background: '#fafafa',
     padding: '8px',
@@ -115,7 +115,13 @@ const BotDesign: React.FC = () => {
 
     const [systemPrompt, setSystemPrompt] = useState<string>('')
     const [welcomeMessage, setWelcomeMessage] = useState<string>('')
+    const {result: pluginToolResult,doPost: doPostPluginToolIds} = usePostManual('/api/v1/aiBotPlugins/getBotPluginToolIds')
+    const {doSave: doSavePlugin} = useSave("aiBotPlugins");
+    const {doPost: doRemovePlugin} = usePostManual('/api/v1/aiBotPlugins/doRemove');
 
+    useEffect(() => {
+        doPostPluginToolIds({data: {botId: params.id}})
+    }, []);
     const {setOptions} = useLayout();
     useEffect(() => {
         setOptions({
@@ -142,6 +148,7 @@ const BotDesign: React.FC = () => {
     }
 
     const {doPost: updateBotLLMOptions} = usePostManual("/api/v1/aiBot/updateLlmOptions")
+
     const doUpdateBotLLMOptions = (values: any) => {
         updateBotLLMOptions({
             data: {
@@ -205,10 +212,7 @@ const BotDesign: React.FC = () => {
         })
     }, []);
 
-    const handleToolExecute = async (pluginId: string, toolId: string, params: Record<string, any>) => {
-        console.log('执行工具:', { pluginId, toolId, params });
-        // 这里调用实际API
-    };
+
     return (
         <>
             <WorkflowsModal open={workflowOpen} onClose={() => setWorkflowOpen(false)}
@@ -225,19 +229,55 @@ const BotDesign: React.FC = () => {
                             }}
             />
 
-            <PluginsModal
-                open={pluginOpen}
-                onCancel={() => {
+            {/*<PluginsModal*/}
+            {/*    open={pluginOpen}*/}
+            {/*    onCancel={() => {*/}
+            {/*        setPluginOpen(false)*/}
+            {/*        doPostPluginTool({data: {botId: params.id}})*/}
+            {/*            .then(r =>{*/}
+            {/*            setPluginToolData(r?.data?.data)*/}
+            {/*        })*/}
+            {/*    }}*/}
+            {/*    params={params}*/}
+            {/*    onToolExecute={handleToolExecute}*/}
+            {/*/>*/}
+            <PluginTools
+                selectedItem={pluginToolResult?.data}
+                goToPage="/ai/plugin"
+                open={pluginOpen} onClose={() => setPluginOpen(false)}
+                onCancel={() => setPluginOpen(false)}
+                onSelectedItem={item => {
                     setPluginOpen(false)
-                    doPostPluginTool({data: {botId: params.id}})
-                        .then(r =>{
-                        setPluginToolData(r?.data?.data)
+                    doSavePlugin({
+                        data: {
+                            botId: params.id,
+                            pluginToolId: item.id,
+                        }
+                    }).then(r => {
+                        if (r?.data?.errorCode === 0) {
+                            message.success("添加成功")
+                            doPostPluginTool({data: {botId: params.id}}).then(r => {
+                                setPluginToolData(r?.data?.data)
+                            })
+                        } else {
+                            message.error("添加失败")
+                        }
                     })
                 }}
-                params={params}
-                onToolExecute={handleToolExecute}
+                onRemoveItem={(item) => {
+                    setPluginOpen(false)
+                    doRemovePlugin({data: {pluginToolId: item.id, botId: params.id}}).then(res => {
+                        if (res?.data?.errorCode === 0){
+                            message.success('删除成功')
+                            doPostPluginTool({data: {botId: params.id}}).then(r => {
+                                setPluginToolData(r?.data?.data)
+                            })
+                        } else {
+                            message.error('删除失败')
+                        }
+                    })
+                }}
             />
-
 
             <KnowledgeModal open={knowledgeOpen} onClose={() => setKnowledgeOpen(false)}
                             onCancel={() => setKnowledgeOpen(false)}
@@ -370,7 +410,6 @@ const BotDesign: React.FC = () => {
                                 key: 'plugins',
                                 label: <CollapseLabel text="插件" onClick={() => {
                                     setPluginOpen(true)
-                                    setPluginToolData([])
                                 }}/>,
                                 children:
                                     <div>
