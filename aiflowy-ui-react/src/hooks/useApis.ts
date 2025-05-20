@@ -180,6 +180,9 @@ export const usePostFile = (url: string, options?: Options) => {
         headers: {
             "Content-Type": "multipart/form-data"
         },
+    },{
+        manual: true,
+        useCache: false,
         ...options
     });
     return {
