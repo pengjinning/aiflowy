@@ -195,7 +195,7 @@ public class AiPluginFunction  implements Function {
             requestParam.setMethod(originalParam.getMethod());
 
             // 优先级: argsMap值 < 参数默认值
-            if (argsMap != null && argsMap.containsKey(paramName) && requestParam.getDefaultValue() != null) {
+            if (argsMap != null && argsMap.containsKey(paramName) && originalParam.getDefaultValue() == null) {
                 // 使用大模型返回的值
                 requestParam.setDefaultValue(argsMap.get(paramName));
             } else if (originalParam.getDefaultValue() != null) {
