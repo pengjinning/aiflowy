@@ -17,6 +17,17 @@ spring:
       static-locations: classpath:/public
   mvc:
     static-path-pattern: /static/**
+  quartz:
+    startup-delay: 1
+    job-store-type: jdbc
+    properties:
+      org:
+        quartz:
+          jobStore:
+            misfireThreshold: 1000
+          threadPool:
+            threadCount: 20
+            threadPriority: 5
 aiflowy:
   storage:
     type: local

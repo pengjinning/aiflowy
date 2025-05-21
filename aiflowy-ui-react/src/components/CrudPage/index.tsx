@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {forwardRef, useEffect, useImperativeHandle} from 'react';
 import {useList, usePage, useRemove, useRemoveBatch, useSave, useUpdate} from "../../hooks/useApis.ts";
 import AntdCrud, {ActionConfig, Actions, ColumnsConfig} from "../AntdCrud";
 import {Page} from "../../types/Page.ts";
@@ -8,6 +8,7 @@ import {useUrlParams} from "../../hooks/useUrlParams.ts";
 import {EditLayout} from "../AntdCrud/EditForm.tsx";
 
 interface CurdPageProps {
+    ref?: any,
     tableAlias: string,
     showType?: "list" | "page",
     defaultPageSize?: number,
@@ -24,7 +25,7 @@ interface CurdPageProps {
     externalRefreshTrigger?: number; // 当这个值变化时触发刷新
 }
 
-const CrudPage: React.FC<CurdPageProps> = ({
+const CrudPage: React.FC<CurdPageProps> = forwardRef(({
                                                tableAlias,
                                                showType = "page",
                                                defaultPageSize = 10,
@@ -38,7 +39,13 @@ const CrudPage: React.FC<CurdPageProps> = ({
                                                paramsToUrl = false,
                                                editLayout,
                                                externalRefreshTrigger
-                                           }) => {
+                                           },ref) => {
+
+    useImperativeHandle(ref, () => ({
+        refresh: () => {
+            actions.onFetchList?.(pageNumber, pageSize, urlParams);
+        }
+    }));
 
     const isPage = showType === "page";
     const {
@@ -138,6 +145,6 @@ const CrudPage: React.FC<CurdPageProps> = ({
                   pageSize={pageSize}
                   totalRow={((result?.data) as Page<any>)?.totalRow}/>
     )
-};
+});
 
 export default CrudPage;

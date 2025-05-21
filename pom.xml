@@ -46,6 +46,12 @@
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-quartz</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis</artifactId>
                 <version>${spring-boot.version}</version>
             </dependency>
@@ -357,7 +363,11 @@
                 <artifactId>aiflowy-module-system</artifactId>
                 <version>${revision}</version>
             </dependency>
-
+            <dependency>
+                <groupId>tech.aiflowy</groupId>
+                <artifactId>aiflowy-module-job</artifactId>
+                <version>${revision}</version>
+            </dependency>
 
             <!--starter-->
             <dependency>
