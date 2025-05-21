@@ -18,6 +18,7 @@
         <module>aiflowy-module-autoconfig</module>
         <module>aiflowy-module-common</module>
         <module>aiflowy-module-ai</module>
+        <module>aiflowy-module-job</module>
     </modules>
 
     <properties>
