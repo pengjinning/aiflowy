@@ -200,7 +200,15 @@ function sidebarProduct(): DefaultTheme.SidebarItem[] {
                 {text: '管理知识库', link: 'knowledge/management-knowledge'},
                 {text: '文档分片', link: 'knowledge/splitter'},
                 {text: 'Embedding 模型', link: 'knowledge/embedding'},
-                {text: '向量数据库', link: 'knowledge/vector-database'}
+                {text: '向量数据库', collapsed: false,
+                    items: [
+                        {text: 'Redis-Stack', link: 'knowledge/vector-database/redis-stack.md'},
+                        {text: 'Milvus', link: 'knowledge/vector-database/milvus.md'},
+                        {text: 'ElasticSearch', link: 'knowledge/vector-database/elasticsearch.md'},
+                        {text: 'openSearch', link: 'knowledge/vector-database/opensearch.md'},
+                        {text: '阿里云', link: 'knowledge/vector-database/aliyun.md'},
+                    ]
+                    }
             ]
         },
         {
