@@ -28,6 +28,9 @@ public class DocumentParserFactory {
         if (typeOrFileName.endsWith(".xlsx")) {
             return new ExcelDocumentParser();
         }
+        if (typeOrFileName.endsWith(".ppt") || typeOrFileName.endsWith(".pptx")) {
+            return new PowerPointDocumentParser();
+        }
         return null;
     }
 }

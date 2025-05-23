@@ -84,12 +84,16 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
             file.type === "text/plain" ||
             file.type === "application/pdf" ||
             file.type === "application/markdown" ||
-            file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            file.name.endsWith(".md");
+            file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+            file.type === "application/vnd.ms-powerpoint" ||  // PPT 文件类型
+            file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation" ||  // PPTX 文件类型
+            file.name.endsWith(".md") ||
+            file.name.endsWith(".ppt") ||  // 添加 .ppt 扩展名检查
+            file.name.endsWith(".pptx");   // 添加 .pptx 扩展名检查
         const isLt20M = file.size / 1024 / 1024 < 20;
 
         if (!isAllowedType) {
-            message.error("仅支持 txt, pdf, md, docx 格式的文件！");
+            message.error("仅支持 txt, pdf, md, docx, ppt, pptx 格式的文件！");
         }
         if (!isLt20M) {
             message.error("单个文件大小不能超过 20MB！");
@@ -102,6 +106,7 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
         }
 
         return isAllowedType && isLt20M;
+        return true;
     };
 
     const beforeUploadExcel = (file: File) => {
@@ -218,7 +223,7 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
 
                     {/* 上传文件 */}
                     <p className="section-description">
-                        支持 txt, pdf, docx, md 格式文件，单次最多上传 {maxCount} 个文件，单个大小不超过 20M。
+                        支持 txt, pdf, docx, md, ppt, pptx 格式文件，单次最多上传 {maxCount} 个文件，单个大小不超过 20M。
                     </p>
 
                     <div style={{display: "flex",  flexDirection:"column", width:"500px"}}>
@@ -340,7 +345,7 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
                         <Upload.Dragger
                             name="file"
                             multiple
-                            accept=".txt,.pdf,.md,.docx"
+                            accept=".txt,.pdf,.md,.docx,.ppt,.pptx"
                             beforeUpload={beforeUploadDocument}
                             fileList={fileList}
                             onChange={(info) => handleFileChange(info.fileList)}
