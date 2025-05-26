@@ -208,6 +208,7 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
                 setDisabledConfirm(false)
             } else if (res.data?.errorCode >= 1){
                 message.error(res.data?.message);
+                setDisabledConfirm(false)
             }
         });
     };
