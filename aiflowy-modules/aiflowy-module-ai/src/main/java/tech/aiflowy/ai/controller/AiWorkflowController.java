@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -252,24 +253,32 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
         if (CollectionUtil.isEmpty(currentParams)) {
             return;
         }
-        for (Parameter parameter : currentParams) {
-            RefType refType = parameter.getRefType();
-            if (refType.equals(RefType.REF)) {
-                parameter.setRefType(RefType.INPUT);
-                String ref = parameter.getRef();
-                if (StrUtil.isNotEmpty(ref)) {
-                    for (ChainNode node : allNodes) {
-                        List<Parameter> parameters = node.getParameters();
-                        if (parameters != null) {
-                            for (Parameter nodeParameter : parameters) {
-                                String nodeAttr = node.getId() + "." + nodeParameter.getName();
-                                if (ref.equals(nodeAttr)) {
-                                    parameter.setDataType(nodeParameter.getDataType());
-                                }
-                            }
-                        }
-                    }
+
+        Map<String, DataType> refToDataTypeMap = new HashMap<>();
+
+        for (ChainNode node : allNodes) {
+            if (node == null || CollectionUtil.isEmpty(node.getParameters())) {
+                continue;
+            }
+
+            String nodeId = node.getId();
+            for (Parameter param : node.getParameters()) {
+                if (param != null && param.getName() != null) {
+                    refToDataTypeMap.put(nodeId + "." + param.getName(), param.getDataType());
                 }
+            }
+        }
+
+        for (Parameter parameter : currentParams) {
+            if (parameter == null || !RefType.REF.equals(parameter.getRefType())) {
+                continue;
+            }
+
+            parameter.setRefType(RefType.INPUT);
+            String ref = parameter.getRef();
+
+            if (StrUtil.isNotEmpty(ref) && refToDataTypeMap.containsKey(ref)) {
+                parameter.setDataType(refToDataTypeMap.get(ref));
             }
         }
     }
