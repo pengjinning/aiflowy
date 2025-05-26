@@ -40,6 +40,9 @@ mvn clean package
 cd aiflowy-ui-react
 npm install
 npm run dev
+
+默认用户名密码：
+admin/123456
 ```
 
 详细文档请参考： https://aiflowy.tech/zh/development/getting-started/getting-started.html
