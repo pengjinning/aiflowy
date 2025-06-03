@@ -375,7 +375,8 @@ const BotDesign: React.FC = () => {
                                 label: <CollapseLabel text="工作流" onClick={() => {
                                     setWorkflowOpen(true)
                                 }}/>,
-                                children: <div>
+                                children:
+                                    <div>
                                     {workflowResult?.data?.length ?
                                         workflowResult?.data?.map((item: any) => {
                                             return <ListItem key={item.id} title={item.workflow.title}
@@ -400,14 +401,16 @@ const BotDesign: React.FC = () => {
                                         )
 
                                     }
-                                </div>,
+                                </div>
+                                ,
                             },
                             {
                                 key: 'knowledge',
                                 label: <CollapseLabel text="知识库" onClick={() => {
                                     setKnowledgeOpen(true)
                                 }}/>,
-                                children: <div>
+                                children:
+                                    <div>
                                     {knowledgeResult?.data.length ?
                                         knowledgeResult?.data?.map((item: any) => {
                                             return <ListItem key={item.id} title={item.knowledge.title}
@@ -432,7 +435,8 @@ const BotDesign: React.FC = () => {
                                             </div>
                                         )
                                     }
-                                </div>,
+                                </div>
+                                ,
                             },
                             {
                                 key: 'plugins',

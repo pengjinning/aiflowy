@@ -63,6 +63,7 @@ public class AiKnowledgeServiceImpl extends ServiceImpl<AiKnowledgeMapper, AiKno
         wrapper.setText(keyword);
 
         StoreOptions options = StoreOptions.ofCollectionName(knowledge.getVectorStoreCollection());
+        options.setIndexName(knowledge.getVectorStoreCollection());
         List<Document> results = documentStore.search(wrapper, options);
 
         if (results == null || results.isEmpty()) {
