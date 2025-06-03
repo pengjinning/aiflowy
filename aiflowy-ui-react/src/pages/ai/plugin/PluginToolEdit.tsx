@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useLayout} from "../../../hooks/useLayout.tsx";
 import {useLocation, useNavigate} from "react-router-dom";
-import {Button, Collapse, Form, Input, message, Select, Spin} from "antd";
+import {Button, Collapse, Form, Input, message, Modal, Select, Spin} from "antd";
 import {usePost, usePostManual} from "../../../hooks/useApis.ts";
 import './less/pluginToolEdit.less'
 import {
@@ -11,7 +11,8 @@ import {
 import TextArea from "antd/es/input/TextArea";
 import {useBreadcrumbRightEl} from "../../../hooks/useBreadcrumbRightEl.tsx";
 import PluginInputAndOutputData, {TreeTableNode} from "./PluginInputAndOutputData.tsx";
-
+import CustomTable from "./CustomTable.tsx";
+import {DataType as TestDataType} from "./CustomTable.tsx";
 
 const PluginToolEdit: React.FC = () => {
     const navigate = useNavigate();
@@ -33,11 +34,24 @@ const PluginToolEdit: React.FC = () => {
     const [showLoading, setShowLoading] = useState(true);
     const [isEditInput, setIsEditInput] = useState(false);
     const [isEditOutput, setIsEditOutput] = useState(false);
+    const [isRunModalOpen, setIsRunModalOpen] = useState(false);
+    const [testData, settTestData] = useState<TestDataType[]>([])
     useBreadcrumbRightEl(
         <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16}}>
             <div>
                 <Button onClick={() => navigate(-1)}  icon={<ArrowLeftOutlined />}>返回</Button>
-                {/* 其他内容 */}
+            </div>
+            <div>
+                <Button onClick={() => {
+                    doPostSearch(
+                        {  data: {
+                                aiPluginToolId: id
+                            }}
+                    ).then(res => {
+                        settTestData(JSON.parse(res.data.data.data.inputData))
+                        showModal()
+                    })
+                }}  type="primary" >试运行</Button>
             </div>
         </div>
     )
@@ -200,11 +214,6 @@ const PluginToolEdit: React.FC = () => {
         );
     };
     const handleSubmit = (submittedParams: TreeTableNode[]) => {
-        console.log('isEditInput')
-        console.log(isEditInput)
-        console.log('isEditOutput')
-        console.log(isEditOutput)
-        console.log('父组件收到的参数:', submittedParams);
         if (isEditInput){
             setIsEditInput(false)
                 doPostUpdate({
@@ -247,6 +256,19 @@ const PluginToolEdit: React.FC = () => {
 
         // 这里可以执行提交到API等操作
     };
+
+    const showModal = () => {
+        setIsRunModalOpen(true);
+    };
+
+    const handleOk = () => {
+        setIsRunModalOpen(false);
+    };
+
+    const handleCancel = () => {
+        setIsRunModalOpen(false);
+    };
+
     const collapseItems = [
         {
             key: '1',
@@ -339,19 +361,36 @@ const PluginToolEdit: React.FC = () => {
     }
 
     return (
-        <div style={{ backgroundColor: '#F5F5F5',height: '100vh', overflow: 'auto' }}>
-            <Collapse
-                bordered={false}
-                defaultActiveKey={['1', '2', '3']}
-                items={collapseItems.map(item => ({
-                    ...item,
-                    style: {
-                        header: { backgroundColor: '#F7F7FA' },
-                        body: { backgroundColor: '#F5F5F5' },
-                    },
-                }))}
-            />
-        </div>
+        <>
+            <div style={{ backgroundColor: '#F5F5F5',height: '100vh', overflow: 'auto' }}>
+                <Collapse
+                    bordered={false}
+                    defaultActiveKey={['1', '2', '3']}
+                    items={collapseItems.map(item => ({
+                        ...item,
+                        style: {
+                            header: { backgroundColor: '#F7F7FA' },
+                            body: { backgroundColor: '#F5F5F5' },
+                        },
+                    }))}
+                />
+            </div>
+                {/*    试运行模态框*/}
+            <Modal
+                width={1300}
+                styles={{body: { height: '700px'}}}
+                wrapClassName="custom-modal-center"
+                closable={{ 'aria-label': 'Custom Close Button' }}
+                centered
+                open={isRunModalOpen}
+                onOk={handleOk}
+                onCancel={handleCancel}
+            >
+            <CustomTable data={testData} pluginToolTitle={pluginTitle+'.' + pluginToolTitle} pluginToolId={id}/>
+            </Modal>
+
+        </>
+
     );
 };
 
