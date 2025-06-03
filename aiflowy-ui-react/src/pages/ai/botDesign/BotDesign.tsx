@@ -240,6 +240,8 @@ const BotDesign: React.FC = () => {
             <WorkflowsModal open={workflowOpen} onClose={() => setWorkflowOpen(false)}
                             onCancel={() => setWorkflowOpen(false)}
                             goToPage={"/ai/workflow"}
+                            addedItems={workflowResult?.data || []}
+                            addedItemsKeyField={"workflowId"}
                             onSelectedItem={item => {
                                 setWorkflowOpen(false)
                                 doSaveWorkflow({
@@ -292,6 +294,8 @@ const BotDesign: React.FC = () => {
             <KnowledgeModal open={knowledgeOpen} onClose={() => setKnowledgeOpen(false)}
                             onCancel={() => setKnowledgeOpen(false)}
                             goToPage={"/ai/knowledge"}
+                            addedItems={knowledgeResult?.data || []}
+                            addedItemsKeyField={"knowledgeId"}
                             onSelectedItem={item => {
                                 setKnowledgeOpen(false)
                                 doSaveKnowledge({
