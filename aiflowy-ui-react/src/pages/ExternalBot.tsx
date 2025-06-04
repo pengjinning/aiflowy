@@ -15,6 +15,7 @@ import { useSse } from "../hooks/useSse.ts";
 import { useParams } from "react-router-dom";
 import {useGetManual, usePostManual} from "../hooks/useApis.ts";
 import {uuid} from "../libs/uuid.ts";
+import {PresetQuestion} from "./ai/botDesign/BotDesign.tsx";
 
 const useStyle = createStyles(({ token, css }) => {
     return {
@@ -103,6 +104,8 @@ export const ExternalBot: React.FC = () => {
     const [isExternalIFrame, setIsExternalIFrame] = useState<boolean>(false);
     const isExternalIFrameRef = useRef(isExternalIFrame);
    const {doGet: doGetCreateToken} =  useGetManual('/api/temp-token/create')
+    const [presetQuestions,setPresetOptions] = useState<PresetQuestion[]>([]);
+   const [helloMessage,setHelloMessage] = useState<string>('');
     useEffect(() => {
         isExternalIFrameRef.current = isExternalIFrame;
     }, [isExternalIFrame]);
@@ -122,6 +125,9 @@ export const ExternalBot: React.FC = () => {
                             link.href = r?.data?.data?.icon || '/favicon.png';
                         }
                         document.title = r?.data?.data?.title;
+                        setPresetOptions(r?.data?.data?.options?.presetQuestions)
+                        setHelloMessage(r?.data?.data?.options?.welcomeMessage)
+
                     });
                 }
             });
@@ -144,7 +150,7 @@ export const ExternalBot: React.FC = () => {
     const { start: startChat } = useSse("/api/v1/aiBot/chat");
     // 查询会话列表的数据
     const { doGet: getConversationManualGet } = useGetManual('/api/v1/conversation/externalList');
-    const { doGet: doGetManual } = useGetManual("/api/v1/aiBotMessage/messageList");
+    const { doGet: doGetMessageList } = useGetManual("/api/v1/aiBotMessage/messageList");
     const { doGet: doGetConverManualDelete } = useGetManual("/api/v1/conversation/deleteConversation");
     const { doGet: doGetConverManualUpdate } = useGetManual("/api/v1/conversation/updateConversation");
     const {doPost:doClearMessage} = usePostManual("/api/v1/conversation/clearMessage")
@@ -228,10 +234,13 @@ export const ExternalBot: React.FC = () => {
         }
         const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement;
         doGetBotInfo({params: {id: params?.id}}).then((r: any) => {
+
             if (link) {
                 link.href = r?.data?.data?.icon || '/favicon.png';
             }
             document.title = r?.data?.data?.title;
+            setPresetOptions(r?.data?.data?.options?.presetQuestions)
+            setHelloMessage(r?.data?.data?.options?.welcomeMessage)
         });
 
         updateExternalSessionId(uuid())
@@ -255,7 +264,7 @@ export const ExternalBot: React.FC = () => {
     const onConversationClick: GetProp<typeof Conversations, 'onActiveChange'> = (key) => {
         setActiveKey(key);
         updateExternalSessionId(key);
-        doGetManual({
+        doGetMessageList({
             params: {
                 sessionId: key,
                 botId: params?.id,
@@ -330,7 +339,7 @@ export const ExternalBot: React.FC = () => {
             }
         });
 
-       const resp = await  doGetManual({
+       const resp = await  doGetMessageList({
             params: {
                  sessionId,
                 botId,
@@ -388,10 +397,11 @@ export const ExternalBot: React.FC = () => {
                 <AiProChat
                     chats={chats}
                     onChatsChange={setChats} // 确保正确传递 onChatsChange
-                    helloMessage="欢迎使用 AIFlowy ，我是你的专属机器人，有什么问题可以随时问我。"
+                    helloMessage={helloMessage}
                     botAvatar={botInfo?.data?.icon}
                     clearMessage={() => clearMessage(params.id,getExternalSessionId(),localStorage.getItem("tempUserId"))}
                     inputDisabled={inputDisabled}
+                    prompts={presetQuestions}
                     request={async (messages) => {
                         const readableStream = new ReadableStream({
                             async start(controller) {

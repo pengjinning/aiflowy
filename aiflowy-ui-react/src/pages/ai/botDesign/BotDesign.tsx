@@ -53,7 +53,7 @@ const CollapseLabel: React.FC<CollapseLabelProps> = ({text, onClick, plusDisable
         }}/>}
     </div>
 }
-interface PresetQuestion {
+export interface PresetQuestion {
     key: string;
     description: string;
     icon?: React.ReactNode;
@@ -572,7 +572,7 @@ const BotDesign: React.FC = () => {
                                 label: <CollapseLabel text="嵌入" onClick={() => {
                                 }} plusDisabled/>,
                                 children: <div>
-                                    <div style={{display:'flex',justifyContent:'space-between'}}>
+                                    <div style={{display:'flex',justifyContent:'space-between',marginBottom:'10px'}}>
                                         <span>启用匿名访问</span>
                                         <Switch
                                             checked={anonymousEnabled}

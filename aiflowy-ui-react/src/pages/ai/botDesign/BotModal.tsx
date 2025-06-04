@@ -54,7 +54,8 @@ export type BotModalProps = {
     pageSize?: number,
     addedItems?: any[],
     addedItemsKeyField?: string,
-    onSelectedItem?: (item: any) => void
+    onSelectedItem?: (item: any) => void,
+    onClose?: () => void
 } & ModalProps
 
 export const BotModal: React.FC<BotModalProps> = (props) => {

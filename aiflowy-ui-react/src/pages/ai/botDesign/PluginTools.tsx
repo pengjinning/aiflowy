@@ -13,8 +13,9 @@ import '../../../components/Accordion/accordion.css'
 export type PluginToolsProps = {
     selectedItem?: any[],
     goToPage: string,
-    onSelectedItem?: (item: any) => void
-    onRemoveItem?: (item: any) => void
+    onSelectedItem?: (item: any) => void,
+    onRemoveItem?: (item: any) => void,
+    onClose?: () => void
 } & ModalProps
 export const PluginTools: React.FC<PluginToolsProps> = (props) => {
 

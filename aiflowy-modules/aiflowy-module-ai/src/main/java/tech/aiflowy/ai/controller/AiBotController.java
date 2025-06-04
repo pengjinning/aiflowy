@@ -261,6 +261,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
                     RequestContextHolder.setRequestAttributes(sra, true);
                     if (response != null) {
                         // 检查是否需要触发 Function Calling
+                        logger.info("是否需要调用function calling:{}",response.getFunctionCallers() != null && CollectionUtil.hasItems(response.getFunctionCallers()));
                         if (response.getFunctionCallers() != null && CollectionUtil.hasItems(response.getFunctionCallers())) {
                             needClose[0] = false;
                             function_call(response, emitter, needClose, historiesPrompt, llm, prompt, false);
@@ -285,6 +286,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
 
             @Override
             public void onStop(ChatContext context) {
+                logger.info("normal chat complete");
                 if (needClose[0]) {
                     emitter.complete();
                 }
