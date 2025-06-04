@@ -277,10 +277,8 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
 
 
                 } catch (Exception e) {
-                    System.out.println("---------------------------出错啦");
-                    AiMessage aiMessage = new AiMessage();
-                    aiMessage.setContent(e.getMessage());
-                    emitter.send(JSON.toJSONString(aiMessage));
+                    logger.error("大模型调用出错：",e);
+                    emitter.send(JSON.toJSONString(Maps.of("content","大模型调用出错，请检查配置")));
                     emitter.completeWithError(e);
                 }
             }
@@ -294,9 +292,9 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
 
             @Override
             public void onFailure(ChatContext context, Throwable throwable) {
-                System.out.println("---------------------------出错啦");
+                logger.error("大模型调用出错：",throwable);
                 AiMessage aiMessage = new AiMessage();
-                aiMessage.setContent(throwable.getMessage());
+                aiMessage.setContent("大模型调用出错，请检查配置");
                 boolean hasUnsupportedApiError = containsUnsupportedApiError(throwable.getMessage());
                 if (hasUnsupportedApiError){
                     String errMessage = throwable.getMessage() + "\n**以下是 AIFlowy 提供的可查找当前错误的方向**\n**1: 在 AIFlowy 中，Bot 对话需要大模型携带 function_calling 功能**" +
