@@ -667,7 +667,7 @@ const BotDesign: React.FC = () => {
                 title="问题预设"
                 closable={{ 'aria-label': 'Custom Close Button' }}
                 open={isOpenProblemPreset}
-
+                onCancel={() => setIsOpenProblemPreset(false)}
                 footer={null}
                 afterOpenChange={(open) => {
                     if (open) {
