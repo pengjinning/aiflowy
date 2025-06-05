@@ -14,6 +14,8 @@
 - 优化：优化 Event 的 toString
 - 修复：修复使用 qwen-plus 调用 function_call 没有正确拼接大模型返回的参数问题
 - 修复：修复S3存储，知识库上传文件后报错 close #ICAUI2
+- 修复：修复 deepSeek-chat 大模型调用 function_call 提交参数类型前缀必须小写问题
+- 修复：修复 deepSeekchat 大模型调用 function_call 类转换失败问题 close #ICBGBX
 - 修复：修复使用 qwen-plus 调用function_call 没有正确拼接大模型返回的参数问题
 - 修复：function call 消息存入数据库
 - 修复：bot 设计页面，插件、工作流、知识库弹窗支持分页
@@ -25,6 +27,7 @@
 - 修复：修复 js 中无法通过 "." 调用 map 数据的问题
 - 修复：解决外部打开聊天时，bot预设的问题、欢迎语失效的问题 close #ICCHE6
 - 修复：优化大模型调用报错时的提示信息
+- 修复：解决外部打开聊天时，无法触发function calling的bug
 
 ## v1.0.4 2025-05-28
 - 新增：新增 sysToken 菜单插入语句
