@@ -32,6 +32,7 @@ const columns: ColumnsConfig<any> = [
         form: {
             type: "input",
             rules: [{required: true, message: '请输入名称'}],
+            extra: (<a target="_blank" href="https://aiflowy.tech/zh/product/llm/addLlm.html" style={{ fontSize: 12}}>大模型配置参考地址</a>)
         }
     },
     {
