@@ -23,5 +23,5 @@ Embedding 模型处理器是一款基于最先进神经网络的向量化计算�
 
 **其他配置（这里用 Gitee 的向量模型作为配置参考，其他配置参考大模型官方要求进行配置）**：
 ```yml
-embedding=/v1/embeddings # 模型向量化地址
+embedPath=/v1/embeddings # 模型向量化地址
 ```
