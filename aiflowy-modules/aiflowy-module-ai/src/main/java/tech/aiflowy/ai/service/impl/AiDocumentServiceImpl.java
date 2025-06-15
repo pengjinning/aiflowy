@@ -40,6 +40,7 @@ import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.filestorage.FileStorageService;
 import tech.aiflowy.common.util.StringUtil;
 import tech.aiflowy.core.utils.JudgeFileTypeUtil;
+import tech.aiflowy.test.ElasticsearchUtil;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -208,6 +209,14 @@ public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocum
         List<AiDocumentChunk> aiDocumentChunks = JSON.parseArray(previewListStr, AiDocumentChunk.class);
         Result result = storeDocument(aiDocument, aiDocumentChunks);
         if (result.isSuccess()) {
+//            ElasticsearchUtil esUtil = new ElasticsearchUtil();
+//            aiDocumentChunks.forEach(item ->{
+//                    try {
+//                        boolean success = esUtil.indexDocument("knowledge-base", item.getId().toString(), JSON.toJSONString(item));
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                });
             this.getMapper().insert(aiDocument);
             AtomicInteger sort = new AtomicInteger(1);
             aiDocumentChunks.forEach(item ->{

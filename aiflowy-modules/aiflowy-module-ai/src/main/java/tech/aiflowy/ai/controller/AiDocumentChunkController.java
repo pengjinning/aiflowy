@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *  控制层。
@@ -68,6 +70,10 @@ public class AiDocumentChunkController extends BaseCurdController<AiDocumentChun
             StoreOptions options = StoreOptions.ofCollectionName(knowledge.getVectorStoreCollection());
             Document document = Document.of(aiDocumentChunk.getContent());
             document.setId(aiDocumentChunk.getId());
+            Map<String, Object> metadata = new HashMap<>();
+            metadata.put("keywords", aiDocumentChunk.getMetadataKeyWords());
+            metadata.put("questions", aiDocumentChunk.getMetadataQuestions());
+            document.setMetadataMap(metadata);
             StoreResult result = documentStore.update(document, options); // 更新已有记录
             return Result.success(result);
         }

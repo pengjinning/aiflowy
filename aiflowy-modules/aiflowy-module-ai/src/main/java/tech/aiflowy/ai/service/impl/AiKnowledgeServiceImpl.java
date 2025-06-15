@@ -16,13 +16,14 @@ import com.agentsflex.core.store.StoreOptions;
 import com.agentsflex.core.util.Maps;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import tech.aiflowy.test.ElasticsearchUtil;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 服务层实现。
@@ -83,10 +84,59 @@ public class AiKnowledgeServiceImpl extends ServiceImpl<AiKnowledgeMapper, AiKno
             if (documentChunk == null){
                 continue;
             }
-            documentChunk.setSimilarityScore(similarity.doubleValue());
+            documentChunk.setVectorSimilarityScore(similarity.doubleValue());
             chunks.add(documentChunk);
         }
 
+//        ElasticsearchUtil elasticsearchUtil = new ElasticsearchUtil();
+//        List<AiDocumentChunk> elasticSearchChunks = null;
+//        try {
+//            elasticSearchChunks = elasticsearchUtil.search("knowledge-base", keyword);
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//        // 去重后的集合
+//        List<AiDocumentChunk> aiDocumentChunks = mergeAndDeduplicate(chunks, elasticSearchChunks);
+//        // 加权计算得分
+//        aiDocumentChunks.forEach(aiDocumentChunk -> {
+//            if (aiDocumentChunk.getVectorSimilarityScore() != null && aiDocumentChunk.getElasticSimilarityScore() != null) {
+//                aiDocumentChunk.setSimilarityScore(aiDocumentChunk.getVectorSimilarityScore()*0.5 + aiDocumentChunk.getElasticSimilarityScore()*0.5);
+//            } else if (aiDocumentChunk.getVectorSimilarityScore() != null && aiDocumentChunk.getElasticSimilarityScore() == null) {
+//                aiDocumentChunk.setSimilarityScore(aiDocumentChunk.getVectorSimilarityScore()*0.5);
+//            }else if (aiDocumentChunk.getVectorSimilarityScore() == null && aiDocumentChunk.getElasticSimilarityScore() != null) {
+//                aiDocumentChunk.setSimilarityScore(aiDocumentChunk.getElasticSimilarityScore()*0.5);
+//            }
+//        });
+//        aiDocumentChunks.sort(Comparator.comparingDouble((AiDocumentChunk chunk) -> -chunk.getSimilarityScore()));
+//        return Result.success(aiDocumentChunks);
         return Result.success(chunks);
+    }
+
+    /**
+     * 根据 id 去重合并两个集合
+     * 默认后出现的会覆盖前面的（可改）
+     */
+    @SuppressWarnings("unchecked")
+    public static List<AiDocumentChunk> mergeAndDeduplicate(List<AiDocumentChunk>... lists) {
+        Map<String, AiDocumentChunk> map = new LinkedHashMap<>();
+
+        for (List<AiDocumentChunk> list : lists) {
+            for (AiDocumentChunk chunk : list) {
+                String id = String.valueOf(chunk.getId());
+
+                if (!map.containsKey(id)) {
+                    AiDocumentChunk newChunk = new AiDocumentChunk();
+                    newChunk.setId(chunk.getId());
+                    newChunk.setContent(chunk.getContent());
+                    newChunk.setVectorSimilarityScore(chunk.getVectorSimilarityScore());
+
+                    map.put(id, newChunk);
+                }
+
+                map.get(id).setElasticSimilarityScore(chunk.getElasticSimilarityScore());
+            }
+        }
+
+        return new ArrayList<>(map.values());
     }
 }
