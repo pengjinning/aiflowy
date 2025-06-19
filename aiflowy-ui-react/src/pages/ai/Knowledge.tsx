@@ -34,6 +34,16 @@ const columnsColumns: ColumnsConfig<any> = [
         }
     },
     {
+        title: '英文名称',
+        dataIndex: 'englishName',
+        key: 'englishName',
+        placeholder: "请输入英文名称, 不允许含中文",
+        supportSearch: true,
+        form: {
+            rules: [{required: true, message: '必须由 a-z、A-Z、0-9 字符组成，或包含下划线和连字符，最大长度为 64 个字符', pattern: /^[a-zA-Z0-9_-]{1,64}$/}]
+        }
+    },
+    {
         title: '描述',
         dataIndex: 'description',
         key: 'description',

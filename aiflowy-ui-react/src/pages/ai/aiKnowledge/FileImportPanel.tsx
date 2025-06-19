@@ -51,8 +51,8 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
 
     const token = isBrowser ? localStorage.getItem(authKey) : null;
     const [aiDocument, setAiDocument] = useState<AiDocumentType>({
-        chunkSize: '200', // 分段大小
-        overlapSize: '100', // 分段重叠大小
+        chunkSize: '512', // 分段大小
+        overlapSize: '128', // 分段重叠大小
         regex: '',
         rowsPerChunk: '50',
         splitterName: selectedSplitter
@@ -67,7 +67,7 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
     interface PreviewItem {
         sorting: string; // 顺序编号
         content: string; // 内容
-        similarityScore: string;
+        score: string;
     }
 
     const headers = {
@@ -550,7 +550,7 @@ const FileImportPanel: React.FC<FileImportPanelProps> = ({ data, maxCount = 1, a
                             setSelectedOption("document")
                             setDataPreView([])
                             setSelectedSplitter("SimpleDocumentSplitter")
-                            setAiDocument({...aiDocument, overlapSize: '100', chunkSize: '200'})
+                            setAiDocument({...aiDocument, overlapSize: '128', chunkSize: '512'})
                             setFileList([])
                             setConfirmImport(false)
                         }}

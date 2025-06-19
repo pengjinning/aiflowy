@@ -19,9 +19,14 @@ public class AiKnowledgeFunction extends BaseFunction {
     public AiKnowledgeFunction() {
     }
 
-    public AiKnowledgeFunction(AiKnowledge aiKnowledge) {
+
+    public AiKnowledgeFunction(AiKnowledge aiKnowledge, boolean needEnglishName) {
         this.knowledgeId = aiKnowledge.getId();
-        this.name = aiKnowledge.getId().toString();
+        if (needEnglishName){
+            this.name = aiKnowledge.getEnglishName();
+        } else {
+            this.name = aiKnowledge.getTitle();
+        }
         this.description = aiKnowledge.getDescription();
         this.parameters = getDefaultParameters();
     }

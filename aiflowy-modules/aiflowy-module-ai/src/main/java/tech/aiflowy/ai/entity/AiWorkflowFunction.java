@@ -20,9 +20,13 @@ public class AiWorkflowFunction extends BaseFunction {
     public AiWorkflowFunction() {
     }
 
-    public AiWorkflowFunction(AiWorkflow aiWorkflow) {
+    public AiWorkflowFunction(AiWorkflow aiWorkflow, boolean needEnglishName) {
         this.workflowId = aiWorkflow.getId();
-        this.name = aiWorkflow.getId().toString();
+        if (needEnglishName){
+            this.name = aiWorkflow.getEnglishName();
+        } else {
+            this.name = aiWorkflow.getTitle();
+        }
         this.description = aiWorkflow.getDescription();
         this.parameters = toParameters(aiWorkflow);
     }

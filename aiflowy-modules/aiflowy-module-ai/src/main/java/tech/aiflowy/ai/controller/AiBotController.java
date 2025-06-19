@@ -36,6 +36,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tech.aiflowy.ai.entity.*;
 import tech.aiflowy.ai.mapper.AiBotConversationMessageMapper;
 import tech.aiflowy.ai.service.*;
+import tech.aiflowy.ai.utils.AiBotChatUtil;
 import tech.aiflowy.ai.utils.AiBotMessageIframeMemory;
 import tech.aiflowy.common.ai.ChatManager;
 import tech.aiflowy.common.ai.MySseEmitter;
@@ -199,17 +200,17 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
             historiesPrompt.setMemory(memory);
 
         }
-
+        boolean needEnglishName = AiBotChatUtil.needEnglishName(llm);
         HumanMessage humanMessage = new HumanMessage(prompt);
 
         // 添加插件相关的function calling
         appendPluginToolFunction(botId, humanMessage);
 
         //添加工作流相关的 Function Calling
-        appendWorkflowFunctions(botId, humanMessage);
+        appendWorkflowFunctions(botId, humanMessage, needEnglishName);
 
         //添加知识库相关的 Function Calling
-        appendKnowledgeFunctions(botId, humanMessage);
+        appendKnowledgeFunctions(botId, humanMessage, needEnglishName);
 
         historiesPrompt.addMessage(humanMessage);
 
@@ -348,12 +349,14 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
         historiesPrompt.setMemory(messageMemory);
 
         String prompt = messages.get(messages.size() - 1).getContent();
+        boolean needEnglishName = AiBotChatUtil.needEnglishName(llm);
+
         HumanMessage humanMessage = new HumanMessage();
 
         // 添加插件、工作流、知识库相关的 Function Calling
         appendPluginToolFunction(botId, humanMessage);
-        appendWorkflowFunctions(botId, humanMessage);
-        appendKnowledgeFunctions(botId, humanMessage);
+        appendWorkflowFunctions(botId, humanMessage, needEnglishName);
+        appendKnowledgeFunctions(botId, humanMessage, needEnglishName);
 
         historiesPrompt.addMessage(humanMessage);
         ChatOptions chatOptions = getChatOptions(llmOptions);
@@ -618,23 +621,23 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
         return aiMessageResponse;
     }
 
-    private void appendWorkflowFunctions(BigInteger botId, HumanMessage humanMessage) {
+    private void appendWorkflowFunctions(BigInteger botId, HumanMessage humanMessage, boolean needEnglishName) {
         QueryWrapper queryWrapper = QueryWrapper.create().eq(AiBotWorkflow::getBotId, botId);
         List<AiBotWorkflow> aiBotWorkflows = aiBotWorkflowService.getMapper().selectListWithRelationsByQuery(queryWrapper);
         if (aiBotWorkflows != null) {
             for (AiBotWorkflow aiBotWorkflow : aiBotWorkflows) {
-                Function function = aiBotWorkflow.getWorkflow().toFunction();
+                Function function = aiBotWorkflow.getWorkflow().toFunction(needEnglishName);
                 humanMessage.addFunction(function);
             }
         }
     }
 
-    private void appendKnowledgeFunctions(BigInteger botId, HumanMessage humanMessage) {
+    private void appendKnowledgeFunctions(BigInteger botId, HumanMessage humanMessage, boolean needEnglishName) {
         QueryWrapper queryWrapper = QueryWrapper.create().eq(AiBotKnowledge::getBotId, botId);
         List<AiBotKnowledge> aiBotKnowledges = aiBotKnowledgeService.getMapper().selectListWithRelationsByQuery(queryWrapper);
         if (aiBotKnowledges != null) {
             for (AiBotKnowledge aiBotKnowledge : aiBotKnowledges) {
-                Function function = aiBotKnowledge.getKnowledge().toFunction();
+                Function function = aiBotKnowledge.getKnowledge().toFunction(needEnglishName);
                 humanMessage.addFunction(function);
             }
         }

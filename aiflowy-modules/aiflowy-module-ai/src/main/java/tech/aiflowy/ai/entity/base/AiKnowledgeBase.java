@@ -44,6 +44,12 @@ public class AiKnowledgeBase extends DateEntity implements Serializable {
     private String title;
 
     /**
+     * 英文名称
+     */
+    @Column(comment = "英文名称")
+    private String englishName;
+
+    /**
      * 描述
      */
     @Column(comment = "描述")
@@ -277,5 +283,13 @@ public class AiKnowledgeBase extends DateEntity implements Serializable {
 
     public void setSearchEngineEnable(Boolean searchEngineEnable) {
         this.searchEngineEnable = searchEngineEnable;
+    }
+
+    public String getEnglishName() {
+        return englishName;
+    }
+
+    public void setEnglishName(String englishName) {
+        this.englishName = englishName;
     }
 }

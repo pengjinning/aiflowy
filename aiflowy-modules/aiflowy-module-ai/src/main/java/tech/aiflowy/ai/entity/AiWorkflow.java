@@ -33,7 +33,7 @@ public class AiWorkflow extends AiWorkflowBase {
 
 
 
-    public Function toFunction() {
-        return new AiWorkflowFunction(this);
+    public Function toFunction(boolean needEnglishName) {
+        return new AiWorkflowFunction(this, needEnglishName);
     }
 }

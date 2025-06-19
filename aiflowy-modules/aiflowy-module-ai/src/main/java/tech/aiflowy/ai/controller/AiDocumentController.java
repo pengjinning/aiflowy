@@ -152,10 +152,10 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
                               @RequestParam(name="rowsPerChunk", required = false) Integer rowsPerChunk
                               ) {
         if (chunkSize == null){
-            chunkSize = 100;
+            chunkSize = 512;
         }
         if (overlapSize == null){
-            overlapSize = 200;
+            overlapSize = 128;
         }
         if (rowsPerChunk == null){
             rowsPerChunk = 1;

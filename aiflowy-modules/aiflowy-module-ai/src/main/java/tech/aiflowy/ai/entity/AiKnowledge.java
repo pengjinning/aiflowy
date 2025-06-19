@@ -86,7 +86,7 @@ public class AiKnowledge extends AiKnowledgeBase {
     }
 
 
-    public Function toFunction() {
-        return new AiKnowledgeFunction(this);
+    public Function toFunction(boolean needEnglishName) {
+        return new AiKnowledgeFunction(this, needEnglishName);
     }
 }
