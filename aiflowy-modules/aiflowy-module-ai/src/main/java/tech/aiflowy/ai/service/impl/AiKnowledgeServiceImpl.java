@@ -80,7 +80,7 @@ public class AiKnowledgeServiceImpl extends ServiceImpl<AiKnowledgeMapper, AiKno
         }
 
         // 判断是否配置了搜索引擎相关配置，如果该知识库没有配置搜索引擎则不进行重排,直接返回向量化的数据结果
-        if (!knowledge.getSearchEngineEnable()){
+        if (knowledge.getSearchEngineEnable() == null || !knowledge.getSearchEngineEnable()){
             return Result.success(vectorDocuments);
         }
 
