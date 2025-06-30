@@ -22,6 +22,7 @@ import {SingleRun} from "./SingleRun.tsx";
 import JsonView from "react18-json-view";
 import {useSse} from "../../../hooks/useSse.ts";
 import {sortNodes} from "../../../libs/workflowUtil";
+import '../style/workflow.design.css'
 
 export const WorkflowDesign = () => {
 
@@ -460,7 +461,7 @@ export const WorkflowDesign = () => {
                                           setPageLoading(false)
                                           setSingleRunOpen(true)
                                       }}
-                                      style={{height: 'calc(100vh - 10px)'}} customNodes={customNodes}/>
+                                      style={{height: 'calc(100vh - 130px)'}} customNodes={customNodes}/>
                         </Spin>
                         : <div style={{padding: '20px'}}><Skeleton active/></div>
                     }
