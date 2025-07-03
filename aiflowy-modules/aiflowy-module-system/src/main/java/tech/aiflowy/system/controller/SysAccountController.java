@@ -42,12 +42,6 @@ public class SysAccountController extends BaseCurdController<SysAccountService, 
     }
 
     @Override
-    @SaCheckPermission("sysUser:list")
-    public Result page(HttpServletRequest request, String sortKey, String sortType, Long pageNumber, Long pageSize) {
-        return super.page(request, sortKey, sortType, pageNumber, pageSize);
-    }
-
-    @Override
     @LogRecord("分页查询")
     protected Page<SysAccount> queryPage(Page<SysAccount> page, QueryWrapper queryWrapper) {
         return service.getMapper().paginateWithRelations(page, queryWrapper);
