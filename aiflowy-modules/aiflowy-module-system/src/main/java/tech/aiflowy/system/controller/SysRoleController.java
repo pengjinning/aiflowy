@@ -1,5 +1,6 @@
 package tech.aiflowy.system.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import tech.aiflowy.common.constant.Constants;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.entity.LoginAccount;
@@ -33,6 +34,7 @@ public class SysRoleController extends BaseCurdController<SysRoleService, SysRol
     }
 
     @PostMapping("saveRoleMenu/{roleId}")
+    @SaCheckPermission("/api/v1/sysRole/save")
     public Result saveRoleMenu(@PathVariable("roleId") BigInteger roleId, @JsonBody List<String> keys) {
         service.saveRoleMenu(roleId, keys);
         return Result.success();

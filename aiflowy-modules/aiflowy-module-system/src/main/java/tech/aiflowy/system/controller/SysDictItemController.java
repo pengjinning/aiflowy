@@ -1,5 +1,6 @@
 package tech.aiflowy.system.controller;
 
+import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.web.controller.BaseCurdController;
 import tech.aiflowy.system.entity.SysDictItem;
 import tech.aiflowy.system.service.SysDictItemService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/v1/sysDictItem")
+@UsePermission(moduleName = "/api/v1/sysDict")
 public class SysDictItemController extends BaseCurdController<SysDictItemService, SysDictItem> {
     public SysDictItemController(SysDictItemService service) {
         super(service);

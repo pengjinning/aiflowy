@@ -1,5 +1,6 @@
 package tech.aiflowy.ai.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.exceptions.ExceptionUtil;
@@ -57,6 +58,7 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
     }
 
     @PostMapping("/importWorkFlow")
+    @SaCheckPermission("/api/v1/aiWorkflow/save")
     public Result importWorkFlow(AiWorkflow workflow, MultipartFile jsonFile) throws Exception {
         InputStream is = jsonFile.getInputStream();
         String content = IoUtil.read(is, StandardCharsets.UTF_8);
@@ -66,12 +68,14 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
     }
 
     @GetMapping("/exportWorkFlow")
+    @SaCheckPermission("/api/v1/aiWorkflow/save")
     public Result exportWorkFlow(BigInteger id) {
         AiWorkflow workflow = service.getById(id);
         return Result.success("content", workflow.getContent());
     }
 
     @GetMapping("getRunningParameters")
+    @SaCheckPermission("/api/v1/aiWorkflow/query")
     public Result getRunningParameters(@RequestParam BigInteger id) {
         AiWorkflow workflow = service.getById(id);
 
@@ -96,6 +100,7 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
     }
 
     @PostMapping("tryRunning")
+    @SaCheckPermission("/api/v1/aiWorkflow/save")
     public Result tryRunning(@JsonBody(value = "id", required = true) BigInteger id, @JsonBody("variables") Map<String, Object> variables) {
         AiWorkflow workflow = service.getById(id);
 
@@ -112,6 +117,7 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
     }
 
     @PostMapping("tryRunningStream")
+    @SaCheckPermission("/api/v1/aiWorkflow/save")
     public SseEmitter tryRunningStream(
             @JsonBody(value = "id", required = true) BigInteger id,
             @JsonBody("variables") Map<String, Object> variables,
@@ -212,6 +218,7 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
     }
 
     @PostMapping("/singleRun")
+    @SaCheckPermission("/api/v1/aiWorkflow/save")
     public Result singleRun(
             @JsonBody(value = "id", required = true) BigInteger id,
             @JsonBody(value = "node", required = true) Map<String, Object> node,

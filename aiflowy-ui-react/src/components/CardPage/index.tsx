@@ -31,7 +31,6 @@ import addCardIcon from "../../../src/assets/addCardIcon.png"
 import "../../pages/commons/commonStyle.less"
 import CustomDeleteIcon from "../CustomIcon/CustomDeleteIcon.tsx";
 import {useCheckPermission} from "../../hooks/usePermissions.tsx";
-
 export type CardPageProps = {
     ref?: any,
     tableAlias: string,
@@ -45,7 +44,7 @@ export type CardPageProps = {
     titleKey?: string,
     descriptionKey?: string,
     customActions?: (data: any, existNodes: React.ReactNode[]) => React.ReactNode[],
-    customHandleButton?: () => React.ReactNode[],
+    customHandleButton?:() => React.ReactNode[],
     addCardTitle?: string,
     optionsText?: {
         addCardTitle?: string, // 新增按钮的文本
@@ -70,8 +69,8 @@ const CardPage: React.FC<CardPageProps> = forwardRef(({
                                                           , customActions = (_data: any, existNodes: any) => existNodes
                                                           , customHandleButton = () => []
                                                           , optionsText = {}
-                                                          , optionIconPath = {},
-                                                      }, ref) => {
+                                                          , optionIconPath={},
+                                                      },ref) => {
 
     useImperativeHandle(ref, () => ({
         refresh: () => {
@@ -228,8 +227,7 @@ const CardPage: React.FC<CardPageProps> = forwardRef(({
 
                 <Row className={"card-row"} gutter={[16, 16]}>
                     {
-                        (result?.data?.records?.length > 0 && useCheckPermission(`/api/v1/${tableAlias}/save`)) &&
-                        <Col span={6} key={"add-card"} xs={24} sm={12} md={8} lg={6}>
+                        (result?.data?.records?.length > 0 && useCheckPermission(`/api/v1/${tableAlias}/save`)) &&  <Col span={6} key={"add-card"} xs={24} sm={12} md={8} lg={6} >
                             <Card
                                 style={{
                                     height: '100%',
@@ -260,10 +258,7 @@ const CardPage: React.FC<CardPageProps> = forwardRef(({
                                         marginRight: '10px'
                                     }}
                                 />
-                                <span style={{
-                                    fontSize: '16px',
-                                    color: '#0066FF '
-                                }}>{optionsText.addCardTitle || "添加"}</span>
+                                <span style={{fontSize: '16px', color: '#0066FF '}}>{optionsText.addCardTitle || "添加"}</span>
                             </Card>
                         </Col>
                     }
@@ -281,11 +276,10 @@ const CardPage: React.FC<CardPageProps> = forwardRef(({
                                 className={"card-hover"}
                                 actions={buildActions(item)}>
                                 <Card.Meta
-                                    avatar={<Avatar src={item[avatarKey] || defaultAvatarSrc}
-                                                    style={{width: '48px', height: '48px'}}/>}
+                                    avatar={<Avatar src={item[avatarKey] || defaultAvatarSrc} style={{width: '48px', height: '48px'}}/>}
                                     title={item[titleKey]}
                                     description={
-                                        <Tooltip title={item[descriptionKey] || "暂无描述"} placement="top">
+                                        <Tooltip title={item[descriptionKey] || "暂无描述"} placement="top" >
                                             <div style={{
                                                 display: '-webkit-box',
                                                 WebkitLineClamp: 1,
@@ -313,11 +307,10 @@ const CardPage: React.FC<CardPageProps> = forwardRef(({
                         >
 
                             {useCheckPermission(`/api/v1/${tableAlias}/save`) && (
-                                <Button
-                                    style={{borderColor: '#0066FF', color: '#0066FF', width: '195px', height: '48px'}}
-                                    onClick={() => {
-                                        setIsEditOpen(true)
-                                    }}>
+                                <Button  style={{borderColor: '#0066FF', color: '#0066FF', width: '195px', height: '48px'}}
+                                         onClick={() => {
+                                             setIsEditOpen(true)
+                                         }}>
                                     {optionsText.noDataAddButtonText || "创建"}
                                 </Button>
                             )}

@@ -8,6 +8,7 @@ import {useGetManual} from "../../hooks/useApis";
 import {Button, message} from "antd";
 import {SysJobModal} from './SysJobModal'
 import {useNavigate} from "react-router-dom";
+import {useCheckPermission} from "../../hooks/usePermissions.tsx";
 
 export const SysJob: React.FC = () => {
 
@@ -123,11 +124,14 @@ export const SysJob: React.FC = () => {
         openType: "modal",
     } as EditLayout;
 
+    const canSave = useCheckPermission("/api/v1/sysJob/save")
+    const canQuery = useCheckPermission("/api/v1/sysJob/query")
+
     const [modalOpen, setModalOpen] = useState(false)
     const getActions = (data: any) => {
         return (
             <>
-                {data.status === 0 &&
+                {canSave && data.status === 0 &&
                     <a onClick={() => {
                         startJob({
                             params: {
@@ -144,7 +148,7 @@ export const SysJob: React.FC = () => {
                     }}> <CaretRightOutlined/> 启动 </a>
                 }
 
-                {data.status === 1 && <a onClick={() => {
+                {canSave && data.status === 1 && <a onClick={() => {
                     stopJob({
                         params: {
                             id: data.id
@@ -160,15 +164,15 @@ export const SysJob: React.FC = () => {
                 }}> <CloseCircleOutlined/> 停止 </a>
                 }
 
-                <a onClick={() => {
+                {canQuery && <a onClick={() => {
                     navigate('/sys/sysJobLog', {
                         state: {
                             jobId: data.id,
                         }
                     })
-                }}> <CodeOutlined/> 日志 </a>
+                }}> <CodeOutlined/> 日志 </a>}
 
-                {data.status === 0 &&
+                {canSave && data.status === 0 &&
                     <a onClick={() => {
                         jobModaRef.current.setData(data)
                         setModalOpen(true)
@@ -198,8 +202,7 @@ export const SysJob: React.FC = () => {
     } as ActionConfig<any>
 
     const customBtn = () => {
-        return (
-            <Button type="primary" onClick={() => {
+        return (canSave && <Button type="primary" onClick={() => {
                 setModalOpen(true)
                 jobModaRef.current.setData(null)
             }}>新增</Button>

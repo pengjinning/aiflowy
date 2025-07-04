@@ -1,5 +1,6 @@
 package tech.aiflowy.job.controller;
 
+import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.satoken.util.SaTokenUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import tech.aiflowy.job.service.SysJobLogService;
  */
 @RestController
 @RequestMapping("/api/v1/sysJobLog")
+@UsePermission(moduleName = "/api/v1/sysJob")
 public class SysJobLogController extends BaseCurdController<SysJobLogService, SysJobLog> {
     public SysJobLogController(SysJobLogService service) {
         super(service);

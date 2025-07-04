@@ -8,6 +8,7 @@ import {ColumnsConfig} from "../../components/AntdCrud";
 import {Button, Form, Input, message, Modal, Space, Spin, Upload} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import {useGetManual, usePostFile} from "../../hooks/useApis.ts";
+import {useCheckPermission} from "../../hooks/usePermissions.tsx";
 
 const columnsColumns: ColumnsConfig<any> = [
     {
@@ -122,6 +123,35 @@ const Workflow: React.FC<{ paramsToUrl: boolean }> = () => {
         })
     }
 
+    const canSave = useCheckPermission("/api/v1/aiWorkflow/save")
+
+    const getCustomActions = (item: any) => {
+        const arr = []
+        if (canSave) {
+            arr.push(<Space onClick={() => {
+                window.open(`/ai/workflow/design/${item.id}`, "_blank")
+            }}>
+                <NodeIndexOutlined title="设计工作流"/>
+                <span>设计</span>
+            </Space>)
+            arr.push(<Space onClick={() => {
+                exportWorkflow(item)
+            }}>
+                <DownloadOutlined title="导出工作流"  />
+                <span>导出</span>
+            </Space>)
+        }
+        return arr;
+    }
+
+    const getCustomHandleButton = () => {
+        const arr = []
+        if (canSave) {
+            arr.push(<Button type={"primary"} onClick={() => {setIsModalOpen(true)}}><UploadOutlined />导入工作流</Button>)
+        }
+        return arr;
+    }
+
     return (
         <>
             <Modal title="导入工作流"
@@ -181,20 +211,7 @@ const Workflow: React.FC<{ paramsToUrl: boolean }> = () => {
                           }}
                           customActions={(item, existNodes) => {
                               return [
-                                  <Space onClick={() => {
-                                      window.open(`/ai/workflow/design/${item.id}`, "_blank")
-                                  }}>
-                                      <NodeIndexOutlined title="设计工作流"/>
-                                      <span>设计</span>
-                                  </Space>
-                                  ,
-                                  <Space onClick={() => {
-                                      exportWorkflow(item)
-                                  }}>
-                                      <DownloadOutlined title="导出工作流"  />
-                                      <span>导出</span>
-                                  </Space>
-                                 ,
+                                  ...getCustomActions(item),
                                   <Space onClick={() => {
                                       window.open(window.location.href.substring(0, window.location.href.indexOf('/ai')) + '/ai/workflow/external/' + item.id, "_blank")
                                   }}>
@@ -207,7 +224,7 @@ const Workflow: React.FC<{ paramsToUrl: boolean }> = () => {
                           }}
                           customHandleButton={() => {
                               return [
-                                  <Button type={"primary"} onClick={() => {setIsModalOpen(true)}}><UploadOutlined />导入工作流</Button>,
+                                  ...getCustomHandleButton()
                               ]
                           }}
                 />

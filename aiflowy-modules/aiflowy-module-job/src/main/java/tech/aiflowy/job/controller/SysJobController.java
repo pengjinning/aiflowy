@@ -1,5 +1,6 @@
 package tech.aiflowy.job.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,6 +33,7 @@ public class SysJobController extends BaseCurdController<SysJobService, SysJob> 
     }
 
     @GetMapping("/start")
+    @SaCheckPermission("/api/v1/sysJob/save")
     public Result start(BigInteger id) {
         SysJob sysJob = service.getById(id);
         sysJob.setStatus(EnumJobStatus.RUNNING.getCode());
@@ -41,6 +43,7 @@ public class SysJobController extends BaseCurdController<SysJobService, SysJob> 
     }
 
     @GetMapping("/stop")
+    @SaCheckPermission("/api/v1/sysJob/save")
     public Result stop(BigInteger id) {
         SysJob sysJob = new SysJob();
         sysJob.setId(id);

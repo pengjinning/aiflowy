@@ -4,6 +4,7 @@ import {ActionConfig, ColumnsConfig} from "../../components/AntdCrud";
 import CrudPage from "../../components/CrudPage";
 import DictItems from "./DictItems.tsx";
 import Linkto from "../../components/Linkto";
+import {useCheckPermission} from "../../hooks/usePermissions.tsx";
 
 const columns: ColumnsConfig<any> = [
     {
@@ -133,12 +134,14 @@ const columns: ColumnsConfig<any> = [
 
 const Dicts: React.FC = () => {
 
+    const canSave = useCheckPermission("/api/v1/sysDict/save")
+
     const actionConfig = {
         detailButtonEnable: false,
         width: 220,
         customActions: (data) => {
             return (
-                data.dictType === 1 &&
+                data.dictType === 1 && canSave &&
                 <Linkto component={DictItems} params={{dictId: data.id}} title={"字典内容配置"}><SettingOutlined/> 内容配置</Linkto>
             )
         },

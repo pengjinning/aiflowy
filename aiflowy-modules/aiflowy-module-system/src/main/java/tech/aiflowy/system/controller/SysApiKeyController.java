@@ -1,5 +1,6 @@
 package tech.aiflowy.system.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.mybatisflex.core.table.TableInfo;
 import com.mybatisflex.core.table.TableInfoFactory;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,6 +37,7 @@ public class SysApiKeyController extends BaseCurdController<SysApiKeyService, Sy
      * @return {@code Result.errorCode == 0} 添加成功，否则添加失败
      */
     @PostMapping("/key/save")
+    @SaCheckPermission("/api/v1/sysApiKey/save")
     public Result save() {
         String apiKey = UUIDGenerator.generateUUID();
         SysApiKey entity = new SysApiKey();

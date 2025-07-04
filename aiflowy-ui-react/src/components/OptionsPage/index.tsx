@@ -25,8 +25,10 @@ const OptionsPage: React.FC<Props> = ({children, style}) => {
 
 
     const onFinish = (values: any) => {
-        doSave({data: values}).then(() => {
-            message.success("数据保存成功")
+        doSave({data: values}).then((res) => {
+            if (res.data.errorCode === 0) {
+                message.success("数据保存成功")
+            }
         })
     };
 

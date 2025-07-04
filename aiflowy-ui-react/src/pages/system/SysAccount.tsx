@@ -8,6 +8,7 @@ import {SettingOutlined} from "@ant-design/icons";
 import {useGetManual, usePostManual} from "../../hooks/useApis.ts";
 import {Key} from "rc-table/lib/interface";
 import {DictSelect} from "../../components/DictSelect";
+import {useCheckPermission} from "../../hooks/usePermissions.tsx";
 
 //编辑页面设置
 const editLayout = {
@@ -236,6 +237,8 @@ export const SysAccount: React.FC = () => {
 
     ];
 
+    const canSave = useCheckPermission("/api/v1/sysAccount/save")
+
     //操作列配置
     const actionConfig = {
         addButtonEnable: true,
@@ -248,7 +251,7 @@ export const SysAccount: React.FC = () => {
             if (isAdmin(data)) {
                 return <></>
             }
-            return showDataScope ? (<a onClick={() => {
+            return showDataScope && canSave ? (<a onClick={() => {
                 setCurrentAccount(data)
                 setOpen(true)
             }}> <SettingOutlined/>数据权限</a>) : (<></>)
@@ -309,8 +312,12 @@ export const SysAccount: React.FC = () => {
                     </Form.Item> : <></>}
                 </Form>
             </Modal>
-            <CrudPage columnsConfig={columnsConfig} tableAlias="sysAccount"
-                      actionConfig={actionConfig} editLayout={editLayout}/>
+            <CrudPage
+                columnsConfig={columnsConfig}
+                tableAlias="sysAccount"
+                actionConfig={actionConfig}
+                editLayout={editLayout}
+            />
         </>
     )
 };

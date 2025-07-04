@@ -19,6 +19,9 @@ public class LoginAutoConfig implements WebMvcConfigurer {
         SaInterceptor saInterceptor = new SaInterceptor(handle -> {
             StpUtil.checkLogin();
         });
+        registry.addInterceptor(new CurdInterceptor())
+                .order(101)
+                .addPathPatterns("/**");
         registry.addInterceptor(saInterceptor)
                 .order(100)
                 .addPathPatterns("/**")
