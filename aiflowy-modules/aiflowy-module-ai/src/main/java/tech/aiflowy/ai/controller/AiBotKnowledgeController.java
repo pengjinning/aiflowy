@@ -2,6 +2,7 @@ package tech.aiflowy.ai.controller;
 
 import tech.aiflowy.ai.entity.AiBotKnowledge;
 import tech.aiflowy.ai.service.AiBotKnowledgeService;
+import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.web.controller.BaseCurdController;
 import com.mybatisflex.core.query.QueryWrapper;
@@ -19,6 +20,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/aiBotKnowledge")
+@UsePermission(moduleName = "/api/v1/aiBot")
 public class AiBotKnowledgeController extends BaseCurdController<AiBotKnowledgeService, AiBotKnowledge> {
     public AiBotKnowledgeController(AiBotKnowledgeService service) {
         super(service);

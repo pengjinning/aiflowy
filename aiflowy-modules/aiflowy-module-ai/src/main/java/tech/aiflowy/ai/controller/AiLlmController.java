@@ -1,5 +1,6 @@
 package tech.aiflowy.ai.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import tech.aiflowy.ai.entity.AiLlm;
 import tech.aiflowy.ai.service.AiLlmService;
 import tech.aiflowy.common.domain.Result;
@@ -30,12 +31,14 @@ public class AiLlmController extends BaseCurdController<AiLlmService, AiLlm> {
     AiLlmService aiLlmService;
 
     @GetMapping("list")
+    @SaCheckPermission("/api/v1/aiLlm/query")
     @Override
     public Result list(AiLlm entity, Boolean asTree, String sortKey, String sortType) {
         return super.list(entity, asTree, sortKey, sortType);
     }
 
     @PostMapping("/addAiLlm")
+    @SaCheckPermission("/api/v1/aiLlm/save")
     public Result addAiLlm(AiLlm entity) {
         LoginAccount account = SaTokenUtil.getLoginAccount();
         commonFiled(entity, account.getId(), account.getTenantId(), account.getDeptId());

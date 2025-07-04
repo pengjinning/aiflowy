@@ -2,6 +2,7 @@ package tech.aiflowy.ai.controller;
 
 import tech.aiflowy.ai.entity.AiBotWorkflow;
 import tech.aiflowy.ai.service.AiBotWorkflowService;
+import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.tree.Tree;
 import tech.aiflowy.common.web.controller.BaseCurdController;
@@ -20,6 +21,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/aiBotWorkflow")
+@UsePermission(moduleName = "/api/v1/aiBot")
 public class AiBotWorkflowController extends BaseCurdController<AiBotWorkflowService, AiBotWorkflow> {
     public AiBotWorkflowController(AiBotWorkflowService service) {
         super(service);

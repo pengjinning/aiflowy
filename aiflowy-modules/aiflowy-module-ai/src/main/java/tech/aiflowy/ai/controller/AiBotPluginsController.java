@@ -1,6 +1,7 @@
 package tech.aiflowy.ai.controller;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.tree.Tree;
 import tech.aiflowy.common.web.controller.BaseCurdController;
@@ -23,6 +24,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/aiBotPlugins")
+@UsePermission(moduleName = "/api/v1/aiBot")
 public class AiBotPluginsController extends BaseCurdController<AiBotPluginsService, AiBotPlugins> {
 
     public AiBotPluginsController(AiBotPluginsService service) {

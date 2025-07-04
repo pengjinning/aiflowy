@@ -2,6 +2,7 @@ package tech.aiflowy.ai.controller;
 
 import tech.aiflowy.ai.entity.AiChatMessage;
 import tech.aiflowy.ai.service.AiChatMessageService;
+import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.web.controller.BaseCurdController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/v1/aiChatMessage")
+@UsePermission(moduleName = "/api/v1/aiBot")
 public class AiChatMessageController extends BaseCurdController<AiChatMessageService, AiChatMessage> {
     public AiChatMessageController(AiChatMessageService service) {
         super(service);

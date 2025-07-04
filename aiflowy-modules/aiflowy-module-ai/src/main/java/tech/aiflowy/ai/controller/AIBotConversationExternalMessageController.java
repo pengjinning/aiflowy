@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/conversation")
+@SaIgnore
 public class AIBotConversationExternalMessageController extends BaseCurdController<AiBotConversationMessageService, AiBotConversationMessage> {
 
     @Resource

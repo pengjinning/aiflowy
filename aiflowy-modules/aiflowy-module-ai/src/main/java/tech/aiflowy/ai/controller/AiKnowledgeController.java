@@ -1,5 +1,6 @@
 package tech.aiflowy.ai.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.mybatisflex.core.query.QueryWrapper;
 import tech.aiflowy.ai.entity.AiKnowledge;
 import tech.aiflowy.ai.service.AiDocumentChunkService;
@@ -49,6 +50,7 @@ public class AiKnowledgeController extends BaseCurdController<AiKnowledgeService
     }
 
     @GetMapping("search")
+    @SaCheckPermission("/api/v1/aiKnowledge/query")
     public Result search(@RequestParam BigInteger id, @RequestParam String keyword) {
         return service.search(id, keyword);
     }

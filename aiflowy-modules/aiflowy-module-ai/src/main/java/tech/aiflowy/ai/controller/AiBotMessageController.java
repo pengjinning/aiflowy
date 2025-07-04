@@ -4,6 +4,7 @@ import cn.dev33.satoken.annotation.SaIgnore;
 import org.springframework.web.bind.annotation.*;
 import tech.aiflowy.ai.entity.AiBotMessage;
 import tech.aiflowy.ai.service.AiBotMessageService;
+import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.web.controller.BaseCurdController;
 import tech.aiflowy.common.satoken.util.SaTokenUtil;
@@ -16,6 +17,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 
 /**
  * Bot 消息记录表 控制层。
@@ -25,6 +27,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/aiBotMessage")
+@UsePermission(moduleName = "/api/v1/aiBot")
 public class AiBotMessageController extends BaseCurdController<AiBotMessageService, AiBotMessage> {
     private final AiBotMessageService aiBotMessageService;
 
@@ -51,17 +54,26 @@ public class AiBotMessageController extends BaseCurdController<AiBotMessageServi
         List<AiBotMessage> list = service.list(queryWrapper);
 
         if (list == null || list.isEmpty()) {
-            return Result.fail();
+            return Result.success(Collections.emptyList());
         }
 
         List<Maps> maps = new ArrayList<>();
         for (AiBotMessage aiBotMessage : list) {
             Map<String, Object> options = aiBotMessage.getOptions();
-            if (options != null && (Integer) options.get("type") == 2) {
+            if (
+                options != null && 
+                options.get("type") != null &&
+                ((Integer) options.get("type") == 2 && 
+                "user".equalsIgnoreCase(aiBotMessage.getRole()))
+            ) {
                 continue;
             }
 
-            if (options != null && (Integer) options.get("type") == 1) {
+            if (
+                options != null && 
+                options.get("type") != null &&
+                (Integer) options.get("type") == 1
+            ) {
                 aiBotMessage.setContent((String) options.get("user_input"));
             }
 

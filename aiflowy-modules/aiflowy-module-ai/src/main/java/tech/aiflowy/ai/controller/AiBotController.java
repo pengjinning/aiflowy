@@ -1,5 +1,6 @@
 package tech.aiflowy.ai.controller;
 
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.util.IdUtil;
@@ -111,6 +112,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
     private AiPluginToolService aiPluginToolService;
 
     @PostMapping("updateOptions")
+    @SaCheckPermission("/api/v1/aiBot/save")
     public Result updateOptions(@JsonBody("id") BigInteger id, @JsonBody("options") Map<String, Object> options) {
         AiBot aiBot = service.getById(id);
         Map<String, Object> existOptions = aiBot.getOptions();
@@ -127,6 +129,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
 
 
     @PostMapping("updateLlmOptions")
+    @SaCheckPermission("/api/v1/aiBot/save")
     public Result updateLlmOptions(@JsonBody("id") BigInteger id, @JsonBody("llmOptions") Map<String, Object> llmOptions) {
         AiBot aiBot = service.getById(id);
         Map<String, Object> existLlmOptions = aiBot.getLlmOptions();
