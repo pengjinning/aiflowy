@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -18,13 +19,23 @@ public class FileStorageManager implements FileStorageService {
     }
 
     @Override
-    public InputStream readStream(String path) throws IOException {
-        return getService().readStream(path);
+    public String save(MultipartFile file,String prePath) {
+        return getService().save(file,prePath);
+    }
+	
+	@Override
+    public void delete(String path) {
+        getService().delete(path);
     }
 
     @Override
-    public void delete(String path) {
-        getService().delete(path);
+    public String save(File file, String prePath) {
+        return getService().save(file, prePath);
+    }
+
+    @Override
+    public InputStream readStream(String path) throws IOException {
+        return getService().readStream(path);
     }
 
     private FileStorageService getService() {

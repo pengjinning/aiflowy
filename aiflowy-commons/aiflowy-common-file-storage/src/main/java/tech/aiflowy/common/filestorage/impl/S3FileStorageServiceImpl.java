@@ -12,6 +12,7 @@ import tech.aiflowy.common.filestorage.StorageConfig;
 import tech.aiflowy.common.filestorage.s3.S3Client;
 import tech.aiflowy.common.filestorage.s3.S3StorageConfig;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -48,8 +49,22 @@ public class S3FileStorageServiceImpl implements FileStorageService {
     }
 
     @Override
-    public InputStream readStream(String path) throws IOException {
-        return client.getObjectContent(path);
+    public String save(MultipartFile file, String path) {
+        try {
+            return client.upload(file,path);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+    }
+
+    @Override
+    public String save(File file, String prePath) {
+        try {
+            return client.upload(file,prePath);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
@@ -79,4 +94,11 @@ public class S3FileStorageServiceImpl implements FileStorageService {
             throw new IllegalArgumentException("URL 不属于当前 Bucket");
         }
     }
+	
+    @Override
+    public InputStream readStream(String path) throws IOException {
+        return client.getObjectContent(path);
+    }
+
+
 }

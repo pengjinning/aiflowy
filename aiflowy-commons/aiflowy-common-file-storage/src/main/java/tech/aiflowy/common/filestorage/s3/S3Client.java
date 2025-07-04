@@ -28,6 +28,7 @@ import tech.aiflowy.common.filestorage.StorageConfig;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.util.Date;
 
@@ -69,6 +70,7 @@ public class S3Client {
 
             createBucket();
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("配置错误! 请检查系统配置:[" + e.getMessage() + "]");
         }
     }
@@ -112,7 +114,8 @@ public class S3Client {
             putObjectRequest.setCannedAcl(getAccessPolicy().getAcl());
             client.putObject(putObjectRequest);
         } catch (Exception e) {
-            throw new RuntimeException("上传文件失败，请检查配置信息:[" + e.getMessage() + "]");
+            log.error("上传文件失败，请检查配置信息:{}",e.getMessage());
+            throw new RuntimeException("上传文件失败，请稍后重试！");
         }
     }
 
@@ -130,6 +133,74 @@ public class S3Client {
         return completeUrl;
     }
 
+    public String upload(MultipartFile file, String prePath) throws Exception {
+        byte[] content = file.getBytes();
+        String name = file.getOriginalFilename();
+        String path = generatePath(content, name);
+        String baseUrl = properties.getEndpoint() + "/" + properties.getBucketName() + "/";
+
+        if (StringUtils.hasValue(properties.getPrefix())) {
+            path = properties.getPrefix()  + path;
+        }
+
+        if (StringUtils.hasValue(prePath)) {
+
+            if (prePath.startsWith("/")){
+                prePath = prePath.substring(1);
+            }
+
+            if (prePath.endsWith("/")){
+                prePath = prePath.substring(0, prePath.length() - 1);
+            }
+
+
+            path = prePath + "/" + path;
+        }
+        String completeUrl = baseUrl + path;
+        upload(content, path, file.getContentType());
+        return completeUrl;
+    }
+
+    public String upload(File file,String prePath) throws Exception {
+        byte[] bytes = Files.readAllBytes(file.toPath());
+        String name = file.getName();
+        String hashName = generatePath(bytes,name);
+        String completeUrl = (StringUtils.hasValue(prePath) ? prePath + "/" : "") + hashName;
+        upload(bytes,completeUrl,Files.probeContentType(file.toPath()));
+        return generateAccessUrl(completeUrl);
+    }
+
+    /**
+     * 生成完整的访问路径（需要访问路径的策略为可读）
+     */
+    private String generateAccessUrl(String path){
+        String domain = properties.getDomain();
+
+        String accessUrl = "";
+
+        if (StringUtils.hasValue(domain)) {
+            accessUrl += domain;
+        }else{
+            accessUrl += properties.getEndpoint();
+        }
+
+        accessUrl += "/" + properties.getBucketName();
+
+        if (path.startsWith("/")){
+            path = path.substring(1);
+        }
+
+        if (path.endsWith("/")){
+            path = path.substring(0, path.length()-1);
+        }
+
+        accessUrl += "/" + path;
+
+        return accessUrl;
+
+
+    }
+
     public static String generatePath(byte[] content, String originalName) throws Exception {
         // 计算文件内容的 SHA256 哈希值
         String sha256Hex = sha256Hex(content);
@@ -139,7 +210,7 @@ public class S3Client {
             // 提取文件后缀
             String extName = FileNameUtil.extName(originalName);
             // 如果后缀存在，返回 "哈希值.后缀"，否则返回 "哈希值"
-            return StrUtil.isBlank(extName) ? sha256Hex : sha256Hex + "." + extName;
+            return (StrUtil.isBlank(extName) ? sha256Hex : sha256Hex + "." + extName);
         }
 
         // 情况二：如果原始文件名为空，基于文件内容推断文件类型
@@ -201,6 +272,11 @@ public class S3Client {
      * @return 文件内容(指定文件字节范围)
      */
     public InputStream getObjectContent(String objectPath, Long start, Long end) {
+
+        if (objectPath.startsWith("http") || objectPath.startsWith("https")) {
+            objectPath = objectPath.substring(properties.getEndpoint().length() + properties.getBucketName().length() + 1);
+        }
+
         GetObjectRequest request = new GetObjectRequest(properties.getBucketName(), objectPath);
         if (start != null) {
             if (end != null) {
@@ -209,7 +285,7 @@ public class S3Client {
                 request.setRange(start);
             }
         }
-        request.setRange(0);
+
         S3Object object = client.getObject(request);
         return object.getObjectContent();
     }

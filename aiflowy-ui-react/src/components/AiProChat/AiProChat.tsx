@@ -1,14 +1,31 @@
 import React, {useLayoutEffect, useMemo, useRef, useState} from 'react';
-import {Bubble, Prompts, Sender, ThoughtChain, ThoughtChainItem, Welcome} from '@ant-design/x';
-import {Button, GetProp, message, Space, Spin, Typography} from 'antd';
-import {CopyOutlined, FolderAddOutlined, OpenAIOutlined, SyncOutlined} from '@ant-design/icons';
+import {
+    Attachments,
+    AttachmentsProps,
+    Bubble,
+    Prompts,
+    Sender,
+    ThoughtChain,
+    ThoughtChainItem,
+    Welcome
+} from '@ant-design/x';
+import {Badge, Button, GetProp, GetRef, message, Space, Spin, Typography, UploadFile} from 'antd';
+import {
+    CloudUploadOutlined,
+    CopyOutlined,
+    FolderAddOutlined,
+    LinkOutlined,
+    OpenAIOutlined,
+    SyncOutlined,
+    UserOutlined
+} from '@ant-design/icons';
 // import ReactMarkdown from 'react-markdown';
 // import remarkGfm from 'remark-gfm';
 // import remarkBreaks from 'remark-breaks';
 import logo from "/favicon.png";
-import {UserOutlined} from '@ant-design/icons';
 import './aiprochat.less'
 import markdownit from 'markdown-it';
+import {usePost} from "../../hooks/useApis.ts";
 
 const fooAvatar: React.CSSProperties = {
     color: '#fff',
@@ -276,7 +293,7 @@ export const AiProChat = ({
                                 ...aiMessage.thoughtChains[targetIndex],
                                 key: eventId,
                                 title,
-                                content: <RenderMarkdown content={description} />,
+                                content: <RenderMarkdown content={description}/>,
                                 status: 'pending'
                             };
                             console.log(`Updated ThoughtChain item with id: ${eventId} for event: ${eventType}`);
@@ -285,7 +302,7 @@ export const AiProChat = ({
                             const newItem: ThoughtChainItem = {
                                 key: eventId,
                                 title,
-                                content:  <RenderMarkdown content={description} />,
+                                content: <RenderMarkdown content={description}/>,
                                 status: 'pending'
                             };
 
@@ -311,8 +328,13 @@ export const AiProChat = ({
 
     // 提交流程优化
     const handleSubmit = async (newMessage: string) => {
+
         const messageContent = newMessage?.trim() || content.trim();
-        if (!messageContent) return;
+
+        if (!messageContent && !fileUrlList.length) return;
+
+
+        console.log(1)
 
         setSendLoading(true);
         setIsStreaming(true);
@@ -338,6 +360,7 @@ export const AiProChat = ({
         setChats?.((prev: ChatMessage[]) => [...(prev || []), ...temp]);
         setTimeout(scrollToBottom, 50);
         setContent('');
+        setFileItems([]);
 
         try {
             const response = await request([...(chats || []), userMessage]);
@@ -477,12 +500,11 @@ export const AiProChat = ({
             }
 
             setChats((prev: ChatMessage[]) => {
-                console.log(prev);
                 const newChats = prev;
-                if (prev){
+                if (prev) {
                     const chatMessage = newChats[prev.length - 1];
-                    if (chatMessage){
-                        chatMessage.content?.replace("Final Answer:","");
+                    if (chatMessage) {
+                        chatMessage.content?.replace("Final Answer:", "");
                     }
                 }
                 return newChats;
@@ -494,7 +516,6 @@ export const AiProChat = ({
             // 确保打字效果完成后再重置状态
             setIsStreaming(false);
             setSendLoading(false);
-            console.log(chats)
         }
     };
 
@@ -765,7 +786,7 @@ export const AiProChat = ({
                             )}
 
                             {/* 🌟 渲染主要内容 */}
-                            <RenderMarkdown content={chat.content} />
+                            <RenderMarkdown content={chat.content}/>
                         </div>
                     ) : chat.content,
                     avatar: chat.role === 'assistant' ? (
@@ -798,6 +819,129 @@ export const AiProChat = ({
             description: '你是谁？'
         }
     ];
+
+
+    // 聊天输入框 header 属性
+
+    const senderRef = React.useRef<GetRef<typeof Sender>>(null);
+
+    const [headerOpen, setHeaderOpen] = React.useState(false);
+    const [fileItems, setFileItems] = React.useState<GetProp<AttachmentsProps, 'items'>>([]);
+    const [fileUrlList, setFileUrlList] = useState<Array<{ uid: string, url: string }>>([])
+
+    const {doPost: uploadFile} = usePost("/api/v1/commons/uploadPrePath");
+
+    const imageExtensions = [
+        '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp',
+        '.svg', '.ico', '.tiff', '.tif', '.avif', '.heic', '.heif'
+    ];
+
+    const senderHeader = (
+        <Sender.Header
+            title={"文件上传"}
+            open={headerOpen}
+            onOpenChange={setHeaderOpen}
+            styles={{
+                content: {
+                    padding: 0,
+                },
+            }}
+        >
+            <Attachments
+                items={fileItems}
+                overflow={"scrollX"}
+                customRequest={async ({file, onSuccess}) => {
+
+                    const uFile = file as UploadFile;
+
+                    const fileData = new FormData();
+                    fileData.append("file", file)
+
+
+                    try {
+                        const resp = await uploadFile({
+                            params: {
+                                prePath: "aibot/files/"
+                            },
+                            data: fileData
+                        })
+
+                        if (resp.data.errorCode !== 0) {
+                            setFileItems((prev) => {
+                                return prev.filter(fileItem => fileItem.originFileObj?.uid !== uFile.uid);
+                            })
+                            return;
+                        }
+
+                        const uid: string = uFile.uid;
+                        const url: string = resp.data.data as string;
+
+                        const fileUrlObj = {uid, url}
+
+                        setFileUrlList((prev) => {
+                            const fileUrlList = [];
+                            prev.forEach(fileUrl => fileUrlList.push(fileUrl))
+                            fileUrlList.push(fileUrlObj)
+                            return fileUrlList;
+                        })
+                        onSuccess?.(resp.data.data, file)
+                    } catch (e) {
+                        setFileItems((prev) => {
+                            return prev.filter(fileItem => fileItem.originFileObj?.uid !== uFile.uid);
+                        })
+                    }
+
+                }}
+                onChange={({file, fileList}) => {
+
+                    const isAdd = fileItems.length < fileList.length
+
+                    const isDelete = fileItems.length > fileList.length
+
+
+                    if (isAdd) {
+                        const extension = file.name.toLowerCase().substring(file.name.lastIndexOf("."));
+
+                        if (!imageExtensions.includes(extension)) {
+                            message.error("仅支持图片文件!")
+                            return;
+                        }
+
+                    }
+
+                    if (isDelete){
+                        setFileUrlList((prev) => {
+                            const newFileUrlList: { uid: string; url: string; }[] = [];
+                            prev.forEach(fileUrl => {
+                                if (fileUrl.uid !== file.originFileObj?.uid) {
+                                    newFileUrlList.push(fileUrl)
+                                }
+                            })
+                            return newFileUrlList
+                        })
+                    }
+
+
+
+                    setFileItems(fileList)
+
+
+                }}
+                placeholder={(type) =>
+                    type === 'drop'
+                        ? {
+                            title: 'Drop file here',
+                        }
+                        : {
+                            icon: <CloudUploadOutlined/>,
+                            title: 'Upload files',
+                            description: 'Click or drag files to this area to upload',
+                        }
+                }
+                getDropContainer={() => senderRef.current?.nativeElement}
+            />
+        </Sender.Header>
+    )
 
 
     return (
@@ -868,11 +1012,24 @@ export const AiProChat = ({
                 }
 
                 <Sender
+                    ref={senderRef}
                     value={content}
                     onChange={setContent}
-                    onSubmit={handleSubmit}
+                    // onSubmit={handleSubmit}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault(); // 防止换行（如果是 textarea）
+                            handleSubmit(content);
+                        }
+                    }}
                     loading={sendLoading || isStreaming}
                     disabled={inputDisabled}
+                    header={senderHeader}
+                    prefix={
+                        <Badge dot={fileItems.length > 0 && !headerOpen}>
+                            <Button onClick={() => setHeaderOpen(!headerOpen)} icon={<LinkOutlined/>}/>
+                        </Badge>
+                    }
                     actions={(_, info) => (
                         <Space size="small">
                             <info.components.ClearButton
@@ -888,6 +1045,7 @@ export const AiProChat = ({
                             />
                             <info.components.SendButton
                                 type="primary"
+                                onClick={() => handleSubmit(content)}
                                 disabled={inputDisabled}
                                 icon={<OpenAIOutlined/>}
                                 loading={sendLoading || isStreaming}
