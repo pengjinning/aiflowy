@@ -1,7 +1,5 @@
 import React, {useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {
-    Attachments,
-    AttachmentsProps,
     Bubble,
     Prompts,
     Sender,
@@ -9,12 +7,10 @@ import {
     ThoughtChainItem,
     Welcome
 } from '@ant-design/x';
-import {Badge, Button, GetProp, GetRef, message, Space, Spin, Typography, UploadFile} from 'antd';
+import {Button, GetProp, GetRef, message, Space, Spin, Typography} from 'antd';
 import {
-    CloudUploadOutlined,
     CopyOutlined,
     FolderAddOutlined,
-    LinkOutlined,
     OpenAIOutlined,
     SyncOutlined,
     UserOutlined
@@ -183,7 +179,6 @@ export const AiProChat = ({
                 });
 
                 if (result.handled) {
-                    console.log(`Event progress "${eventType}" handled by custom handler`);
                     return true;
                 }
             } catch (error) {
@@ -205,6 +200,7 @@ export const AiProChat = ({
             isComplete: true
         };
 
+
         if (onCustomEventComplete) {
             try {
                 const result = await onCustomEventComplete(eventType, eventData, {
@@ -213,7 +209,6 @@ export const AiProChat = ({
                 });
 
                 if (result.handled) {
-                    console.log(`Event complete "${eventType}" handled by custom complete handler`);
                     return true;
                 }
             } catch (error) {
@@ -296,7 +291,6 @@ export const AiProChat = ({
                                 content: <RenderMarkdown content={description}/>,
                                 status: 'pending'
                             };
-                            console.log(`Updated ThoughtChain item with id: ${eventId} for event: ${eventType}`);
                         } else {
                             // 没找到相同 id 的项，创建新项
                             const newItem: ThoughtChainItem = {
@@ -307,7 +301,6 @@ export const AiProChat = ({
                             };
 
                             aiMessage.thoughtChains.push(newItem);
-                            console.log(`Created new ThoughtChain item with id: ${eventId} for event: ${eventType}`);
                         }
                     } else {
                         console.warn(`Event ${eventType} has no id, skipping ThoughtChain processing`);
@@ -331,10 +324,7 @@ export const AiProChat = ({
 
         const messageContent = newMessage?.trim() || content.trim();
 
-        if (!messageContent && !fileUrlList.length) return;
-
-
-        console.log(1)
+        // if (!messageContent && !fileUrlList.length) return;
 
         setSendLoading(true);
         setIsStreaming(true);
@@ -360,7 +350,7 @@ export const AiProChat = ({
         setChats?.((prev: ChatMessage[]) => [...(prev || []), ...temp]);
         setTimeout(scrollToBottom, 50);
         setContent('');
-        setFileItems([]);
+        // setFileItems([]);
 
         try {
             const response = await request([...(chats || []), userMessage]);
@@ -399,7 +389,6 @@ export const AiProChat = ({
                     shouldContinueReading = false;
                     //  流结束时，如果还有未完成的事件，触发事件完成处理
                     if (currentEventType.current) {
-                        console.log(`Stream finished, completing event: ${currentEventType.current}`);
                         await handleEventComplete(currentEventType.current, eventContent.current);
                         currentEventType.current = null;
                         eventContent.current = '';
@@ -411,11 +400,17 @@ export const AiProChat = ({
                 const parse = JSON.parse(decode);
                 const respData = JSON.parse(parse.data);
 
+                // 🔍 调试：打印收到的数据
+                console.log('📥 收到数据:', {
+                    event: parse.event,
+                    content: respData.content,
+                    contentLength: (respData.content || '').length
+                });
+
                 const incomingEventType = parse.event || 'content';
 
                 // 检查是否切换到了新的事件类型（使用 ref.current）
                 if (currentEventType.current && currentEventType.current !== incomingEventType) {
-                    console.log(`Event type changed from ${currentEventType.current} to ${incomingEventType}, completing previous event`);
 
                     try {
                         // 上一个事件完成，触发完成处理
@@ -454,7 +449,17 @@ export const AiProChat = ({
                 }
 
                 // 处理内容更新
-                partial += respData.content || '';
+                const newContent = respData.content || '';
+                if (newContent && !partial.endsWith(newContent)) {
+                    partial += newContent;
+                } else if (newContent && partial.endsWith(newContent)) {
+                    console.warn('🚨 检测到重复内容，跳过累积:', newContent);
+                }
+
+                console.log('📚 累积内容:', {
+                    partialLength: partial.length,
+                    partialContent: partial.substring(Math.max(0, partial.length - 50))
+                });
 
                 // 清除之前的打字间隔
                 if (typingIntervalId) {
@@ -475,6 +480,7 @@ export const AiProChat = ({
                                 lastMsg.content = currentContent;
                                 lastMsg.updateAt = Date.now();
                             }
+
                             return newChats;
                         });
 
@@ -500,11 +506,12 @@ export const AiProChat = ({
             }
 
             setChats((prev: ChatMessage[]) => {
-                const newChats = prev;
-                if (prev) {
-                    const chatMessage = newChats[prev.length - 1];
-                    if (chatMessage) {
-                        chatMessage.content?.replace("Final Answer:", "");
+                const newChats = [...prev]; // 创建新数组而不是直接引用
+                if (newChats.length > 0) {
+                    const lastMessage = newChats[newChats.length - 1];
+                    if (lastMessage && lastMessage.role === 'assistant') {
+                        // 正确地移除 "Final Answer:" 前缀
+                        lastMessage.content = lastMessage.content.replace(/^Final Answer:\s*/i, "");
                     }
                 }
                 return newChats;
@@ -585,7 +592,6 @@ export const AiProChat = ({
 
                     //  流结束时，如果还有未完成的事件，触发事件完成处理
                     if (currentEventType.current) {
-                        console.log(`Regenerate stream finished, completing event: ${currentEventType.current}`);
                         await handleEventComplete(currentEventType.current, eventContent.current);
                         currentEventType.current = null;
                         eventContent.current = '';
@@ -685,6 +691,7 @@ export const AiProChat = ({
             if (typingIntervalId) {
                 clearInterval(typingIntervalId);
             }
+
 
         } catch (error) {
             console.error('Regenerate error:', error);
@@ -825,123 +832,258 @@ export const AiProChat = ({
 
     const senderRef = React.useRef<GetRef<typeof Sender>>(null);
 
-    const [headerOpen, setHeaderOpen] = React.useState(false);
-    const [fileItems, setFileItems] = React.useState<GetProp<AttachmentsProps, 'items'>>([]);
-    const [fileUrlList, setFileUrlList] = useState<Array<{ uid: string, url: string }>>([])
+    // const [headerOpen, setHeaderOpen] = React.useState(false);
+    // const [fileItems, setFileItems] = React.useState<GetProp<AttachmentsProps, 'items'>>([]);
+    // const [fileUrlList, setFileUrlList] = useState<Array<{ uid: string, url: string }>>([])
+    //
+    // const {doPost: uploadFile} = usePost("/api/v1/commons/uploadPrePath");
+    //
+    // const imageExtensions = [
+    //     '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp',
+    //     '.svg', '.ico', '.tiff', '.tif', '.avif', '.heic', '.heif'
+    // ];
 
-    const {doPost: uploadFile} = usePost("/api/v1/commons/uploadPrePath");
+    // const senderHeader = (
+    //     <Sender.Header
+    //         title={"文件上传"}
+    //         open={headerOpen}
+    //         onOpenChange={setHeaderOpen}
+    //         styles={{
+    //             content: {
+    //                 padding: 0,
+    //             },
+    //         }}
+    //     >
+    //         <Attachments
+    //             items={fileItems}
+    //             overflow={"scrollX"}
+    //             customRequest={async ({file, onSuccess}) => {
+    //
+    //                 const uFile = file as UploadFile;
+    //
+    //                 const fileData = new FormData();
+    //                 fileData.append("file", file)
+    //
+    //
+    //                 try {
+    //                     const resp = await uploadFile({
+    //                         params: {
+    //                             prePath: "aibot/files/"
+    //                         },
+    //                         data: fileData
+    //                     })
+    //
+    //                     if (resp.data.errorCode !== 0) {
+    //                         setFileItems((prev) => {
+    //                             return prev.filter(fileItem => fileItem.originFileObj?.uid !== uFile.uid);
+    //                         })
+    //                         return;
+    //                     }
+    //
+    //                     const uid: string = uFile.uid;
+    //                     const url: string = resp.data.data as string;
+    //
+    //                     const fileUrlObj = {uid, url}
+    //
+    //                     setFileUrlList((prev) => {
+    //                         const fileUrlList = [];
+    //                         prev.forEach(fileUrl => fileUrlList.push(fileUrl))
+    //                         fileUrlList.push(fileUrlObj)
+    //                         return fileUrlList;
+    //                     })
+    //                     onSuccess?.(resp.data.data, file)
+    //                 } catch (e) {
+    //                     setFileItems((prev) => {
+    //                         return prev.filter(fileItem => fileItem.originFileObj?.uid !== uFile.uid);
+    //                     })
+    //                 }
+    //
+    //             }}
+    //             onChange={({file, fileList}) => {
+    //
+    //                 const isAdd = fileItems.length < fileList.length
+    //
+    //                 const isDelete = fileItems.length > fileList.length
+    //
+    //
+    //                 if (isAdd) {
+    //                     const extension = file.name.toLowerCase().substring(file.name.lastIndexOf("."));
+    //
+    //                     if (!imageExtensions.includes(extension)) {
+    //                         message.error("仅支持图片文件!")
+    //                         return;
+    //                     }
+    //
+    //                 }
+    //
+    //                 if (isDelete){
+    //                     setFileUrlList((prev) => {
+    //                         const newFileUrlList: { uid: string; url: string; }[] = [];
+    //                         prev.forEach(fileUrl => {
+    //                             if (fileUrl.uid !== file.originFileObj?.uid) {
+    //                                 newFileUrlList.push(fileUrl)
+    //                             }
+    //                         })
+    //                         return newFileUrlList
+    //                     })
+    //                 }
+    //
+    //
+    //
+    //                 setFileItems(fileList)
+    //
+    //
+    //             }}
+    //             placeholder={(type) =>
+    //                 type === 'drop'
+    //                     ? {
+    //                         title: 'Drop file here',
+    //                     }
+    //                     : {
+    //                         icon: <CloudUploadOutlined/>,
+    //                         title: 'Upload files',
+    //                         description: 'Click or drag files to this area to upload',
+    //                     }
+    //             }
+    //             getDropContainer={() => senderRef.current?.nativeElement}
+    //         />
+    //     </Sender.Header>
+    // )
 
-    const imageExtensions = [
-        '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp',
-        '.svg', '.ico', '.tiff', '.tif', '.avif', '.heic', '.heif'
-    ];
 
-    const senderHeader = (
-        <Sender.Header
-            title={"文件上传"}
-            open={headerOpen}
-            onOpenChange={setHeaderOpen}
-            styles={{
-                content: {
-                    padding: 0,
-                },
-            }}
-        >
-            <Attachments
-                items={fileItems}
-                overflow={"scrollX"}
-                customRequest={async ({file, onSuccess}) => {
+    const mediaStreamRef = useRef<MediaStream | null>(null);
+    const audioContextRef = useRef<AudioContext | null>(null);
+    const processorRef = useRef<ScriptProcessorNode | null>(null);
+    const recordedBuffersRef = useRef<Int16Array[]>([])
+    const [recording, setRecording] = React.useState(false);
+    const {doPost:voiceInput} = usePost("/api/v1/aiBot/voiceInput")
 
-                    const uFile = file as UploadFile;
-
-                    const fileData = new FormData();
-                    fileData.append("file", file)
-
-
-                    try {
-                        const resp = await uploadFile({
-                            params: {
-                                prePath: "aibot/files/"
-                            },
-                            data: fileData
-                        })
-
-                        if (resp.data.errorCode !== 0) {
-                            setFileItems((prev) => {
-                                return prev.filter(fileItem => fileItem.originFileObj?.uid !== uFile.uid);
-                            })
-                            return;
-                        }
-
-                        const uid: string = uFile.uid;
-                        const url: string = resp.data.data as string;
-
-                        const fileUrlObj = {uid, url}
-
-                        setFileUrlList((prev) => {
-                            const fileUrlList = [];
-                            prev.forEach(fileUrl => fileUrlList.push(fileUrl))
-                            fileUrlList.push(fileUrlObj)
-                            return fileUrlList;
-                        })
-                        onSuccess?.(resp.data.data, file)
-                    } catch (e) {
-                        setFileItems((prev) => {
-                            return prev.filter(fileItem => fileItem.originFileObj?.uid !== uFile.uid);
-                        })
-                    }
-
-                }}
-                onChange={({file, fileList}) => {
-
-                    const isAdd = fileItems.length < fileList.length
-
-                    const isDelete = fileItems.length > fileList.length
-
-
-                    if (isAdd) {
-                        const extension = file.name.toLowerCase().substring(file.name.lastIndexOf("."));
-
-                        if (!imageExtensions.includes(extension)) {
-                            message.error("仅支持图片文件!")
-                            return;
-                        }
-
-                    }
-
-                    if (isDelete){
-                        setFileUrlList((prev) => {
-                            const newFileUrlList: { uid: string; url: string; }[] = [];
-                            prev.forEach(fileUrl => {
-                                if (fileUrl.uid !== file.originFileObj?.uid) {
-                                    newFileUrlList.push(fileUrl)
-                                }
-                            })
-                            return newFileUrlList
-                        })
-                    }
-
-
-
-                    setFileItems(fileList)
-
-
-                }}
-                placeholder={(type) =>
-                    type === 'drop'
-                        ? {
-                            title: 'Drop file here',
-                        }
-                        : {
-                            icon: <CloudUploadOutlined/>,
-                            title: 'Upload files',
-                            description: 'Click or drag files to this area to upload',
-                        }
+    const startPCMRecording = async (): Promise<void> => {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: {
+                    sampleRate: 16000,
+                    channelCount: 1,
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true
                 }
-                getDropContainer={() => senderRef.current?.nativeElement}
-            />
-        </Sender.Header>
-    )
+            });
+
+            mediaStreamRef.current = stream;
+
+            const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({
+                sampleRate: 16000
+            });
+            audioContextRef.current = audioContext;
+
+            const source = audioContext.createMediaStreamSource(stream);
+            const processor = audioContext.createScriptProcessor(4096, 1, 1);
+            processorRef.current = processor;
+
+            recordedBuffersRef.current = [];
+
+            processor.onaudioprocess = (event) => {
+                const inputBuffer = event.inputBuffer;
+                const inputData = inputBuffer.getChannelData(0);
+
+                const pcmData = new Int16Array(inputData.length);
+                for (let i = 0; i < inputData.length; i++) {
+                    const sample = Math.max(-1, Math.min(1, inputData[i]));
+                    pcmData[i] = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+                }
+
+                recordedBuffersRef.current.push(pcmData);
+            };
+
+            source.connect(processor);
+            processor.connect(audioContext.destination);
+
+            console.log('PCM录音开始');
+
+        } catch (error) {
+            console.error('录制启动失败:', error);
+            message.error('无法访问麦克风，请检查权限设置');
+            throw error;
+        }
+    };
+
+
+    const stopPCMRecording = (): Promise<Int16Array | null> => {
+        return new Promise((resolve) => {
+            try {
+                if (mediaStreamRef.current) {
+                    mediaStreamRef.current.getTracks().forEach(track => track.stop());
+                    mediaStreamRef.current = null;
+                }
+
+                if (audioContextRef.current) {
+                    audioContextRef.current.close();
+                    audioContextRef.current = null;
+                }
+
+                if (processorRef.current) {
+                    processorRef.current.disconnect();
+                    processorRef.current = null;
+                }
+
+                const totalLength = recordedBuffersRef.current.reduce((acc, buffer) => acc + buffer.length, 0);
+
+                if (totalLength === 0) {
+                    console.warn('没有录制到音频数据');
+                    resolve(null);
+                    return;
+                }
+
+                const mergedData = new Int16Array(totalLength);
+                let offset = 0;
+
+                recordedBuffersRef.current.forEach(buffer => {
+                    mergedData.set(buffer, offset);
+                    offset += buffer.length;
+                });
+
+                console.log(`PCM录音结束，录制了 ${(totalLength / 16000).toFixed(2)} 秒音频`);
+
+                recordedBuffersRef.current = [];
+                resolve(mergedData);
+
+            } catch (error) {
+                console.error('停止录制失败:', error);
+                resolve(null);
+            }
+        });
+    };
+
+    const uploadPCMData = async (pcmData: Int16Array): Promise<any> => {
+        if (!pcmData || pcmData.length === 0) {
+            message.warning('没有录制到音频数据');
+            return null;
+        }
+
+        try {
+            const formData = new FormData();
+            const blob = new Blob([pcmData.buffer], { type: 'audio/pcm' });
+
+            formData.append('audio', blob, 'voice_message.pcm');
+            formData.append('sampleRate', '16000');
+            formData.append('channels', '1');
+            formData.append('bitDepth', '16');
+            formData.append('duration', String(pcmData.length / 16000));
+
+            const response = await voiceInput({
+                data:formData
+            })
+
+            console.log(response)
+
+            return response;
+
+        } catch (error) {
+            throw error;
+        }
+    };
+
 
 
     return (
@@ -1015,25 +1157,75 @@ export const AiProChat = ({
                     ref={senderRef}
                     value={content}
                     onChange={setContent}
-                    // onSubmit={handleSubmit}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault(); // 防止换行（如果是 textarea）
-                            handleSubmit(content);
-                        }
+                    onSubmit={handleSubmit}
+                    // onKeyDown={(e) => {
+                    //     if (e.key === 'Enter' && !e.shiftKey) {
+                    //         e.preventDefault(); // 防止换行（如果是 textarea）
+                    //         handleSubmit(content);
+                    //     }
+                    // }}
+                    allowSpeech={{
+                        // When setting `recording`, the built-in speech recognition feature will be disabled
+                        recording,
+                        onRecordingChange: async (nextRecording) => {
+
+                            if (nextRecording) {
+                                console.log("录音中....");
+                                try {
+                                    await startPCMRecording();
+                                } catch (error) {
+                                    setRecording(false);
+                                    return;
+                                }
+                            } else {
+                                console.log("录音结束，发送请求.");
+                                try {
+                                    message.loading({ content: '正在处理语音...', key: 'processing' });
+
+                                    const pcmData = await stopPCMRecording();
+
+                                    if (pcmData) {
+                                        const result = await uploadPCMData(pcmData);
+
+
+                                        if (result) {
+                                            message.success({ content: '语音发送成功', key: 'processing' });
+
+                                            // 如果后端返回了转换的文本，可以填充到输入框
+                                            if (result.data.data) {
+                                                setContent(result.data.data);
+                                                handleSubmit(result.data.data)
+                                            }
+                                        }
+                                    } else {
+                                        message.warning({ content: '没有录制到音频', key: 'processing' });
+                                    }
+
+                                } catch (error) {
+                                    message.error({ content: '语音处理失败', key: 'processing' });
+                                    console.error('语音处理失败:', error);
+                                }
+                            }
+
+                            setRecording(nextRecording);
+                        },
                     }}
                     loading={sendLoading || isStreaming}
                     disabled={inputDisabled}
-                    header={senderHeader}
-                    prefix={
-                        <Badge dot={fileItems.length > 0 && !headerOpen}>
-                            <Button onClick={() => setHeaderOpen(!headerOpen)} icon={<LinkOutlined/>}/>
-                        </Badge>
-                    }
-                    actions={(_, info) => (
-                        <Space size="small">
-                            <info.components.ClearButton
-                                disabled={sendLoading || isStreaming || !chats?.length}  // 强制不禁用
+                    // header={senderHeader}
+                    // prefix={
+                    //     <Badge dot={fileItems.length > 0 && !headerOpen}>
+                    //         <Button onClick={() => setHeaderOpen(!headerOpen)} icon={<LinkOutlined/>}/>
+                    //     </Badge>
+                    // }
+                    actions={(_, info) => {
+
+
+                        const {SendButton, ClearButton, SpeechButton} = info.components;
+
+                        return <Space size="small">
+                            <ClearButton
+                                disabled={sendLoading || isStreaming || !chats?.length || recording}  // 强制不禁用
                                 title="删除对话记录"
                                 style={{fontSize: 20}}
                                 onClick={async (e) => {
@@ -1043,15 +1235,18 @@ export const AiProChat = ({
                                     setSendLoading(false)
                                 }}
                             />
-                            <info.components.SendButton
+                            <SpeechButton
+                                disabled={sendLoading || isStreaming}
+                            />
+                            <SendButton
                                 type="primary"
-                                onClick={() => handleSubmit(content)}
-                                disabled={inputDisabled}
+                                // onClick={() => handleSubmit(content)}
+                                disabled={inputDisabled || recording}
                                 icon={<OpenAIOutlined/>}
                                 loading={sendLoading || isStreaming}
                             />
                         </Space>
-                    )}
+                    }}
                 />
             </div>
         </div>

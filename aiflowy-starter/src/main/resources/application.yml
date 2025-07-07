@@ -107,6 +107,11 @@ logging:
   level:
     root: info
     tech.aiflowy.ai: debug
-
+voiceInput:
+  volcengine:
+    app:
+      appId:
+      token:
+      cluster:
 
 

@@ -154,7 +154,9 @@ export const BotModal: React.FC<BotModalProps> = (props) => {
             {...restProps}
             width={"800px"}
             afterOpenChange={(open) => {
-                if (open && !items) {
+                console.log(1,items)
+
+                if (open && !items.length) {
                     fetchData(currentPage,'')
                 }
 

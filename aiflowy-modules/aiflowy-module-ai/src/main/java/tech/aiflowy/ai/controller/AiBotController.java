@@ -14,10 +14,8 @@ import com.agentsflex.core.llm.response.AiMessageResponse;
 import com.agentsflex.core.llm.response.FunctionCaller;
 import com.agentsflex.core.message.AiMessage;
 import com.agentsflex.core.message.HumanMessage;
-import com.agentsflex.core.message.Message;
 import com.agentsflex.core.message.SystemMessage;
 import com.agentsflex.core.prompt.HistoriesPrompt;
-import com.agentsflex.core.prompt.TextPrompt;
 import com.agentsflex.core.prompt.ToolPrompt;
 import com.agentsflex.core.react.ReActAgent;
 import com.agentsflex.core.react.ReActAgentListener;
@@ -27,6 +25,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alicp.jetcache.Cache;
 import com.mybatisflex.core.query.QueryWrapper;
+import okhttp3.Headers;
+import okhttp3.Request;
+import okhttp3.WebSocketListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +35,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tech.aiflowy.ai.entity.*;
 import tech.aiflowy.ai.mapper.AiBotConversationMessageMapper;
@@ -64,6 +63,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import com.agentsflex.core.llm.client.OkHttpClientUtil;
 import okhttp3.OkHttpClient;
@@ -91,6 +91,10 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
     private AiBotConversationMessageMapper aiBotConversationMessageMapper;
     @Resource
     private AiBotService aiBotService;
+
+    @Resource
+    @Qualifier("volcAsrService")
+    private AsrService asrService;
 
     @Autowired
     @Qualifier("defaultCache") // 指定 Bean 名称
@@ -142,6 +146,27 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
         aiBot.setLlmOptions(existLlmOptions);
         service.updateById(aiBot);
         return Result.success();
+    }
+
+    @PostMapping("voiceInput")
+    @SaIgnore
+    public Result voiceInput(
+            @RequestParam("audio") MultipartFile audioFile,
+            @RequestParam("sampleRate") String sampleRate,
+            @RequestParam("channels") String channels,
+            @RequestParam("bitDepth") String bitDepth,
+            @RequestParam("duration") String duration
+    ) {
+
+        String recognize = null;
+        try {
+            recognize = asrService.recognize(audioFile.getInputStream());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
+        return Result.success(recognize);
     }
 
     /**
@@ -314,11 +339,11 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
                 String fullReasoningContent = response.getMessage().getFullReasoningContent();
                 String content = response.getMessage().getContent();
 
-                if (StringUtils.hasLength(content)) {
-                    logger.info("onChatResponseStream:" + content);
-                } else {
-                    logger.info("onChatResponseStream:" + fullReasoningContent);
-                }
+//                if (StringUtils.hasLength(content)) {
+//                    logger.info("onChatResponseStream:" + content);
+//                } else {
+//                    logger.info("onChatResponseStream:" + fullReasoningContent);
+//                }
 
                 if (StringUtils.hasLength(reasoningContent)) {
 

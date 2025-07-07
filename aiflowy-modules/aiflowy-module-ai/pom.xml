@@ -64,5 +64,11 @@
             <groupId>tech.aiflowy</groupId>
             <artifactId>aiflowy-module-system</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.java-websocket</groupId>
+            <artifactId>Java-WebSocket</artifactId>
+        </dependency>
+
     </dependencies>
 </project>
