@@ -5,7 +5,7 @@ import {UploadOutlined} from "@ant-design/icons";
 
 const baseUrl = `${import.meta.env.VITE_APP_SERVER_ENDPOINT}/`;
 const authKey = `${import.meta.env.VITE_APP_AUTH_KEY || "authKey"}`;
-
+const tokenKey = `${import.meta.env.VITE_APP_TOKEN_KEY}`;
 
 interface FileUploaderProps {
     value?: string;
@@ -19,6 +19,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({value, onChange}) => {
 
     const headers = {
         Authorization: token || "",
+        [tokenKey]: token || "",
     };
 
     const [fileList, setFileList] = useState<UploadFile[]>([]);
