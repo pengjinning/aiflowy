@@ -207,7 +207,7 @@ const CardPage: React.FC<CardPageProps> = forwardRef(({
     };
 
     return (
-        <div style={{padding: "8px"}}>
+        <div style={{padding: "24px"}}>
             <EditPage modalTitle={editModalTitle || ""}
                       tableAlias={tableAlias}
                       open={isEditOpen}

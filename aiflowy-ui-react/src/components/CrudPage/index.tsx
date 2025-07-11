@@ -23,6 +23,8 @@ interface CurdPageProps {
     editLayout?: EditLayout,
     onRefresh?: () => void;
     externalRefreshTrigger?: number; // 当这个值变化时触发刷新
+    needHideSearchForm?: boolean;
+
 }
 
 const CrudPage: React.FC<CurdPageProps> = forwardRef(({
@@ -38,7 +40,8 @@ const CrudPage: React.FC<CurdPageProps> = forwardRef(({
                                                params,
                                                paramsToUrl = false,
                                                editLayout,
-                                               externalRefreshTrigger
+                                               externalRefreshTrigger,
+                                               needHideSearchForm
                                            },ref) => {
 
     useImperativeHandle(ref, () => ({
@@ -46,6 +49,7 @@ const CrudPage: React.FC<CurdPageProps> = forwardRef(({
             actions.onFetchList?.(pageNumber, pageSize, urlParams);
         }
     }));
+
 
     const isPage = showType === "page";
     const {
@@ -149,7 +153,10 @@ const CrudPage: React.FC<CurdPageProps> = forwardRef(({
                   }}
                   pageNumber={pageNumber}
                   pageSize={pageSize}
-                  totalRow={((result?.data) as Page<any>)?.totalRow}/>
+                  totalRow={((result?.data) as Page<any>)?.totalRow}
+                  ref={ref}
+                  needHideSearchForm={needHideSearchForm}
+        />
     )
 });
 

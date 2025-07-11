@@ -386,7 +386,7 @@ const Plugin: React.FC = () => {
 		});
 	};
 	return (
-		<div style={{padding: '8px'}}>
+		<div style={{padding: '24px'}}>
 			{hasSavePermission &&
 				<KeywordSearchForm
 					setIsEditOpen={() =>{
@@ -397,7 +397,6 @@ const Plugin: React.FC = () => {
 					columns={columnsConfig}
 					tableAlias={"aiPlugin"}
 					onSearch={(values: any) =>{
-						console.log('Search:', values);
 						doSearchPlugins(values);
 					}}/>
 			}

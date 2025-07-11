@@ -28,7 +28,7 @@ const Breadcrumb: React.FC = () => {
     const lastItem = breadcrumbs[breadcrumbs.length - 1];
 
     return (
-        <Flex style={{alignItems: "center", marginTop: "10px", marginBottom: "20px"}}>
+        <Flex style={{alignItems: "center", height: "48px", backgroundColor: "white", padding: "0 24px", background: "#F2F2F2"}}>
             <h2 style={{margin: "0", padding: "0"}}>{lastItem?.title}</h2>
             <AntdBreadcrumb style={{marginLeft: '16px'}} items={breadcrumbs}/>
             <div style={{marginLeft: "auto", marginRight: "20px"}}>{options?.breadcrumbRightEl}</div>

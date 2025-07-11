@@ -228,7 +228,6 @@ const TreePage: React.FC<TreePageProps> = ({
                     background: "#fff",
                     borderTopLeftRadius: "3px",
                     borderTopRightRadius: "3px",
-                    paddingLeft: "40px",
                 }}>
                     {children}
                 </Content>

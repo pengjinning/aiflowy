@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import TreeClassifiedPage from "../../components/TreeClassifiedPage";
 import CrudPage from "../../components/CrudPage";
 import {ColumnsConfig} from "../../components/AntdCrud";
-import { Tag} from "antd";
+import {Tag} from "antd";
 import CustomLeftArrowIcon from "../../components/CustomIcon/CustomLeftArrowIcon.tsx";
-
+import KeywordSearchForm from "../../components/AntdCrud/KeywordSearchForm.tsx";
 
 const columns: ColumnsConfig<any> = [
     {
@@ -40,7 +40,6 @@ const columns: ColumnsConfig<any> = [
         title: '品牌',
         dataIndex: 'brand',
         key: 'brand',
-        supportSearch: true,
         hidden: true,
         dict: '/api/v1/aiLlmBrand/list?asTree=true',
         form: {
@@ -194,29 +193,45 @@ const columns: ColumnsConfig<any> = [
 ];
 
 
+
 const Llms: React.FC<{ paramsToUrl: boolean }> = () => {
+
+    const crudRef = useRef<{ openAddModal: () => void , onSearch: (values: any) => void, formReset: () => void}>(null);
 
     const [groupId, setGroupId] = useState('')
 
     return (
-        <TreeClassifiedPage treeTableAlias="aiLlmBrand"
-                  treeCardTitle={"接入平台"}
-                  treeEditable={false}
-                  treeTitleIconRender={(item) => {
-                      if (typeof item.icon === "string" && (item.icon.startsWith("http") || item.icon.startsWith("/"))) {
-                          return <img src={item.icon} alt={item.title} style={{width: 14, height: 14}}/>
-                      }
-                      return React.isValidElement(item.icon)
-                          ? item.icon
-                          : <div dangerouslySetInnerHTML={{__html: item.icon || ""}} style={{padding: "3px"}}/>
-                  }}
-                  treeCardExtra={
-                    <CustomLeftArrowIcon/>
-                  }
-                  onTreeSelect={setGroupId}>
-            <CrudPage columnsConfig={columns} tableAlias="aiLlm" params={{brand: groupId}} key={groupId}
-                      editLayout={{openType: "modal"}}/>
-        </TreeClassifiedPage>
+        <div style={{margin: "24px"}}>
+                <KeywordSearchForm
+                    setIsEditOpen={() =>{
+                        crudRef.current?.openAddModal()
+                    }}
+                    addButtonText="新增大模型"
+                    columns={columns}
+                    tableAlias={"aiLlm"}
+                    onSearch={(values: any) =>{
+                        crudRef.current?.onSearch(values)
+                    }}/>
+
+            <TreeClassifiedPage treeTableAlias="aiLlmBrand"
+                                treeCardTitle={"接入平台"}
+                                treeEditable={false}
+                                treeTitleIconRender={(item) => {
+                                    if (typeof item.icon === "string" && (item.icon.startsWith("http") || item.icon.startsWith("/"))) {
+                                        return <img src={item.icon} alt={item.title} style={{width: 14, height: 14}}/>
+                                    }
+                                    return React.isValidElement(item.icon)
+                                        ? item.icon
+                                        : <div dangerouslySetInnerHTML={{__html: item.icon || ""}} style={{padding: "3px"}}/>
+                                }}
+                                treeCardExtra={
+                                    <CustomLeftArrowIcon/>
+                                }
+                                onTreeSelect={setGroupId}>
+                <CrudPage columnsConfig={columns} tableAlias="aiLlm" params={{brand: groupId}} key={groupId} needHideSearchForm={true}
+                          editLayout={{openType: "modal"}} ref={crudRef}/>
+            </TreeClassifiedPage>
+        </div>
     )
 };
 

@@ -34,7 +34,7 @@ const Layout: React.FC = () => {
                             <div style={{position: 'sticky', top: 0, zIndex: 1}}>
                                 <Header collapsed={options.leftMenuCollapsed ?? false}/>
                             </div>
-                            <AntdLayout style={{padding: '10px'}}>
+                            <AntdLayout>
                                 {options.showBreadcrumb && <Breadcrumb/>}
                                 <div style={{height: '100%',  overflow: 'auto'}}>
                                     <Content style={{ borderRadius: '3px'}}>

@@ -37,9 +37,8 @@ const SearchForm: React.FC<{
 
     const formStyle = {
         maxWidth: 'none',
-        paddingLeft: 8,
-        paddingTop: 8,
-        paddingRight: 8
+        paddingTop: 24,
+        paddingRight: 8,
     };
 
     const onFinish = (values: any) => {

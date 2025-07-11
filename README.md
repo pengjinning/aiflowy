@@ -11,20 +11,23 @@ AIFlowy 是一个基于 Java 开发的企业级的开源 AI 应用开发平台 �
 ## 功能列表
 
 **AI 功能**
-- [x] Bot 应用（已完成）
-- [x] Bot 插件（已完成）
-- [x] Rag 知识库（已完成）
-- [x] AI 工作流编排（已完成）
-- [x] 大模型配置（已完成）
-- [x] 大模型市场（已完成）
+- [x] Bots 应用
+- [x] 插件
+- [x] RAG 知识库
+- [x] AI 工作流编排
+- [x] 素材中心（AI 自动生成图片、音频、视频等素材内容）
+- [x] 大模型配置
+- [x] 大模型市场
 
 **系统管理**
-- [x] 用户管理（已完成）
-- [x] 角色管理（已完成）
-- [x] 菜单管理（已完成）
-- [x] 部门管理（已完成）
-- [x] 岗位管理（已完成）
-- [x] 日志管理（已完成）
+- [x] 用户管理
+- [x] 角色管理
+- [x] 菜单管理
+- [x] 部门管理
+- [x] 岗位管理
+- [x] 日志管理
+- [x] 数据字典
+- [x] 定时任务
 
 **近期计划**
 - [ ] 完善文档（进行中...）
@@ -34,10 +37,31 @@ AIFlowy 是一个基于 Java 开发的企业级的开源 AI 应用开发平台 �
 ## 产品截图
 
 ![login.png](docs/assets/images/login.png)
-<span style="display:block;text-align:center;">登录</span>
+登录
 
-![bots.png](docs/assets/images/bots.png)
-<span style="display:block;text-align:center;">Bots</span>
+![bot1.png](docs/assets/images/bot1.png)
+Bots
+
+![bot2.png](docs/assets/images/bot2.png)
+Bots
+
+![cj.png](docs/assets/images/cj.png)
+插件
+
+![gzl1.png](docs/assets/images/gzl1.png)
+工作流
+
+![rag.png](docs/assets/images/rag.png)
+知识库
+
+![sck.png](docs/assets/images/sck.png)
+素材库
+
+![llm.png](docs/assets/images/llm.png)
+大模型
+
+
+
 ## 快速开始
 
 ```shell

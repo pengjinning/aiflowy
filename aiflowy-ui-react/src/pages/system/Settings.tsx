@@ -24,8 +24,6 @@ const Settings: React.FC = () => {
     }, [])
     return (
         <OptionsPage style={{
-            border: "1px solid #eee",
-            height: 'calc(100vh - 68px)',
             overflowY: 'auto'}}>
 
             <div className="settings-model-container">
