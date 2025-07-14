@@ -12,11 +12,14 @@ import {
 import {Badge, Button, GetProp, GetRef, Image, message, Space, Spin, Typography, UploadFile} from 'antd';
 import {
     CopyOutlined,
-    FolderAddOutlined, LinkOutlined,
+    FolderAddOutlined,
+    LinkOutlined,
     OpenAIOutlined,
+    PauseCircleOutlined,
+    PictureOutlined,
+    PlayCircleOutlined,
     SyncOutlined,
-    UserOutlined,
-    PictureOutlined
+    UserOutlined
 } from '@ant-design/icons';
 // import ReactMarkdown from 'react-markdown';
 // import remarkGfm from 'remark-gfm';
@@ -43,8 +46,10 @@ export type ChatMessage = {
     options?: object;
 };
 
+
+
 // 事件类型
-export type EventType = 'thinking' | 'thought' | 'toolCalling' | 'callResult' | string;
+export type EventType = 'thinking' | 'thought' | 'toolCalling' | 'callResult' | 'messageSessionId' | string;
 
 export type EventHandlerResult = {
     handled: boolean; // 是否已处理该事件
@@ -144,12 +149,14 @@ export const AiProChat = ({
     const voiceMapRef = useRef<Map<string, string[]>>(new Map());
     // 当前正在播放的 sessionId，用于多会话控制
     const currentSessionIdRef = useRef<string | null>(null);
+    const [playingSessionId,setPlayingSessionId] = useState<string | null>()
     // 当前是否处于播放状态
     const isPlayingRef = useRef<boolean>(false);
     // 音频上下文 AudioContext 实例
     const audioPlayContextRef = useRef<AudioContext | null>(null);
     // 当前正在播放的音频源（用于手动停止）
     const currentAudioSourceRef = useRef<AudioBufferSourceNode | null>(null);
+
 
     // 播放指定 sessionId 的音频片段队列
     const playAudioQueue = async (sessionId: string) => {
@@ -163,13 +170,14 @@ export const AiProChat = ({
         audioPlayContextRef.current = audioContext;
 
         currentSessionIdRef.current = sessionId;
+        setPlayingSessionId(sessionId)
         isPlayingRef.current = true;
 
         let playIndex = 0; // 当前播放起始片段索引
 
         while (playIndex < queue.length) {
             // 如果 sessionId 被切换，终止当前播放
-            if (currentSessionIdRef.current !== sessionId) return;
+            if (currentSessionIdRef.current !== sessionId ) return;
 
             let chunkCount = CHUNK_SIZE;
             let audioBuffer: AudioBuffer | null = null;
@@ -251,12 +259,17 @@ export const AiProChat = ({
             } catch (e) {
                 console.warn("停止播放出错", e);
             }
+            currentAudioSourceRef.current = null;
         }
+
+        currentSessionIdRef.current = null;
+        setPlayingSessionId(null)
+
         isPlayingRef.current = false;
     };
 
     useEffect(() => {
-        const webSocket = new WebSocket(`ws://localhost:8080/api/v1/aiBot/ws/chat?sessionId=${sessionId}`);
+        const webSocket = new WebSocket(`${import.meta.env.VITE_APP_WS_SERVER_ENDPOINT}/api/v1/aiBot/ws/chat?sessionId=${sessionId}`);
 
         webSocket.onopen = () => {
             console.log("WebSocket 连接建立");
@@ -283,6 +296,7 @@ export const AiProChat = ({
 
             if (shouldStart) {
                 stopCurrentPlayback();
+
                 playAudioQueue(voiceData.messageSessionId);
             }
         };
@@ -407,25 +421,7 @@ export const AiProChat = ({
         }
 
         // 🧠 处理 ThoughtChain 相关事件
-        if (['thinking', 'thought', 'toolCalling', 'callResult'].includes(eventType)) {
-
-            setChats((prevChats: ChatMessage[]) => {
-                const newChats = [...prevChats];
-
-                const lastAiIndex = (() => {
-                    for (let i = newChats.length - 1; i >= 0; i--) {
-                        if (newChats[i].role === 'assistant') {
-                            return i;
-                        }
-                    }
-                    return -1;
-                })();
-
-                const aiMessage = newChats[lastAiIndex];
-                aiMessage.loading = false;
-
-                return newChats;
-            });
+        if (['thinking', 'thought', 'toolCalling', 'callResult',].includes(eventType)) {
 
             setChats((prevChats: ChatMessage[]) => {
                 const newChats = [...prevChats];
@@ -480,12 +476,52 @@ export const AiProChat = ({
 
                             aiMessage.thoughtChains.push(newItem);
                         }
+
+
+
                     } else {
                         console.warn(`Event ${eventType} has no id, skipping ThoughtChain processing`);
                     }
 
                     // 更新消息的更新时间
                     aiMessage.updateAt = Date.now();
+                }
+
+
+
+
+
+                return newChats;
+            });
+
+            return true;
+        }
+
+        if (['messageSessionId'].includes(eventType)) {
+            setChats((prevChats: ChatMessage[]) => {
+                const newChats = [...prevChats];
+
+                // 找到最后一条 assistant 消息
+                const lastAiIndex = (() => {
+                    for (let i = newChats.length - 1; i >= 0; i--) {
+                        if (newChats[i].role === 'assistant') {
+                            return i;
+                        }
+                    }
+                    return -1;
+                })();
+
+                if (lastAiIndex !== -1) {
+                    const aiMessage = newChats[lastAiIndex];
+                    if (!aiMessage.options){
+                        aiMessage.options = {
+                            messageSessionId: eventData.metadataMap.messageSessionId,
+                        } ;
+                    }else{
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        aiMessage.options.messageSessionId = eventData.metadataMap.messageSessionId;
+                    }
                 }
 
                 return newChats;
@@ -974,6 +1010,31 @@ export const AiProChat = ({
                                     handleQaClick(chat, index)
                                 }}
                             ></Button>}
+                            {(
+                                chat.role === "assistant" &&
+                                !isStreaming &&
+                                <Button
+                                    color="default"
+                                    variant="text"
+                                    size="small"
+                                    icon={playingSessionId === chat.options.messageSessionId ? <PauseCircleOutlined /> :<PlayCircleOutlined />}
+                                    onClick={async () => {
+                                        if (currentSessionIdRef.current === chat.options?.messageSessionId ) {
+                                            // 如果正在播放，则停止
+                                            stopCurrentPlayback();
+                                        } else {
+                                            // 如果没有播放，则开始播放（如果需要的话）
+                                            const messageSessionId = chat?.options?.messageSessionId;
+                                            if (messageSessionId) {
+                                                stopCurrentPlayback(); // 先停止其他播放
+                                                playAudioQueue(messageSessionId); // 播放当前消息的音频
+                                            }
+                                        }
+                                    }}
+                                >
+
+                                </Button>
+                            )}
                         </Space>
                     ),
                     role: chat.role === 'user' ? 'local' : 'ai',
@@ -1265,7 +1326,6 @@ export const AiProChat = ({
             return null;
         }
 
-        try {
             const formData = new FormData();
             const blob = new Blob([pcmData.buffer], {type: 'audio/pcm'});
 
@@ -1281,9 +1341,6 @@ export const AiProChat = ({
 
             return response;
 
-        } catch (error) {
-            throw error;
-        }
     };
 
 
@@ -1392,7 +1449,7 @@ export const AiProChat = ({
                                         if (result) {
                                             message.success({content: '语音发送成功', key: 'processing'});
 
-                                            // 如果后端返回了转换的文本，可以填充到输入框
+                                            // 如果后端返回了转换的文本
                                             if (result.data.data) {
                                                 setContent(result.data.data);
                                                 handleSubmit(result.data.data)
