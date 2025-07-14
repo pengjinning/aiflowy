@@ -319,6 +319,7 @@ export const AiProChat = ({
                 stopCurrentPlayback();
 
                 playAudioQueue(voiceData.messageSessionId);
+
             }
         };
 
@@ -441,7 +442,25 @@ export const AiProChat = ({
         }
 
         // 🧠 处理 ThoughtChain 相关事件
-        if (['thinking', 'thought', 'toolCalling', 'callResult',].includes(eventType)) {
+        if (['thinking', 'thought', 'toolCalling', 'callResult'].includes(eventType)) {
+
+            setChats((prevChats: ChatMessage[]) => {
+                const newChats = [...prevChats];
+
+                const lastAiIndex = (() => {
+                    for (let i = newChats.length - 1; i >= 0; i--) {
+                        if (newChats[i].role === 'assistant') {
+                            return i;
+                        }
+                    }
+                    return -1;
+                })();
+
+                const aiMessage = newChats[lastAiIndex];
+                aiMessage.loading = false;
+
+                return newChats;
+            });
 
             setChats((prevChats: ChatMessage[]) => {
                 const newChats = [...prevChats];
@@ -512,41 +531,38 @@ export const AiProChat = ({
             });
 
             return true;
-        }else if(['messageSessionId'].includes(eventType)) {
-            setChats((prevChats: ChatMessage[]) => {
-                const newChats = [...prevChats];
-
-                // 找到最后一条 assistant 消息
-                const lastAiIndex = (() => {
-                    for (let i = newChats.length - 1; i >= 0; i--) {
-                        if (newChats[i].role === 'assistant') {
-                            return i;
-                        }
-                    }
-                    return -1;
-                })();
-
-                if (lastAiIndex !== -1) {
-                    const aiMessage = newChats[lastAiIndex];
-                    if (!aiMessage.options){
-                        aiMessage.options = {
-                            messageSessionId: eventData.metadataMap.messageSessionId,
-                        } ;
-                    }else{
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        aiMessage.options.messageSessionId = eventData.metadataMap.messageSessionId;
-                    }
-                }
-
-                return newChats;
-            });
-
-            return true;
         }
+
+        // if (['messageSessionId'].includes(eventType)) {
+        //     setChats((prevChats: ChatMessage[]) => {
+        //         const newChats = [...prevChats];
+        //
+        //         // 找到最后一条 assistant 消息
+        //         const lastAiIndex = (() => {
+        //             for (let i = newChats.length - 1; i >= 0; i--) {
+        //                 if (newChats[i].role === 'assistant') {
+        //                     return i;
+        //                 }
+        //             }
+        //             return -1;
+        //         })();
+        //
+        //         if (lastAiIndex !== -1) {
+        //             const aiMessage = newChats[lastAiIndex];
+        //             if (!aiMessage.options){
+        //                 aiMessage.options = {};
+        //             }
+        //             aiMessage.options['messageSessionId'] = eventData;
+        //         }
+        //
+        //         return newChats;
+        //     });
+        // }
 
         return true;
     };
+
+    // 提交流程优化
 
     // 提交流程优化
     const handleSubmit = async (newMessage: string) => {
@@ -700,6 +716,7 @@ export const AiProChat = ({
                 if (typingIntervalId) {
                     clearInterval(typingIntervalId);
                 }
+
 
                 // 开始新的打字效果
                 typingIntervalId = setInterval(() => {
