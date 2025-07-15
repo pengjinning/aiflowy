@@ -93,7 +93,12 @@ const DynamicFormItem: React.FC<{
         const key = (columnConfig.dict as DictConfig)?.disabledItemAndChildrenKey;
         disabledDictItemAndChildren(dictData.data, data[key!])
     }
-
+    if (queryDict && !loading && dictData?.data) {
+        dictData.data = dictData.data.map((item: { [x: string]: any; options: any; }) => {
+            const { options, ...rest } = item; // 移除options属性
+            return rest;
+        });
+    }
     function renderInput(column: ColumnConfig) {
 
         if (queryDict && loading) {
