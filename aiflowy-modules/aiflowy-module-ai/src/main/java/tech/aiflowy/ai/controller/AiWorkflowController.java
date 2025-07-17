@@ -14,6 +14,7 @@ import com.agentsflex.core.chain.event.ChainStatusChangeEvent;
 import com.agentsflex.core.chain.event.NodeEndEvent;
 import com.agentsflex.core.chain.event.NodeStartEvent;
 import com.agentsflex.core.chain.listener.ChainEventListener;
+import com.agentsflex.core.chain.listener.ChainSuspendListener;
 import com.agentsflex.core.chain.listener.NodeErrorListener;
 import com.agentsflex.core.chain.node.ConfirmNode;
 import com.alibaba.fastjson.JSONObject;
@@ -160,7 +161,7 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
 
         JSONObject json = new JSONObject();
 
-        addChainEvent(chain, json, emitter, false);
+        addChainEvent(chain, json, emitter);
 
         ThreadUtil.execAsync(() -> {
             try {
@@ -170,7 +171,7 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
                 json.put("content", content);
                 emitter.sendAndComplete(json.toJSONString());
             } catch (ChainSuspendException e) {
-                handleChainSuspendException(chain, json, emitter);
+                //handleChainSuspendException(chain, json, emitter);
             }
         });
 
@@ -197,7 +198,7 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
         defaultCache.remove(RedisKey.CHAIN_SUSPEND_KEY + chainId);
         Chain chain = Chain.fromJSON(chainJson);
 
-        addChainEvent(chain, json, emitter, true);
+        addChainEvent(chain, json, emitter);
 
         ThreadUtil.execAsync(() -> {
             try {
@@ -208,14 +209,14 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
                 json.put("content", content);
                 emitter.sendAndComplete(json.toJSONString());
             } catch (ChainSuspendException e) {
-                handleChainSuspendException(chain, json, emitter);
+                //handleChainSuspendException(chain, json, emitter);
             }
         });
 
         return emitter;
     }
 
-    private void addChainEvent(Chain chain, JSONObject json, MySseEmitter emitter, boolean isResume) {
+    private void addChainEvent(Chain chain, JSONObject json, MySseEmitter emitter) {
         chain.addEventListener(new ChainEventListener() {
             @Override
             public void onEvent(ChainEvent event, Chain chain) {
@@ -224,10 +225,7 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
                     ChainNode node = ((NodeStartEvent) event).getNode();
                     if ((node instanceof ConfirmNode)) {
                         chain.getMemory().put("confirmNodeId", node.getId());
-                        //System.out.println("确认节点开始 ---> " + node.getId());
-                        if (isResume) {
-                            return;
-                        }
+                        System.out.println("确认节点开始 ---> " + node.getId());
                     }
                     content.put("nodeId", node.getId());
                     content.put("status", "start");
@@ -238,10 +236,7 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
                     ChainNode node = ((NodeEndEvent) event).getNode();
                     if ((node instanceof ConfirmNode)) {
                         chain.getMemory().put("confirmNodeId", node.getId());
-                        //System.out.println("确认节点结束 ---> " + node.getId());
-                        if (isResume) {
-                            return;
-                        }
+                        System.out.println("确认节点结束 ---> " + node.getId());
                     }
                     Map<String, Object> result = ((NodeEndEvent) event).getResult();
                     JSONObject content = new JSONObject();
@@ -277,6 +272,27 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
                     json.put("content", content);
                     emitter.sendAndComplete(json.toJSONString());
                 }
+            }
+        });
+
+        chain.addSuspendListener(new ChainSuspendListener() {
+            @Override
+            public void onSuspend(Chain chain) {
+                Object confirmNodeId = chain.getMemory().get("confirmNodeId");
+                System.out.println("流程挂起 ---> " + confirmNodeId);
+                String message = chain.getMessage();
+                List<Parameter> suspendForParameters = chain.getSuspendForParameters();
+                JSONObject content = new JSONObject();
+                content.put("chainMessage", message);
+                content.put("nodeId", confirmNodeId);
+                content.put("status", "confirm");
+                content.put("suspendForParameters", suspendForParameters);
+                String chainId = IdUtil.fastSimpleUUID();
+                String chainJson = chain.toJSON();
+                content.put("chainId", chainId);
+                defaultCache.put(RedisKey.CHAIN_SUSPEND_KEY + chainId, chainJson, 1, TimeUnit.HOURS);
+                json.put("content", content);
+                emitter.sendAndComplete(json.toJSONString());
             }
         });
     }

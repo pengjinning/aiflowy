@@ -52,7 +52,9 @@ export const WorkflowDesign = () => {
         }).then(res => {
             setRunLoading(false)
             const nodeJson = JSON.parse(res.data?.data.content);
-            setCollapseItems(sortNodes(nodeJson))
+            const nodes = sortNodes(nodeJson)
+            //console.log("nodes: ", nodes)
+            setCollapseItems(nodes)
         })
     }
 
@@ -225,12 +227,20 @@ export const WorkflowDesign = () => {
         }
         if (msg.nodeId && msg.status) {
             collapseItems.map((item: any) => {
+                const nodeType =  item.original.type
                 if (item.key == msg.nodeId) {
                     if (msg.status === 'start') {
-                        item.extra = <Spin indicator={<LoadingOutlined/>}/>
-                        item.children = ""
+                        // 非确认节点不设置起始状态，因为恢复执行后会再次执行此节点
+                        if ("confirmNode" !== nodeType) {
+                            item.extra = <Spin indicator={<LoadingOutlined/>}/>
+                            item.children = ""
+                        }
                     }
                     if (msg.status === 'end') {
+                        // 确认节点如果子项不为空就不再重新渲染，因为恢复执行后会再次执行此节点，重新渲染的话就是JSON字符串了。
+                        if ("confirmNode" === nodeType && item.children) {
+                            return
+                        }
                         item.extra = <Spin indicator={<CheckCircleOutlined style={{color: 'green'}}/>}/>
                         item.children = msg.res ?
                             <div style={{wordWrap: "break-word",}}>
