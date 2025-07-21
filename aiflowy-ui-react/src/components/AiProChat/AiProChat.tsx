@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
+import React, {forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {
     Attachments,
     AttachmentsProps,
@@ -26,6 +26,7 @@ import CustomPlayIcon from "../CustomIcon/CustomPlayIcon.tsx";
 import CustomSpeakerIcon from "../CustomIcon/CustomSpeakerIcon.tsx";
 import CustomRefreshIcon from "../CustomIcon/CustomRefreshIcon.tsx";
 import CustomCopyIcon from "../CustomIcon/CustomCopyIcon.tsx";
+import botIcon from "../../assets/botDesignAvatar.png"
 // const fooAvatar: React.CSSProperties = {
 //     color: '#fff',
 //     backgroundColor: '#87d068',
@@ -86,6 +87,8 @@ export type AiProChatProps = {
     llmDetail?: any;
     sessionId?: string;
     options?: any;
+    autoSize?: { minRows: number, maxRows: number};
+    isBotDesign?: boolean;
 };
 
 export const RenderMarkdown: React.FC<{ content: string, fileList?: Array<string> }> = ({content, fileList}) => {
@@ -107,31 +110,38 @@ export const RenderMarkdown: React.FC<{ content: string, fileList?: Array<string
     );
 };
 
+// 首先定义 ref 的类型
+export interface AiProChatHandle {
+    clearChatMessage: () => Promise<void>;
+}
 
-export const AiProChat = ({
-                              loading,
-                              chats: parentChats,
-                              onChatsChange: parentOnChatsChange,
-                              style = {},
-                              appStyle = {},
-                              // @ts-ignore
-                              helloMessage = '欢迎使用 AIFlowy',
-                              // @ts-ignore
-                              botAvatar = `${logo}`,
-                              request,
-                              showQaButton = false,
-                              onQaButtonClick = (): void => {
-                              },
-                              clearMessage,
-                              inputDisabled = false,
-                              prompts,
-                              customToolBarr,
-                              onCustomEvent,
-                              onCustomEventComplete,
-                              llmDetail = {},
-                              sessionId,
-                              options
-                          }: AiProChatProps) => {
+export const AiProChat = forwardRef<AiProChatHandle, AiProChatProps>(
+    (
+        {
+            loading,
+            chats: parentChats,
+            onChatsChange: parentOnChatsChange,
+            style = {},
+            appStyle = {},
+            helloMessage = '',
+            botAvatar = `${logo}`,
+            request,
+            showQaButton = false,
+            onQaButtonClick = (): void => {},
+            clearMessage,
+            inputDisabled = false,
+            prompts,
+            customToolBarr,
+            onCustomEvent,
+            onCustomEventComplete,
+            llmDetail = {},
+            sessionId,
+            options,
+            autoSize = { minRows: 4, maxRows: 4 },
+            isBotDesign = false
+        }: AiProChatProps,
+        ref
+    ) => {
     const isControlled = parentChats !== undefined && parentOnChatsChange !== undefined;
     const [internalChats, setInternalChats] = useState<ChatMessage[]>([]);
     const chats = useMemo(() => {
@@ -760,6 +770,20 @@ export const AiProChat = ({
         }
     };
 
+        // 暴露方法给父组件
+        useImperativeHandle(ref, () => ({
+            clearChatMessage,
+        }));
+
+
+    const clearChatMessage = async () => {
+        setSendLoading(true)
+        await clearMessage?.();
+        setSendLoading(false)
+        setFileItems([])
+        setFileUrlList([])
+        setHeaderOpen(false)
+    };
     // 重新生成消息
     const handleRegenerate = async (index: number) => {
         // 找到当前 assistant 消息对应的上一条用户消息
@@ -1111,13 +1135,14 @@ export const AiProChat = ({
                             <RenderMarkdown content={chat.content} fileList={chat.files || chat?.options?.fileList}/>
                         </div>
                     ) : <RenderMarkdown content={chat.content} fileList={chat.files || chat?.options?.fileList}/>,
-                    // avatar: chat.role === 'assistant' ? (
-                    //     <img
-                    //         src={botAvatar}
-                    //         style={{width: 32, height: 32, borderRadius: '50%'}}
-                    //         alt="AI Avatar"
-                    //     />
-                    // ) : {icon: <UserOutlined/>, style: fooAvatar},
+
+                    avatar: (isBotDesign && chat.role) === 'assistant' ? (
+                        <img
+                            src={botIcon}
+                            style={{width: 40, height: 40, borderRadius: '50%'}}
+                            alt="AI Avatar"
+                        />
+                    ) : undefined,
                 }))}
                 roles={{ai: {placement: 'start'}, local: {placement: 'end'}}}
             />
@@ -1418,6 +1443,7 @@ export const AiProChat = ({
             {/* 消息容器 */}
             <div
                 ref={messagesContainerRef}
+                className={isBotDesign ? 'is-bot-design-container-style' : ''}
                 style={{
                     flex: 1,
                     overflowY: 'auto',
@@ -1439,11 +1465,12 @@ export const AiProChat = ({
 
             <div
                 style={{
-                    padding: '12px',
                     display: 'flex',
                     flexDirection: "column",
                     gap: '8px',
                 }}
+                className={isBotDesign ? 'is-bot-design-input-area-style' : 'chat-input-area-default'}
+
             >
 
                 {/* 🌟 提示词 */}
@@ -1457,28 +1484,31 @@ export const AiProChat = ({
                             item: {padding: '6px 12px', borderRadius: '8px', height: 36, border: '1px solid #C7C7C7'},
                         }}
                     />
-                    <div className={"chat-clear-text"}>
-                        { chats?.length > 0 &&
-                            <Button
-                                // disabled={(sendLoading || isStreaming || recording || fileUploading) ? true : !fileItems.length && !chats?.length}  // 强制不禁用
-                                onClick={async (e: any) => {
-                                    e.preventDefault();  // 阻止默认行为（如果有）
-                                    setSendLoading(true)
-                                    await clearMessage?.();
-                                    setSendLoading(false)
-                                    setFileItems([])
-                                    setFileUrlList([])
-                                    setHeaderOpen(false)
-                                }}
-                            >
-                                <img src={clearButtonIcon} style={{width: 24, height: 24}} alt="delete"/>
-                                <span className={"chat-clear-button-text"}>
+                    {!isBotDesign &&
+                        <div className={"chat-clear-text"}>
+                            { chats?.length > 0 &&
+                                <Button
+                                    // disabled={(sendLoading || isStreaming || recording || fileUploading) ? true : !fileItems.length && !chats?.length}  // 强制不禁用
+                                    onClick={async (e: any) => {
+                                        e.preventDefault();  // 阻止默认行为（如果有）
+                                        setSendLoading(true)
+                                        await clearMessage?.();
+                                        setSendLoading(false)
+                                        setFileItems([])
+                                        setFileUrlList([])
+                                        setHeaderOpen(false)
+                                    }}
+                                >
+                                    <img src={clearButtonIcon} style={{width: 24, height: 24}} alt="delete"/>
+                                    <span className={"chat-clear-button-text"}>
                                     清除上下文
                                 </span>
-                            </Button>
-                        }
+                                </Button>
+                            }
 
-                    </div>
+                        </div>
+                    }
+
 
                 </div>
 
@@ -1564,7 +1594,7 @@ export const AiProChat = ({
 
                         header={senderHeader}
                         actions={false}
-                        autoSize={{ minRows: 4, maxRows: 4}}
+                        autoSize={autoSize}
                         footer={({ components }) => {
                             const {SendButton, SpeechButton} = components ;
                             return (
@@ -1610,4 +1640,4 @@ export const AiProChat = ({
             </div>
         </div>
     );
-};
+});

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 import {useLayout} from '../../../hooks/useLayout.tsx';
 import {Row} from 'antd/lib/index';
@@ -20,13 +20,14 @@ import {LlmSlider} from "./LlmSlider.tsx";
 import {KnowledgeModal} from "./Knowledge.tsx";
 import TextArea from "antd/es/input/TextArea";
 import {getSessionId} from "../../../libs/getSessionId.ts";
-import {AiProChat, ChatMessage} from "../../../components/AiProChat/AiProChat";
+import {AiProChat, AiProChatHandle, ChatMessage} from "../../../components/AiProChat/AiProChat";
 import {PluginTools} from "./PluginTools.tsx";
 import {processArray} from "../../../libs/parseAnswerUtil.tsx";
 import {useSseWithEvent} from "../../../hooks/useSseWithEvent.ts";
 import {useCheckPermission} from "../../../hooks/usePermissions.tsx";
 import "./botDesign.less"
 import CustomDeleteIcon from "../../../components/CustomIcon/CustomDeleteIcon.tsx";
+import clearButtonIcon from "../../../assets/clearButton.png";
 
 const colStyle: React.CSSProperties = {
     background: '#FFFFFF',
@@ -309,7 +310,11 @@ const BotDesign: React.FC = () => {
 
     const [voicePlayEnabled, setVoicePlayEnabled] = useState<boolean>(false)
     const [voicePlaySwitchLoading, setVoicePlaySwitchLoading] = useState<boolean>(false)
+    const aiProChatRef = useRef<AiProChatHandle>(null);
 
+    const handleClearChat = async () => {
+        await aiProChatRef.current?.clearChatMessage();
+    };
     return (
         <>
             <WorkflowsModal open={workflowOpen} onClose={() => setWorkflowOpen(false)}
@@ -957,9 +962,15 @@ const BotDesign: React.FC = () => {
                             <span className={"bot-design-text-title"}>
                                     预览
                             </span>
+                            <div style={{cursor: "pointer"}} onClick={() => handleClearChat()}>
+                                <img src={clearButtonIcon} style={{width: 24, height: 24}} alt=""/>
+                            </div>
+
                         </div>
                         <div style={{height: "calc(100vh - 122px)", width: "100%"}} className={"bot-chat"}>
                             <AiProChat
+                                ref={aiProChatRef}
+                                isBotDesign={true}
                                 sessionId={getSessionId()}
                                 chats={chats}
                                 prompts={presetQuestions}
@@ -968,6 +979,7 @@ const BotDesign: React.FC = () => {
                                 llmDetail={detail?.data}
                                 helloMessage={detail?.data?.options?.welcomeMessage}
                                 clearMessage={clearMessage}
+                                autoSize={{minRows: 2, maxRows: 2}}
                                 request={async (messages) => {
                                     const readableStream = new ReadableStream({
                                         async start(controller) {
