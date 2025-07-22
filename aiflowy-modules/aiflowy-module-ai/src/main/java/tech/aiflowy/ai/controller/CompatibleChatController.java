@@ -272,9 +272,12 @@ public class CompatibleChatController {
      */
     private void startFunctionCallChatStream(Llm llm, MySseEmitter mySseEmitter,
         ChatOptions chatOptions) {
+
         llm.chatStream("", new StreamResponseListener() {
             @Override
             public void onMessage(ChatContext context, AiMessageResponse response) {
+                ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+                RequestContextHolder.setRequestAttributes(sra, true);
                 logger.info("大模型 function calling 回复：{}", response.getResponse());
                 mySseEmitter.send(response.getResponse());
             }
