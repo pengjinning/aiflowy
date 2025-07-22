@@ -90,7 +90,7 @@ const columns: ColumnsConfig<any> = [
         key: 'llmEndpoint',
         hidden: true,
         editCondition: (data) => {
-            return data?.isCustomInput || data?.brand === "ollama" && data?.brand !== "spark"
+            return data?.isCustomInput || data?.brand === "ollama"
         }
 
     },
@@ -109,33 +109,33 @@ const columns: ColumnsConfig<any> = [
             type: "input",
         },
         editCondition: (data: any) => {
-            return data?.brand === "spark" || data?.brand === "ollama"
+            return  data?.brand === "ollama"
         }
     },
-    {
-        title: 'App Id',
-        dataIndex: 'options.appId',
-        key: 'options.appId',
-        hidden: true,
-        form: {
-            type: "input",
-        },
-        editCondition: (data: any) => {
-            return data?.brand === "spark" || data?.brand === "ollama"
-        }
-    },
-    {
-        title: 'Version',
-        dataIndex: 'options.version',
-        key: 'options.version',
-        hidden: true,
-        form: {
-            type: "input",
-        },
-        editCondition: (data) => {
-            return data?.brand === "spark";
-        }
-    },
+    // {
+    //     title: 'App Id',
+    //     dataIndex: 'options.appId',
+    //     key: 'options.appId',
+    //     hidden: true,
+    //     form: {
+    //         type: "input",
+    //     },
+    //     editCondition: (data: any) => {f
+    //         return data?.brand === "spark" || data?.brand === "ollama"
+    //     }
+    // },
+    // {
+    //     title: 'Version',
+    //     dataIndex: 'options.version',
+    //     key: 'options.version',
+    //     hidden: true,
+    //     form: {
+    //         type: "input",
+    //     },
+    //     editCondition: (data) => {
+    //         return data?.brand === "spark";
+    //     }
+    // },
     {
         title: '对话路径',
         dataIndex: 'options.chatPath',
@@ -143,7 +143,7 @@ const columns: ColumnsConfig<any> = [
         hidden: true,
         form: {type: 'input'},
         editCondition: (data) => {
-            return data?.brand && data?.isCustomInput && data?.brand !== "ollama" && data?.brand !== "spark";
+            return data?.brand && data?.isCustomInput && data?.brand !== "ollama";
         },
     },
     {
@@ -220,7 +220,7 @@ const columns: ColumnsConfig<any> = [
             type: 'switch',
         },
         editCondition: (data) => {
-            return data?.brand === "ollama" || (data?.brand && data?.isCustomInput);
+            return (data?.brand === "ollama" || (data?.brand && data?.isCustomInput)) && data?.brand !== "spark";
         },
     },
     {
@@ -230,7 +230,7 @@ const columns: ColumnsConfig<any> = [
         hidden: true,
         form: {type: 'switch'},
         editCondition: (data) => {
-            return data?.brand === "ollama" || (data?.brand && data?.isCustomInput);
+            return (data?.brand === "ollama" || (data?.brand && data?.isCustomInput)) && data?.brand !== "spark";
         },
     },
     {
@@ -300,7 +300,7 @@ const columns: ColumnsConfig<any> = [
         hidden: true,
         form: {type: 'switch'},
         editCondition: (data) => {
-            return data?.brand === "ollama" || (data?.brand && data?.isCustomInput);
+            return (data?.brand !== "ollama" && data?.brand !== "spark") && (data?.brand && data?.isCustomInput);
         },
     },
 ];

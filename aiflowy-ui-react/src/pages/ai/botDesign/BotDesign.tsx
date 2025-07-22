@@ -514,7 +514,7 @@ const BotDesign: React.FC = () => {
                                        onChange={(value: number) => {
                                            doUpdateBotLLMOptions({maxReplyLength: value})
                                        }}/>
-                            <LlmSlider disabled={!botSavePermission} title="携带历史条数" min={1} max={10} step={1}
+                            <LlmSlider disabled={!botSavePermission} title="携带历史条数" min={10} max={100} step={1}
                                        defaultValue={detail?.data?.llmOptions?.maxMessageCount || 3}
                                        onChange={(value: number) => {
                                            doUpdateBotLLMOptions({maxMessageCount: value})
