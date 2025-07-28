@@ -99,7 +99,7 @@ const useStyle = createStyles(({token, css}) => {
 export const ExternalBot: React.FC = () => {
 
     const params = useParams();
-    var tempUserId = localStorage.getItem("tempUserId");
+    const tempUserId = localStorage.getItem("tempUserId");
     if (!tempUserId) {
         localStorage.setItem("tempUserId", uuid().toString() + params.id)
         console.log('重新设置了')
@@ -117,28 +117,44 @@ export const ExternalBot: React.FC = () => {
     useEffect(() => {
         const isFrame = urlParams.get('isIframe');
         const token = urlParams.get('authKey');
-        if (isFrame) {
-            const newValue = true;
-            setIsExternalIFrame(newValue);
-            isExternalIFrameRef.current = newValue; // 手动同步 ref
-            doGetCreateToken().then((res: any) => {
-                if (res.data.errorCode === 0) {
-                    localStorage.setItem('authKey', res.data.data);
-                    const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement;
-                    doGetBotInfo({params: {id: params?.id}}).then((r: any) => {
-                        if (link) {
-                            link.href = r?.data?.data?.icon || '/favicon.png';
-                        }
-                        document.title = r?.data?.data?.title;
-                        setPresetOptions(r?.data?.data?.options?.presetQuestions)
-                        setHelloMessage(r?.data?.data?.options?.welcomeMessage)
 
-                    });
+        doGetBotInfo({params: {id: params?.id}}).then((r: any) => {
+            const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement;
+            if (link) {
+                link.href = r?.data?.data?.icon || '/favicon.png';
+            }
+            document.title = r?.data?.data?.title;
+            setPresetOptions(r?.data?.data?.options?.presetQuestions)
+            setHelloMessage(r?.data?.data?.options?.welcomeMessage)
+
+            updateExternalSessionId(uuid())
+            getConversationManualGet(
+                {
+                    params: {"botId": r?.data?.data?.id, "tempUserId": localStorage.getItem("tempUserId")}
                 }
+            ).then((r: any) => {
+                setActiveKey(getExternalSessionId());
+                setConversationsItems(getConversations(r?.data?.data?.cons));
             });
-        } else if (token) {
-            localStorage.setItem('authKey', token);
-        }
+
+            if (isFrame) {
+                const newValue = true;
+                setIsExternalIFrame(newValue);
+                isExternalIFrameRef.current = newValue; // 手动同步 ref
+                doGetCreateToken().then((res: any) => {
+                    if (res.data.errorCode === 0) {
+                        localStorage.setItem('authKey', res.data.data);
+
+
+                    }
+                });
+            } else if (token) {
+                localStorage.setItem('authKey', token);
+            }
+
+        });
+
+
 
 
     }, []); // 空依赖数组表示只在组件挂载时执行一次
@@ -184,7 +200,7 @@ export const ExternalBot: React.FC = () => {
                         doGetConverManualDelete({
                             params: {
                                 sessionId: getExternalSessionId(),
-                                botId: params?.id,
+                                botId: botInfo?.data?.id,
                                 tempUserId: localStorage.getItem("tempUserId")
                             },
                         }).then(async (res: any) => {
@@ -193,7 +209,7 @@ export const ExternalBot: React.FC = () => {
                                 setChats([])
                                 const resp = await getConversationManualGet({
                                     params: {
-                                        "botId": params?.id,
+                                        "botId": botInfo?.data?.id,
                                         "tempUserId": localStorage.getItem("tempUserId")
                                     }
                                 })
@@ -230,7 +246,7 @@ export const ExternalBot: React.FC = () => {
         // }
         if (chats.length === 2 && chats[1].content.length < 1) {
             getConversationManualGet({
-                params: {"botId": params?.id, "tempUserId": localStorage.getItem("tempUserId")}
+                params: {"botId": botInfo?.data?.id, "tempUserId": localStorage.getItem("tempUserId")}
             }).then((r: any) => {
                 setConversationsItems(getConversations(r?.data?.data?.cons));
             });
@@ -238,31 +254,26 @@ export const ExternalBot: React.FC = () => {
     }, [chats])
 
 
-    useEffect(() => {
-        if (isExternalIFrameRef.current) {
-            return;
-        }
-        const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement;
-        doGetBotInfo({params: {id: params?.id}}).then((r: any) => {
-
-            if (link) {
-                link.href = r?.data?.data?.icon || '/favicon.png';
-            }
-            document.title = r?.data?.data?.title;
-            setPresetOptions(r?.data?.data?.options?.presetQuestions)
-            setHelloMessage(r?.data?.data?.options?.welcomeMessage)
-        });
-
-        updateExternalSessionId(uuid())
-        getConversationManualGet(
-            {
-                params: {"botId": params?.id, "tempUserId": localStorage.getItem("tempUserId")}
-            }
-        ).then((r: any) => {
-            setActiveKey(getExternalSessionId());
-            setConversationsItems(getConversations(r?.data?.data?.cons));
-        });
-    }, [])
+    // useEffect(() => {
+    //     if (isExternalIFrameRef.current) {
+    //         return;
+    //     }
+    //     const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement;
+    //     doGetBotInfo({params: {id: params?.id}}).then((r: any) => {
+    //
+    //         if (link) {
+    //             link.href = r?.data?.data?.icon || '/favicon.png';
+    //         }
+    //         document.title = r?.data?.data?.title;
+    //         setPresetOptions(r?.data?.data?.options?.presetQuestions)
+    //         setHelloMessage(r?.data?.data?.options?.welcomeMessage)
+    //
+    //
+    //
+    //     });
+    //
+    //
+    // }, [])
 
     const onAddConversation = () => {
         setNewExternalSessionId();
@@ -276,7 +287,7 @@ export const ExternalBot: React.FC = () => {
         doGetMessageList({
             params: {
                 sessionId: key,
-                botId: params?.id,
+                botId: botInfo?.data?.id,
                 // 是externalBot页面提交的消息记录
                 isExternalMsg: 1,
                 tempUserId: localStorage.getItem("tempUserId")
@@ -324,7 +335,7 @@ export const ExternalBot: React.FC = () => {
         doGetConverManualUpdate({
             params: {
                 sessionId: activeKey,
-                botId: params?.id,
+                botId: botInfo?.data?.id,
                 title: newTitle,
                 tempUserId: localStorage.getItem("tempUserId")
             },
@@ -426,7 +437,7 @@ export const ExternalBot: React.FC = () => {
                     llmDetail={botInfo?.data}
                     botAvatar={botInfo?.data?.icon}
                     sessionId={getExternalSessionId()}
-                    clearMessage={() => clearMessage(params.id, getExternalSessionId(), localStorage.getItem("tempUserId"))}
+                    clearMessage={() => clearMessage(botInfo?.data?.id, getExternalSessionId(), localStorage.getItem("tempUserId"))}
                     inputDisabled={inputDisabled}
                     prompts={presetQuestions}
                     options={{
@@ -440,7 +451,7 @@ export const ExternalBot: React.FC = () => {
                             console.log(111)
                             getConversationManualGet(
                                 {
-                                    params: {"botId": params?.id, "tempUserId": localStorage.getItem("tempUserId")}
+                                    params: {"botId": botInfo?.data?.id, "tempUserId": localStorage.getItem("tempUserId")}
                                 }
                             ).then((r: any) => {
                                 setConversationsItems(getConversations(r?.data?.data?.cons));
@@ -461,7 +472,7 @@ export const ExternalBot: React.FC = () => {
                                 const encoder = new TextEncoder();
                                 startChat({
                                     data: {
-                                        botId: params.id,
+                                        botId: botInfo?.data?.id,
                                         sessionId: getExternalSessionId(),
                                         prompt: messages[messages.length - 1].content as string,
                                         fileList:messages[messages.length - 1].files as Array<string>,
