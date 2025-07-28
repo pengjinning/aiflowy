@@ -10,6 +10,10 @@ import com.mybatisflex.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.web.exceptions.BusinessException;
+import tech.aiflowy.ai.utils.RegexUtils;
+import com.mybatisflex.core.query.QueryWrapper;
+
+import java.util.Map;
 
 /**
  *  服务层实现。
@@ -24,8 +28,26 @@ public class AiBotServiceImpl extends ServiceImpl<AiBotMapper, AiBot> implements
 
     @Override
     public Result getDetail(String id) {
-        AiBot aiBot = this.getMapper().selectOneById(id);
+        AiBot aiBot = null;
+
+        if (id.matches(RegexUtils.ALL_NUMBER)){
+            aiBot = getById(id);
+
+            if (aiBot == null) {
+               aiBot = getByAlias(id);
+            }
+
+        }else{
+            aiBot = getByAlias(id);
+        }
+
         return Result.success(aiBot);
+    }
+
+    public AiBot getByAlias(String alias){
+        QueryWrapper queryWrapper = QueryWrapper.create();
+        queryWrapper.eq("alias",alias);
+        return getOne(queryWrapper);
     }
 
     @Override

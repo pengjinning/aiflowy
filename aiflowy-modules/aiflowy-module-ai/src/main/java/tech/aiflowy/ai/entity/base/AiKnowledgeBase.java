@@ -20,6 +20,12 @@ public class AiKnowledgeBase extends DateEntity implements Serializable {
     private BigInteger id;
 
     /**
+     * 别名
+     */
+    @Column(comment = "别名")
+    private String alias;
+
+    /**
      * 部门ID
      */
     @Column(comment = "部门ID")
@@ -292,4 +298,14 @@ public class AiKnowledgeBase extends DateEntity implements Serializable {
     public void setEnglishName(String englishName) {
         this.englishName = englishName;
     }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    
 }

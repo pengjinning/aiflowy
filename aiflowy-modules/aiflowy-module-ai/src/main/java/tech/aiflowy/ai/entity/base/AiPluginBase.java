@@ -19,6 +19,12 @@ public class AiPluginBase implements Serializable {
     private BigInteger id;
 
     /**
+     * 别名
+     */
+    @Column(comment = "别名")
+    private String alias;
+
+    /**
      * 图标地址
      */
     @Column(comment = "图标地址")
@@ -180,4 +186,14 @@ public class AiPluginBase implements Serializable {
     public void setTokenValue(String tokenValue) {
         this.tokenValue = tokenValue;
     }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    
 }
