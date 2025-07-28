@@ -240,6 +240,7 @@ function sidebarProduct(): DefaultTheme.SidebarItem[] {
                         {text: '插件', link: 'workflow/nodes/plugin'},
                         {text: 'sql 查询', link: 'workflow/nodes/sql-node'},
                         {text: '素材同步', link: 'workflow/nodes/download-node'},
+                        {text: '数据节点', link: 'workflow/nodes/data-node'},
                     ]
                 },
             ]
