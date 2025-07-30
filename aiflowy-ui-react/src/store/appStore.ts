@@ -19,7 +19,7 @@ export interface AppStore {
 }
 
 export const useAppStore = create<AppStore>()(persist(
-    (set, get) => ({
+    (set, _get) => ({
         nickName: '',
         avatar: '',
         jwt: '',
