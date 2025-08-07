@@ -18,7 +18,8 @@ const Login: React.FC = () => {
 
     const { startCaptcha } = useCaptcha();
     const appStore = useAppStore();
-    const { loading, doLogin } = useLoginV3();
+    const { doLogin } = useLoginV3();
+    const [loginLoading, setLoginLoading] = useState(false);
 
     const [isPageLoaded, setIsPageLoaded] = useState(false);
 
@@ -56,6 +57,7 @@ const Login: React.FC = () => {
             message.error("请先阅读并同意用户服务协议和隐私政策");
             return;
         }
+        setLoginLoading(true)
         startCaptcha((randstr, ticket) => {
             doLogin({
                 data: {
@@ -65,6 +67,7 @@ const Login: React.FC = () => {
                 },
             })
                 .then((resp) => {
+                    setLoginLoading(false)
                     if (resp.data.errorCode === 0) {
                         const from = new URLSearchParams(location.search).get("from");
                         if (from) {
@@ -133,7 +136,7 @@ const Login: React.FC = () => {
                                 className={styles.submitButton}
                                 htmlType="submit"
                                 block
-                                loading={loading}
+                                loading={loginLoading}
                             >
                                 登 录
                             </Button>
