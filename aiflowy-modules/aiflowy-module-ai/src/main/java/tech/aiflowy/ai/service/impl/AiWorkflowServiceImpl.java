@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.ai.utils.RegexUtils;
 import com.mybatisflex.core.query.QueryWrapper;
+import org.springframework.beans.BeanUtils;
+import tech.aiflowy.common.web.exceptions.BusinessException;
+import java.math.BigInteger;
+import tech.aiflowy.ai.utils.CustomBeanUtils;
 
 /**
  * 服务层实现。
@@ -49,6 +53,24 @@ public class AiWorkflowServiceImpl extends ServiceImpl<AiWorkflowMapper, AiWorkf
 
         return getOne(queryWrapper);
 
+    }
+
+
+    @Override
+    public boolean updateById(AiWorkflow entity, boolean ignoreNulls) {
+        AiWorkflow workFlow = getById(entity.getId());
+        if (workFlow == null) {
+            throw new BusinessException("工作流不存在");
+        }
+
+        CustomBeanUtils.copyPropertiesIgnoreNull(entity,workFlow);
+
+        if ("".equals(workFlow.getAlias())){
+            workFlow.setAlias(null);
+        }
+
+
+        return super.updateById(workFlow,false);
     }
 
 

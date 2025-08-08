@@ -200,7 +200,7 @@ CREATE TABLE `TB_QRTZ_TRIGGERS`  (
 DROP TABLE IF EXISTS `tb_ai_bot`;
 CREATE TABLE `tb_ai_bot`  (
   `id` bigint UNSIGNED NOT NULL COMMENT '主键ID',
-  `alias` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '别名',
+  `alias` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '别名',
   `dept_id` bigint UNSIGNED NOT NULL COMMENT '部门ID',
   `tenant_id` bigint UNSIGNED NOT NULL COMMENT '租户ID',
   `title` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标题',
@@ -400,7 +400,7 @@ CREATE TABLE `tb_ai_document_history`  (
 DROP TABLE IF EXISTS `tb_ai_knowledge`;
 CREATE TABLE `tb_ai_knowledge`  (
   `id` bigint UNSIGNED NOT NULL,
-  `alias` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '别名',
+  `alias` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci  NULL COMMENT '别名',
   `dept_id` bigint UNSIGNED NOT NULL COMMENT '部门ID',
   `tenant_id` bigint UNSIGNED NOT NULL COMMENT '租户ID',
   `icon` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'ICON',
@@ -460,7 +460,7 @@ CREATE TABLE `tb_ai_llm`  (
 DROP TABLE IF EXISTS `tb_ai_plugin`;
 CREATE TABLE `tb_ai_plugin`  (
   `id` bigint NOT NULL COMMENT '插件id',
-  `alias` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '别名',
+  `alias` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci  NULL  COMMENT '别名',
   `name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '名称',
   `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '描述',
   `type` int NULL DEFAULT NULL COMMENT '类型',
@@ -548,7 +548,7 @@ CREATE TABLE `tb_ai_plugins`  (
 DROP TABLE IF EXISTS `tb_ai_workflow`;
 CREATE TABLE `tb_ai_workflow`  (
   `id` bigint UNSIGNED NOT NULL COMMENT 'ID 主键',
-  `alias` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT '别名',
+  `alias` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci  NULL  COMMENT '别名',
   `dept_id` bigint UNSIGNED NOT NULL COMMENT '部门ID',
   `tenant_id` bigint UNSIGNED NOT NULL COMMENT '租户ID',
   `title` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标题',

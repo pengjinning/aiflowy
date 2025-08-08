@@ -38,6 +38,7 @@ import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.entity.LoginAccount;
 import tech.aiflowy.common.satoken.util.SaTokenUtil;
 import tech.aiflowy.common.web.controller.BaseCurdController;
+import tech.aiflowy.common.web.exceptions.BusinessException;
 import tech.aiflowy.common.web.jsonbody.JsonBody;
 import tech.aiflowy.system.service.SysApiKeyService;
 
@@ -81,9 +82,9 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
         InputStream is = jsonFile.getInputStream();
         String content = IoUtil.read(is, StandardCharsets.UTF_8);
         workflow.setContent(content);
-        if (!StringUtils.hasLength(workflow.getAlias())){
-            workflow.setAlias(UUID.randomUUID().toString().replaceAll("-",""));
-        }
+        // if (!StringUtils.hasLength(workflow.getAlias())){
+        //     workflow.setAlias(UUID.randomUUID().toString().replaceAll("-",""));
+        // }
         save(workflow);
         return Result.success();
     }
@@ -419,6 +420,36 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
                 parameter.setDataType(refToDataTypeMap.get(ref));
             }
         }
+    }
+
+
+    @Override
+    protected Result onSaveOrUpdateBefore(AiWorkflow entity, boolean isSave) {
+
+
+        String alias = entity.getAlias();
+
+        if (StringUtils.hasLength(alias)){
+            AiWorkflow workflow = service.getByAlias(alias);
+
+            if (workflow == null){
+                return null;
+            }
+
+            if (isSave){
+                throw new BusinessException("别名已存在！");
+            }
+
+            BigInteger id = entity.getId();
+
+            if (id.compareTo(workflow.getId()) != 0){
+                throw new BusinessException("别名已存在！");
+            }
+
+
+        }
+
+        return null;
     }
 
 

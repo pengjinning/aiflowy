@@ -14,6 +14,7 @@ import tech.aiflowy.ai.mapper.AiKnowledgeMapper;
 import tech.aiflowy.ai.service.AiDocumentChunkService;
 import tech.aiflowy.ai.service.AiKnowledgeService;
 import tech.aiflowy.ai.service.AiLlmService;
+import tech.aiflowy.ai.utils.CustomBeanUtils;
 import tech.aiflowy.ai.utils.RegexUtils;
 import tech.aiflowy.common.domain.Result;
 import com.agentsflex.core.document.Document;
@@ -23,6 +24,7 @@ import com.agentsflex.core.store.StoreOptions;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import tech.aiflowy.common.util.StringUtil;
+import tech.aiflowy.common.web.exceptions.BusinessException;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
@@ -178,5 +180,22 @@ public class AiKnowledgeServiceImpl extends ServiceImpl<AiKnowledgeMapper, AiKno
 
     }
 
+
+    @Override
+    public boolean updateById(AiKnowledge entity) {
+        AiKnowledge aiKnowledge = getById(entity.getId());
+        if (aiKnowledge == null) {
+            throw new BusinessException("bot 不存在");
+        }
+
+        CustomBeanUtils.copyPropertiesIgnoreNull(entity,aiKnowledge);
+
+        if ("".equals(aiKnowledge.getAlias())){
+            aiKnowledge.setAlias(null);
+        }
+
+
+        return super.updateById(aiKnowledge,false);
+    }
 
 }

@@ -413,12 +413,13 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
 
         WebSocket finalWebSocket = webSocket;
 
-        Boolean reActEnabled = (Boolean) options.get("reActModeEnabled");
+        boolean reActEnabled = options != null && options.get("reActModeEnabled") != null && (Boolean) options.get(
+            "reActModeEnabled");
 
-        if (reActEnabled == null || !reActEnabled) {
+        if (!reActEnabled) {
             // 普通模式
             return normalChat(emitter, aiLlm, functions, prompt, fileList, historiesPrompt, chatOptions, finalWebSocket,
-                finalAnswerContentBuffer, messageSessionId, voiceEnabled, builder);
+                finalAnswerContentBuffer, messageSessionId, voiceEnabled, builder,sessionId);
         } else {
             // ReAct 模式
             return reActChat(emitter, aiLlm, functions, prompt, fileList, historiesPrompt, chatOptions, finalWebSocket,
@@ -825,7 +826,8 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
         StringBuilder finalAnswerContentBuffer,
         String messageSessionId,
         boolean voiceEnabled,
-        OkHttpClient.Builder[] builder
+        OkHttpClient.Builder[] builder,
+        String sessionId
     ) {
         Llm llm = aiLlm.toLlm();
         HumanMessage humanMessage = new HumanMessage(prompt);
@@ -851,6 +853,9 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         final Boolean[] needClose = {true};
 
+        AiMessage thinkingMessage = new AiMessage();
+        Map<String, Object> thinkingIdMap = new HashMap<>();
+
         llm.chatStream(historiesPrompt, new StreamResponseListener() {
             @Override
             public void onMessage(ChatContext context, AiMessageResponse response) {
@@ -863,14 +868,66 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
                         if (response.getFunctionCallers() != null && CollectionUtil.hasItems(response
                             .getFunctionCallers())) {
                             needClose[0] = false;
-                            function_call(response, emitter, needClose, historiesPrompt, llm, prompt, false,
-                                chatOptions);
+                            functionCall(
+                                response, 
+                                emitter, 
+                                historiesPrompt, 
+                                llm, 
+                                sessionId,
+                                finalAnswerContentBuffer,
+                                chatOptions,
+                                messageSessionId,
+                                voiceEnabled,
+                                thinkingMessage    
+                            );
                         } else {
-                            // 强制流式返回，即使有 Function Calling 也先返回部分结果
-                            if (response.getMessage() != null) {
-                                String content = response.getMessage().getContent();
-                                if (StringUtil.hasText(content)) {
-                                    emitter.send(JSON.toJSONString(response.getMessage()));
+
+                            String thinkingContent = response.getMessage().getReasoningContent();
+                            String fullReasoningContent = response.getMessage().getFullReasoningContent();
+                            String content = response.getMessage().getContent();
+
+                            if (StringUtils.hasLength(thinkingContent)){
+                                if (thinkingIdMap.get("id") == null) {
+                                    thinkingIdMap.put("id", IdUtil.getSnowflake(1, 1).nextId());
+                                }
+                                thinkingIdMap.put("chainTitle", "🧠 思考");
+                                thinkingIdMap.put("type", 0);
+
+                                thinkingMessage.setContent(thinkingContent);
+                                thinkingMessage.setFullContent(fullReasoningContent);
+                                logger.info("fullReasongingContent:{}",fullReasoningContent);
+                                thinkingMessage.setMetadataMap(thinkingIdMap);
+
+                                try {
+                                    emitter.send(SseEmitter.event().name("thinking").data(JSON.toJSONString(thinkingMessage)));
+                                } catch (IOException e) {
+                                    throw new BusinessException("发送思考事件报错");
+                                }
+                            }
+
+
+                            if (StringUtil.hasLength(content)) {
+
+
+                                AiMessage message = response.getMessage();
+
+                                // 检查是否已设置 messageSessionId，如果没有则设置
+                                Map<String, Object> metadataMap = message.getMetadataMap();
+                                if (metadataMap == null) {
+                                    metadataMap = new HashMap<>();
+                                    message.setMetadataMap(metadataMap);
+                                }
+
+                                // 确保 messageSessionId 存在
+                                if (!metadataMap.containsKey("messageSessionId")) {
+                                    metadataMap.put("messageSessionId", messageSessionId);
+                                }
+
+                                emitter.send(JSON.toJSONString(message));
+
+                                // 发送TTS消息
+                                if (voiceEnabled && finalWebSocket != null) {
+                                    ttsService.sendTTSMessage(finalWebSocket, messageSessionId, content);
                                 }
                             }
                         }
@@ -887,6 +944,12 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
             public void onStop(ChatContext context) {
                 logger.info("normal chat complete");
                 if (needClose[0]) {
+                    if (voiceEnabled && finalWebSocket != null) {
+                        ttsService.sendTTSMessage(finalWebSocket, messageSessionId, "_end_");
+                    }
+
+
+
                     emitter.complete();
                 }
             }
@@ -965,35 +1028,124 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
     /**
      * @param aiMessageResponse 大模型返回的消息
      * @param emitter
-     * @param needClose         是否需要关闭流
      * @param historiesPrompt   消息历史记录
      * @param llm               大模型
-     * @param prompt            提示词
-     * @param isExternalChatApi true 外部系统调用bot false 内部系统调用bot
      */
-    private String function_call(AiMessageResponse aiMessageResponse, MySseEmitter emitter, Boolean[] needClose,
-        HistoriesPrompt historiesPrompt, Llm llm, String prompt, boolean isExternalChatApi, ChatOptions chatOptions) {
+    private String functionCall(
+        AiMessageResponse aiMessageResponse, 
+        MySseEmitter emitter, 
+        HistoriesPrompt historiesPrompt, 
+        Llm llm,
+        String sessionId,
+        StringBuilder finalAnswerContentBuffer,
+        ChatOptions chatOptions,
+        String messageSessionId,
+        boolean voiceEnabled,
+        AiMessage thinkingMessage
+    ) {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         RequestContextHolder.setRequestAttributes(sra, true);
-        String content = aiMessageResponse.getMessage().getContent();
-        Object messageContent = aiMessageResponse.getMessage();
-        if (StringUtil.hasText(content)) {
-            // 如果是外部系统调用chat
-            if (isExternalChatApi) {
-                AiBotExternalMsgJsonResult result = handleMessageStreamJsonResult(aiMessageResponse.getMessage());
 
-                emitter.send(JSON.toJSONString(result, new SerializeConfig()));
-            } else {
-                emitter.send(JSON.toJSONString(messageContent));
-            }
+        String connectId = UUID.randomUUID().toString().replace("-","");
+        finalAnswerContentBuffer.setLength(0);
 
+        AiMessage toolCallMessage = new AiMessage();
+        toolCallMessage.setContent("\n\n\uD83D\uDCCB 调用工具中..." + "\n\n");
+        toolCallMessage.setFullContent("\n\n\uD83D\uDCCB 调用工具中..." + "\n\n");
+        toolCallMessage.setMetadataMap(Maps.of("showContent", toolCallMessage.getContent())
+            .set("type", 1)
+            .set("chainTitle", "\n\n\uD83D\uDCCB 调用工具" + "\n\n")
+            .set("chainContent", "\n\n\uD83D\uDCCB 调用工具中..." + "\n\n")
+            .set("id", IdUtil.getSnowflake(1, 1).nextId() + ""));
+        
+        try {
+            emitter.send(SseEmitter.event().name("toolCalling").data(JSON.toJSONString(toolCallMessage)));
+        } catch (IOException e) {
+            throw new BusinessException("发送工具调用事件报错");
         }
+
+        boolean[] alreadyAdd = {false};
+        
+
+        WebSocket webSocket = null;
+        if (voiceEnabled) {
+            webSocket = ttsService.init(connectId, messageSessionId, base64 -> {
+                logger.info("发送语音数据消息到前端");
+                ChatVoiceHandler.sendJsonVoiceMessage(sessionId, messageSessionId, base64);
+            }, (result) -> {
+                logger.info("tts 转语音 session 执行完毕，connection 已关闭，进行结果缓存");
+
+                List<Map<String, Object>> voiceList = (List<Map<String, Object>>) cache.get(VOICE_KEY);
+
+                if (voiceList == null) {
+                    voiceList = new ArrayList<>();
+                }
+
+                Map<String, Object> resultMap = new HashMap<>();
+                resultMap.put(MESSAGE_SESSION_ID_KEY, messageSessionId);
+                resultMap.put(FULL_TEXT_KEY, finalAnswerContentBuffer.toString());
+                resultMap.put(BASE64_KEY, result);
+
+                voiceList.add(resultMap);
+
+                // 缓存60分钟
+                cache.put("aiBot:voice", voiceList, 60, TimeUnit.MINUTES);
+
+                // 将完整音频文件保存到本地的逻辑，如果需要则打开下面的注释 👇
+                // if (StringUtils.hasLength(result)) {
+                // File file = new File(messageSessionId + "_" + System.currentTimeMillis() +
+                // ".mp3");
+                // try (FileOutputStream fos = new FileOutputStream(file)){
+                // byte[] decode = Base64.getDecoder().decode(result);
+                // fos.write(decode);
+                // }catch (IOException e) {
+                // logger.error("合并语音文件失败", e);
+                // }
+                // }
+
+            }, null);
+        }
+
+        WebSocket finalWebSocket = webSocket;
+
         llm.chatStream(ToolPrompt.of(aiMessageResponse), new StreamResponseListener() {
             @Override
             public void onMessage(ChatContext context, AiMessageResponse response) {
-                String content = response.getMessage().getContent();
-                if (StringUtil.hasText(content)) {
-                    emitter.send(JSON.toJSONString(response.getMessage()));
+                RequestContextHolder.setRequestAttributes(sra, true);
+                
+                AiMessage message = response.getMessage();
+                if (!alreadyAdd[0]){
+
+                    if (thinkingMessage != null && StringUtils.hasLength(thinkingMessage.getFullContent())){
+                        thinkingMessage.setFullContent("thinking:" + thinkingMessage.getFullContent());
+                        historiesPrompt.addMessage(thinkingMessage);
+                    }
+
+                    
+                    historiesPrompt.addMessage(toolCallMessage);
+                    alreadyAdd[0] = true;
+                }
+                
+
+                // 检查是否已设置 messageSessionId，如果没有则设置
+                Map<String, Object> metadataMap = message.getMetadataMap();
+                if (metadataMap == null) {
+                    metadataMap = new HashMap<>();
+                    message.setMetadataMap(metadataMap);
+                }
+
+                // 确保 messageSessionId 存在
+                if (!metadataMap.containsKey("messageSessionId")) {
+                    metadataMap.put("messageSessionId", messageSessionId);
+                }
+
+                emitter.send(JSON.toJSONString(message));
+
+                // 发送TTS消息
+                if (voiceEnabled && finalWebSocket != null && StringUtil.hasLength(message.getContent())) {
+                    logger.info("发送语音播报消息：{}",message.getContent());
+                    finalAnswerContentBuffer.append(message.getContent());
+                    ttsService.sendTTSMessage(finalWebSocket, messageSessionId, message.getContent());
                 }
             }
 
@@ -1003,6 +1155,10 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
                 if (lastAiMessage != null) {
                     historiesPrompt.addMessage(lastAiMessage);
                 }
+                if (voiceEnabled && finalWebSocket != null) {
+                    ttsService.sendTTSMessage(finalWebSocket, messageSessionId, "_end_");
+                }
+                
                 emitter.complete();
             }
 
@@ -1015,7 +1171,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
             }
         }, chatOptions);
 
-        return JSON.toJSONString(messageContent);
+        return JSON.toJSONString("");
     }
 
     @GetMapping("getDetail")
@@ -1066,6 +1222,24 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
 
     @Override
     protected Result onSaveOrUpdateBefore(AiBot entity, boolean isSave) {
+
+        String alias = entity.getAlias();
+
+        if (StringUtils.hasLength(alias)){
+            AiBot aiBot = service.getByAlias(alias);
+
+
+            if (aiBot != null && isSave){
+                throw new BusinessException("别名已存在！");
+            }
+
+            if (aiBot != null && aiBot.getId().compareTo(entity.getId()) != 0){
+                throw new BusinessException("别名已存在！");
+            }
+
+        }
+
+
         if (isSave) {
             // 设置默认值
             entity.setLlmOptions(getDefaultLlmOptions());

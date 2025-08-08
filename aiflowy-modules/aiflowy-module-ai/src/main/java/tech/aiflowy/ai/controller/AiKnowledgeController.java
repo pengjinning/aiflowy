@@ -2,6 +2,7 @@ package tech.aiflowy.ai.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.mybatisflex.core.query.QueryWrapper;
+import org.springframework.util.StringUtils;
 import tech.aiflowy.ai.entity.AiKnowledge;
 import tech.aiflowy.ai.service.AiBotKnowledgeService;
 import tech.aiflowy.ai.service.AiDocumentChunkService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import tech.aiflowy.common.web.exceptions.BusinessException;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
@@ -46,6 +48,24 @@ public class AiKnowledgeController extends BaseCurdController<AiKnowledgeService
 
     @Override
     protected Result onSaveOrUpdateBefore(AiKnowledge entity, boolean isSave) {
+
+        String alias = entity.getAlias();
+
+        if (StringUtils.hasLength(alias)){
+            AiKnowledge knowledge = service.getByAlias(alias);
+
+
+            if (knowledge != null && isSave){
+                throw new BusinessException("别名已存在！");
+            }
+
+            if (knowledge != null && knowledge.getId().compareTo(entity.getId()) != 0){
+                throw new BusinessException("别名已存在！");
+            }
+
+        }
+
+
         if (isSave){
             Map<String, Object> options =  new HashMap<>();
             if (entity.getSearchEngineEnable() == null){

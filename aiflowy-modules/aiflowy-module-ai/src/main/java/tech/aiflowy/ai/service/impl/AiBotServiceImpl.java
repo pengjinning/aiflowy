@@ -8,6 +8,7 @@ import tech.aiflowy.ai.mapper.AiBotMapper;
 import tech.aiflowy.ai.service.AiBotService;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import tech.aiflowy.ai.utils.CustomBeanUtils;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.web.exceptions.BusinessException;
 import tech.aiflowy.ai.utils.RegexUtils;
@@ -64,5 +65,23 @@ public class AiBotServiceImpl extends ServiceImpl<AiBotMapper, AiBot> implements
 
         updateById(byId,false);
 
+    }
+
+
+    @Override
+    public boolean updateById(AiBot entity) {
+        AiBot aiBot = getById(entity.getId());
+        if (aiBot == null) {
+            throw new BusinessException("bot 不存在");
+        }
+
+        CustomBeanUtils.copyPropertiesIgnoreNull(entity,aiBot);
+
+        if ("".equals(aiBot.getAlias())){
+            aiBot.setAlias(null);
+        }
+
+
+        return super.updateById(aiBot,false);
     }
 }
