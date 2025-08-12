@@ -27,6 +27,7 @@ export const ExecResult: React.FC<ExecResultProps> = ({nodes = [], result = {}})
     }, nodes)
 
     const showResult = (arr: any[], contentType: string) => {
+        console.log(contentType)
         return (
             <div className={contentType === "text" ? css.resultTextContainer : css.resultContainer}>
                 {arr.map((item: any,index) => {
@@ -58,7 +59,7 @@ export const ExecResult: React.FC<ExecResultProps> = ({nodes = [], result = {}})
                             }
                             {(contentType === "text" || !contentType) &&
                                 <div>
-                                    {item}
+                                    <JsonView src={result}/>
                                 </div>
                             }
                             {(contentType === "other" || contentType === "file") &&
@@ -67,7 +68,7 @@ export const ExecResult: React.FC<ExecResultProps> = ({nodes = [], result = {}})
                                          src={getIcon(contentType)}/>
                                 </div>
                             }
-                            {contentType !== "text" && <div>
+                            {(contentType && contentType !== "text") && <div>
                                 <a href={item} target={"_blank"}>下载</a>
                             </div>}
                         </div>
