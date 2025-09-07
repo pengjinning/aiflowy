@@ -40,6 +40,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tech.aiflowy.ai.entity.*;
+import tech.aiflowy.ai.enums.BotMessageTypeEnum;
 import tech.aiflowy.ai.mapper.AiBotConversationMessageMapper;
 import tech.aiflowy.ai.message.MultimodalMessageBuilder;
 import tech.aiflowy.ai.service.*;
@@ -290,13 +291,14 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
         AiBot aiBot = service.getById(botId);
 
         if (aiBot == null) {
-            return ChatManager.getInstance().sseEmitterForContent("机器人不存在");
+            return ChatManager.getInstance().sseEmitterForContent(JSON.toJSONString(Maps.of("content", "机器人不存在")));
         }
 
         boolean login = StpUtil.isLogin();
 
         if (!login && !aiBot.isAnonymousEnabled()) {
             return ChatManager.getInstance().sseEmitterForContent(JSON.toJSONString(Maps.of("content", "此bot不支持匿名访问")));
+
         }
 
         Map<String, Object> llmOptions = aiBot.getLlmOptions();
@@ -306,13 +308,13 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
         AiLlm aiLlm = aiLlmService.getById(aiBot.getLlmId());
 
         if (aiLlm == null) {
-            return ChatManager.getInstance().sseEmitterForContent("LLM不存在");
+            return ChatManager.getInstance().sseEmitterForContent(JSON.toJSONString(Maps.of("content", "LLM不存在")));
         }
 
         Llm llm = aiLlm.toLlm();
 
         if (llm == null) {
-            return ChatManager.getInstance().sseEmitterForContent("LLM获取为空");
+            return ChatManager.getInstance().sseEmitterForContent(JSON.toJSONString(Maps.of("content", "LLM获取为空")));
         }
         final HistoriesPrompt historiesPrompt = new HistoriesPrompt();
         if (llmOptions != null && llmOptions.get("maxMessageCount") != null) {
@@ -482,7 +484,6 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
                 "{user_input}";
 
         // 解决 https://gitee.com/aiflowy/aiflowy/issues/ICMRM2 根据大模型配置属性决定是否构建多模态消息
-        Map<String, Object> aiLlmOptions = aiLlm.getOptions();
 
         if (!"ollama".equals(aiLlm.getBrand()) && !"spark".equals(aiLlm.getBrand())) {
 
@@ -583,7 +584,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
                                 thoughtMessage.setContent(chunk);
                                 thoughtMessage.setFullContent(chunk);
                                 thoughtMessage.setMetadataMap(Maps.of("showContent", chunk)
-                                        .set("type", 1)
+                                        .set("type", BotMessageTypeEnum.REACT_THINKING.getValue())
                                         .set("chainTitle", "💭 思路")
                                         .set("chainContent", chunk)
                                         .set("id", currentThoughtId + ""));
@@ -635,7 +636,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
                             aiMessage.setFullContent(content);
                             aiMessage.setContent(content);
                             aiMessage.setMetadataMap(Maps.of("showContent", content)
-                                    .set("type", 1)
+                                    .set("type", BotMessageTypeEnum.REACT_THINKING.getValue())
                                     .set("chainTitle", "💭 思路")
                                     .set("chainContent", content)
                                     .set("id", currentThoughtId + ""));
@@ -684,7 +685,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
                 aiMessage.setFullContent("工具执行过程出现异常....正在尝试解决....");
                 aiMessage.setContent("工具执行过程出现异常....正在尝试解决....");
                 aiMessage.setMetadataMap(Maps.of("showContent", "工具执行过程出现异常....正在尝试解决....")
-                        .set("type", 1)
+                        .set("type", BotMessageTypeEnum.REACT_THINKING.getValue())
                         .set("chainTitle", "💭 思路")
                         .set("chainContent", "工具执行过程出现异常....正在尝试解决....")
                         .set("id", IdUtil.getSnowflake(1, 1).nextId() + ""));
@@ -764,7 +765,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
                     thinkingMessage.setContent("");
                     thinkingMessage.setMetadataMap(null);
                     thinkingIdMap.put("id", null);
-                    thinkingIdMap.put("type", 0);
+                    thinkingIdMap.put("type", BotMessageTypeEnum.NORMAL.getValue());
                 }
 
                 RequestContextHolder.setRequestAttributes(sra, true);
@@ -773,7 +774,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
                 toolCallMessage.setContent(step.getAction());
                 toolCallMessage.setFullContent(step.getAction());
                 toolCallMessage.setMetadataMap(Maps.of("showContent", toolCallMessage.getContent())
-                        .set("type", 1)
+                        .set("type", BotMessageTypeEnum.REACT_THINKING.getValue())
                         .set("chainTitle", "\n\n\uD83D\uDCCB 调用工具中..." + "\n\n")
                         .set("chainContent", step.getAction())
                         .set("id", IdUtil.getSnowflake(1, 1).nextId() + ""));
@@ -801,7 +802,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
                 aiMessage.setFullContent("\uD83D\uDD0D 调用结果:" + result + "\n\n");
                 aiMessage.setContent("\uD83D\uDD0D 调用结果:" + result + "\n\n");
                 aiMessage.setMetadataMap(Maps.of("showContent", aiMessage.getContent())
-                        .set("type", 2)
+                        .set("type", BotMessageTypeEnum.TOOL_RESULT.getValue())
                         .set("chainTitle", "\uD83D\uDD0D 调用结果")
                         .set("chainContent", result.toString())
                         .set("id", IdUtil.getSnowflake(1, 1).nextId() + ""));
@@ -842,7 +843,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
             // 构建多模态消息
 
             humanMessage.setMetadataMap(
-                    Maps.of("type", 1)
+                    Maps.of("type", BotMessageTypeEnum.USER_INPUT.getValue())
                             .set("fileList", fileList)
                             .set("user_input", prompt)
             );
@@ -895,7 +896,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
                                     thinkingIdMap.put("id", IdUtil.getSnowflake(1, 1).nextId());
                                 }
                                 thinkingIdMap.put("chainTitle", "🧠 思考");
-                                thinkingIdMap.put("type", 0);
+                                thinkingIdMap.put("type", BotMessageTypeEnum.NORMAL.getValue());
 
                                 thinkingMessage.setContent(thinkingContent);
                                 thinkingMessage.setFullContent(fullReasoningContent);
@@ -1056,7 +1057,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
         toolCallMessage.setContent("\n\n\uD83D\uDCCB 调用工具中..." + "\n\n");
         toolCallMessage.setFullContent("\n\n\uD83D\uDCCB 调用工具中..." + "\n\n");
         toolCallMessage.setMetadataMap(Maps.of("showContent", toolCallMessage.getContent())
-                .set("type", 1)
+                .set("type", BotMessageTypeEnum.REACT_THINKING.getValue())
                 .set("chainTitle", "\n\n\uD83D\uDCCB 调用工具" + "\n\n")
                 .set("chainContent", "\n\n\uD83D\uDCCB 调用工具中..." + "\n\n")
                 .set("id", IdUtil.getSnowflake(1, 1).nextId() + ""));
