@@ -70,16 +70,15 @@ public class InputStreamFile implements MultipartFile {
     public byte[] getBytes() throws IOException {
         if (this.bytes == null) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            while (inputStream.read(buffer) != -1) {
-                bos.write(buffer);
+            byte[] buffer = new byte[2048];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                bos.write(buffer, 0, bytesRead);
             }
             this.bytes = bos.toByteArray();
         }
-
         return this.bytes;
     }
-
 
     @NotNull
     @Override
