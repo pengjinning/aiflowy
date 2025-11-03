@@ -128,6 +128,7 @@ const PluginToolEdit: React.FC = () => {
                                                 data: {
                                                     id: values.id,
                                                     name: values.name,
+                                                    englishName: values.englishName,
                                                     description: values.description,
                                                     basePath: values.basePath,
                                                     requestMethod: values.requestMethod
@@ -174,6 +175,7 @@ const PluginToolEdit: React.FC = () => {
                                 formBasicInfo.setFieldsValue({
                                     id: pluginToolInfo?.data?.data?.id,
                                     name: pluginToolInfo?.data?.data?.name,
+                                    englishName: pluginToolInfo?.data?.data?.englishName,
                                     description: pluginToolInfo?.data?.data?.description,
                                     basePath: pluginToolInfo?.data?.data?.basePath ? pluginToolInfo?.data?.data?.basePath : `/${pluginToolInfo?.data?.data?.name}`,
                                     baseUrl: pluginToolInfo?.data?.aiPlugin?.baseUrl,
@@ -263,7 +265,19 @@ const PluginToolEdit: React.FC = () => {
                     <Form.Item label="id" name="id" hidden rules={[{ required: true }]}>
                         <Input />
                     </Form.Item>
-                    <Form.Item label="工具名称" name="name" rules={[{ required: true }]}>
+                    <Form.Item label="工具名称" name="name"
+                               rules={[{ required: true, pattern: /^(?=.*[a-zA-Z])[a-zA-Z0-9_]+$/,
+
+                    }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item label="英文名称" name="englishName" rules={[
+                        { required: true, message: '请输入英文名称' },
+                        {
+                            pattern: /^[a-zA-Z_][a-zA-Z0-9_\.\-]{0,63}$/,
+                            message: '格式无效，需满足：以字母或下划线开头，仅包含字母、数字、下划线、点或短横线，长度不超过64个字符'
+                        }
+                    ]}>
                         <Input />
                     </Form.Item>
                     <Form.Item label="工具描述" name="description" rules={[{ required: true }]}>
@@ -288,6 +302,7 @@ const PluginToolEdit: React.FC = () => {
             ) : (
                 <div className="compact-view">
                     <div><strong>工具名称:</strong> {pluginToolInfo?.data?.data?.name || '--'}</div>
+                    <div><strong>英文名称:</strong> {pluginToolInfo?.data?.data?.englishName || '--'}</div>
                     <div><strong>工具描述:</strong>{pluginToolInfo?.data?.data?.description || '--'}</div>
                     <div>
                         <strong>工具路径:</strong>

@@ -41,7 +41,7 @@ public class AiPluginFunction  implements Function {
     }
 
     public AiPluginFunction(AiPluginTool aiPluginTool) {
-        this.name = aiPluginTool.getId().toString();
+        this.name = aiPluginTool.getEnglishName();
         this.description = aiPluginTool.getDescription();
         this.pluginToolId = aiPluginTool.getId();
         this.parameters = getDefaultParameters(aiPluginTool.getInputData());

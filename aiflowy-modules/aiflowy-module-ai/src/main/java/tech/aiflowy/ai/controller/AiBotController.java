@@ -1379,46 +1379,6 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
         return functionList;
     }
 
-    private void appendWorkflowFunctions(BigInteger botId, HumanMessage humanMessage, boolean needEnglishName) {
-        QueryWrapper queryWrapper = QueryWrapper.create().eq(AiBotWorkflow::getBotId, botId);
-        List<AiBotWorkflow> aiBotWorkflows = aiBotWorkflowService.getMapper()
-                .selectListWithRelationsByQuery(queryWrapper);
-        if (aiBotWorkflows != null) {
-            for (AiBotWorkflow aiBotWorkflow : aiBotWorkflows) {
-                Function function = aiBotWorkflow.getWorkflow().toFunction(needEnglishName);
-                humanMessage.addFunction(function);
-            }
-        }
-    }
-
-    private void appendKnowledgeFunctions(BigInteger botId, HumanMessage humanMessage, boolean needEnglishName) {
-        QueryWrapper queryWrapper = QueryWrapper.create().eq(AiBotKnowledge::getBotId, botId);
-        List<AiBotKnowledge> aiBotKnowledges = aiBotKnowledgeService.getMapper()
-                .selectListWithRelationsByQuery(queryWrapper);
-        if (aiBotKnowledges != null) {
-            for (AiBotKnowledge aiBotKnowledge : aiBotKnowledges) {
-                Function function = aiBotKnowledge.getKnowledge().toFunction(needEnglishName);
-                humanMessage.addFunction(function);
-            }
-        }
-    }
-
-    private void appendPluginToolFunction(BigInteger botId, HumanMessage humanMessage) {
-        QueryWrapper queryWrapper = QueryWrapper.create().select("plugin_tool_id").eq(AiBotPlugins::getBotId, botId);
-        List<BigInteger> pluginToolIds = aiBotPluginsService.getMapper()
-                .selectListWithRelationsByQueryAs(queryWrapper, BigInteger.class);
-
-        if (pluginToolIds == null || pluginToolIds.isEmpty()) {
-            return;
-        }
-
-        QueryWrapper queryTool = QueryWrapper.create().select("*").from("tb_ai_plugin_tool").in("id", pluginToolIds);
-        List<AiPluginTool> aiPluginTools = aiPluginToolService.getMapper().selectListWithRelationsByQuery(queryTool);
-        for (AiPluginTool item : aiPluginTools) {
-            humanMessage.addFunction(item.toFunction());
-        }
-
-    }
 
     private boolean containsUnsupportedApiError(String message) {
         if (message == null) {

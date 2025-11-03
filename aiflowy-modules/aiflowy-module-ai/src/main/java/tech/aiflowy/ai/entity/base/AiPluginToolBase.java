@@ -26,6 +26,12 @@ public class AiPluginToolBase implements Serializable {
     private BigInteger pluginId;
 
     /**
+     * 英文名称
+     */
+    @Column(comment = "英文名称")
+    private String englishName;
+
+    /**
      * 名称
      */
     @Column(comment = "名称")
@@ -177,8 +183,13 @@ public class AiPluginToolBase implements Serializable {
         return debugStatus;
     }
 
-    public void setDebugStatus(int debugStatus) {
-        this.debugStatus = debugStatus;
+    public void setDebugStatus(int debugStatus) {this.debugStatus = debugStatus;}
+
+    public String getEnglishName() {
+        return englishName;
     }
 
+    public void setEnglishName(String englishName) {
+        this.englishName = englishName;
+    }
 }
