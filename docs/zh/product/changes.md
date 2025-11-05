@@ -1,5 +1,43 @@
 # AIFlowy 更新记录
 
+## v1.1.7 2025-11-05
+**开源版：**
+- feat: 插件支持 File 上传
+- feat: 优化 sse hooks
+- feat: 优化 RequestUtil 添加对 ContentCachingRequestWrapper 的处理
+- feat: 新增 Log reporter 模块，方便在开发过程中进行调试和排查问题
+- feat: bot 思维链消息标识抽取为枚举
+- feat: 修改 Dockerfile 以设置文件所有权
+- feat: 更新环境配置并调整 Docker Compose 设置
+- chore: 更新最新 sql
+- chore: 点击新增大模型无反应 bug
+- chore: 优化文件上传存储地址
+- chore: 升级 mybatis-flex,agents-flex,tinyflow-java 到最新版本
+- chore: 优化静态资源缓存策略
+- fix: 插件增加英文名称字段，解决大模型调用 name 字段调用不到 function 问题
+- fix: 修改输入参数保存导致传入方法为空问题
+- fix: 补充思维链枚举调用遗漏的地方
+- fix: 优化语音缓存的细节问题
+
+## v1.1.6 2025-08-22
+**开源版：**
+- 新增：添加 Docker 和 Nginx 配置以支持前后端容器化部署
+- 优化：优化 hooks 调用逻辑
+- 修复：修复新增/编辑用户的表单校验问题
+
+**商业版：**
+- 新增：新增通用字段
+- 新增：去掉字段
+- 优化：修复 hooks 调用逻辑
+- 修复：移除多余表
+- 修复：解决一些页面的控制台警告
+- 修复：修复 QA 知识库 ID 为空的问题
+- 修复：修复新增/编辑用户的表单校验问题
+- 修复：补全实体类缺失字段
+- 修复：默认跳转 bot 页
+- 修复：sql 相关问题
+- 修复：修改配置文件
+
 ## v1.1.5 2025-08-13
 
 **开源版：**
