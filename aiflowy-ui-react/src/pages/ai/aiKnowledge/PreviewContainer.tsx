@@ -40,33 +40,33 @@ const PreviewContainer: React.FC<PreviewContainerProps> = ({
                 </h3>
                 {data.length > 0 && (
                     <span className="preview-stats">
-            共 {total} 个分段
+            共 {total > 0 ? total : data.length} 个分段
           </span>
                 )}
             </div>
 
             <div className="preview-content">
-                    <List
-                        className="preview-list"
-                        itemLayout="horizontal"
-                        dataSource={data}
-                        loading={loading}
-                        renderItem={(item: PreviewItem, index) => (
-                            <List.Item>
-                                <List.Item.Meta
-                                    avatar={<div className="segment-badge">{item.sorting ?? index + 1}</div>}
-                                    title={
-                                        isSearching ? (
-                                            <a>{`相似度 ${item?.score ?? 'N/A'}`}</a>
-                                        ) : undefined
-                                    }
-                                    description={<div style={{ whiteSpace:'normal' }}>
-                                        {item.content}
-                                    </div>}
-                                />
-                            </List.Item>
-                        )}
-                    />
+                <List
+                    className="preview-list"
+                    itemLayout="horizontal"
+                    dataSource={data}
+                    loading={loading}
+                    renderItem={(item: PreviewItem, index) => (
+                        <List.Item>
+                            <List.Item.Meta
+                                avatar={<div className="segment-badge">{item.sorting ?? index + 1}</div>}
+                                title={
+                                    isSearching ? (
+                                        <a>{`相似度 ${item?.score ?? 'N/A'}`}</a>
+                                    ) : undefined
+                                }
+                                description={<div style={{ whiteSpace:'normal' }}>
+                                    {item.content}
+                                </div>}
+                            />
+                        </List.Item>
+                    )}
+                />
             </div>
 
             {confirmImport && (
