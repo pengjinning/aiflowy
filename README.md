@@ -18,9 +18,10 @@ AIFlowy 是一个基于 Java 开发的企业级的开源 AI 应用开发平台 �
 - 全面提升系统性能与扩展性？
 
 💡 现在就为 AIFlowy 投上一票，直接影响 v2.0 的开发方向！
+
 🔗 投票地址：https://gitee.com/activity/2025opensource?ident=INV9BE
 
-> PS：投票后，截图私聊作者微信：fuh99777，拉你进入 AIFlowy v2.0 专有交流群，抢先参与功能设计与讨论！
+ **PS：投票后，截图私聊作者微信：fuh99777，拉你进入 AIFlowy v2.0 专有交流群，抢先参与功能设计与讨论！**
 
 注意：当前 main 分支为开发版本，稳定版本请切换到 v1.x 分支。
 
