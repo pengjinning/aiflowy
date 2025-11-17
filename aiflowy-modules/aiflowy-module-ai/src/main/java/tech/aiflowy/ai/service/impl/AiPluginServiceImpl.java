@@ -120,7 +120,7 @@ public class AiPluginServiceImpl extends ServiceImpl<AiPluginMapper, AiPlugin> i
     }
 
     @Override
-    public Result pageByCategory(Long pageNumber, Long pageSize, int category) {
+    public Result<Page<AiPlugin>> pageByCategory(Long pageNumber, Long pageSize, int category) {
         // 通过分类查询插件
         QueryWrapper queryWrapper = QueryWrapper.create().select("plugin_id")
                 .from("tb_ai_plugin_category_relation")
@@ -130,7 +130,7 @@ public class AiPluginServiceImpl extends ServiceImpl<AiPluginMapper, AiPlugin> i
         Page<AiPluginCategoryRelation> paginateCategories = aiPluginCategoryRelationMapper.paginate(pageNumber, pageSize, queryWrapper);
         List<AiPlugin> aiPlugins = Collections.emptyList();
         if (paginateCategories.getRecords().isEmpty()) {
-            return Result.success(new Page<>(aiPlugins, pageNumber, pageSize, paginateCategories.getTotalRow()));
+            return Result.ok(new Page<>(aiPlugins, pageNumber, pageSize, paginateCategories.getTotalRow()));
         }
         List<BigInteger> pluginIds = pagePluginIds.getRecords();
         // 查询对应的插件信息
@@ -139,7 +139,7 @@ public class AiPluginServiceImpl extends ServiceImpl<AiPluginMapper, AiPlugin> i
                 .in("id", pluginIds);
         aiPlugins = aiPluginMapper.selectListByQuery(queryPluginWrapper);
         Page<AiPlugin> aiPluginPage = new Page<>(aiPlugins, pageNumber, pageSize, paginateCategories.getTotalRow());
-        return Result.success(aiPluginPage);
+        return Result.ok(aiPluginPage);
     }
 
 

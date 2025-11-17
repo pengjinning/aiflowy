@@ -27,7 +27,7 @@ public class AiWorkflowServiceImpl extends ServiceImpl<AiWorkflowMapper, AiWorkf
      * 根据别名或 id 查询详情
      */
     @Override
-    public Result getDetail(String idOrAlias) {
+    public AiWorkflow getDetail(String idOrAlias) {
 
         AiWorkflow workflow = null;
 
@@ -42,7 +42,7 @@ public class AiWorkflowServiceImpl extends ServiceImpl<AiWorkflowMapper, AiWorkf
             workflow = getByAlias(idOrAlias);
         }
 
-        return Result.success(workflow);
+        return workflow;
     }
 
     @Override

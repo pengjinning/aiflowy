@@ -53,22 +53,15 @@ public class AiKnowledgeFunction extends BaseFunction {
     public Object invoke(Map<String, Object> argsMap) {
 
         AiKnowledgeService knowledgeService = SpringContextUtil.getBean(AiKnowledgeService.class);
-        Result result = knowledgeService.search(this.knowledgeId, (String) argsMap.get("input"));
+        List<Document> documents = knowledgeService.search(this.knowledgeId, (String) argsMap.get("input"));
 
-        if (result.isSuccess()) {
-            StringBuilder sb = new StringBuilder();
-            //noinspection unchecked
-            List<Document> documents = (List<Document>) result.data();
-            if (documents != null) {
-                for (Document document : documents) {
-                    sb.append(document.getContent());
-                }
+        StringBuilder sb = new StringBuilder();
+        if (documents != null) {
+            for (Document document : documents) {
+                sb.append(document.getContent());
             }
-            return sb.toString();
         }
-
-
-        return result.failMessage();
+        return sb.toString();
     }
 
     @Override

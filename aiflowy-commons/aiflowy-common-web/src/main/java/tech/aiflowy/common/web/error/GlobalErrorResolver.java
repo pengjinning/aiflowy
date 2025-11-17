@@ -1,5 +1,7 @@
 package tech.aiflowy.common.web.error;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import tech.aiflowy.common.domain.Result;
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
@@ -33,8 +35,8 @@ public class GlobalErrorResolver implements HandlerExceptionResolver {
             LOG.error(ex.toString(), ex);
             error = Result.fail(1, "错误信息：" + ex.getMessage());
         }
-
+        JSONObject object = JSON.parseObject(JSON.toJSONString(error));
         return new ModelAndView(new FastJsonView())
-                .addAllObjects(error);
+                .addAllObjects(object);
     }
 }
