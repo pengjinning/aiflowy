@@ -1,5 +1,6 @@
 package tech.aiflowy.common.web.controller;
 
+import org.apache.poi.ss.formula.functions.T;
 import tech.aiflowy.common.ai.ChatManager;
 import tech.aiflowy.common.ai.util.AiSqlUtil;
 import tech.aiflowy.common.domain.Result;
@@ -49,8 +50,8 @@ public class BaseCurdController<S extends IService<M>, M> extends BaseController
      * @return {@code Result.errorCode == 0} 添加成功，否则添加失败
      */
     @PostMapping("save")
-    public Result save(@JsonBody M entity) {
-        Result result = onSaveOrUpdateBefore(entity, true);
+    public Result<?> save(@JsonBody M entity) {
+        Result<?> result = onSaveOrUpdateBefore(entity, true);
         if (result != null) return result;
 
         if (entity == null) {
@@ -58,11 +59,13 @@ public class BaseCurdController<S extends IService<M>, M> extends BaseController
         }
         LoginAccount loginAccount = SaTokenUtil.getLoginAccount();
         commonFiled(entity,loginAccount.getId(),loginAccount.getTenantId(),loginAccount.getDeptId());
-        boolean success = service.save(entity);
+        service.save(entity);
         onSaveOrUpdateAfter(entity, true);
         TableInfo tableInfo = TableInfoFactory.ofEntityClass(entity.getClass());
         Object[] pkArgs = tableInfo.buildPkSqlArgs(entity);
-        return Result.create(success).set("id", pkArgs);
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("id", pkArgs);
+        return Result.ok(resultMap);
     }
 
     /**
@@ -79,13 +82,13 @@ public class BaseCurdController<S extends IService<M>, M> extends BaseController
      */
     @PostMapping("remove")
     @Transactional
-    public Result remove(@JsonBody(value = "id", required = true) Serializable id) {
+    public Result<?> remove(@JsonBody(value = "id", required = true) Serializable id) {
         List<Serializable> ids = Collections.singletonList(id);
-        Result result = onRemoveBefore(ids);
+        Result<?> result = onRemoveBefore(ids);
         if (result != null) return result;
         boolean success = service.removeById(id);
         onRemoveAfter(ids);
-        return Result.create(success);
+        return Result.ok(success);
     }
 
 
@@ -102,15 +105,15 @@ public class BaseCurdController<S extends IService<M>, M> extends BaseController
      */
     @PostMapping("removeBatch")
     @Transactional
-    public Result removeBatch(@JsonBody(value = "ids", required = true) Collection<Serializable> ids) {
+    public Result<?> removeBatch(@JsonBody(value = "ids", required = true) Collection<Serializable> ids) {
         if (ids == null || ids.isEmpty()) {
-            return Result.fail();
+            return Result.fail("id不能为空");
         }
-        Result result = onRemoveBefore(ids);
+        Result<?> result = onRemoveBefore(ids);
         if (result != null) return result;
         boolean success = service.removeByIds(ids);
         onRemoveAfter(ids);
-        return Result.create(success);
+        return Result.ok(success);
     }
 
     /**
@@ -120,12 +123,12 @@ public class BaseCurdController<S extends IService<M>, M> extends BaseController
      * @return {@code Result.errorCode == 0} 更新成功，否则更新失败
      */
     @PostMapping("update")
-    public Result update(@JsonBody M entity) {
-        Result result = onSaveOrUpdateBefore(entity, false);
+    public Result<?> update(@JsonBody M entity) {
+        Result<?> result = onSaveOrUpdateBefore(entity, false);
         if (result != null) return result;
-        boolean success = service.updateById(entity);
+        service.updateById(entity);
         onSaveOrUpdateAfter(entity, false);
-        return Result.create(success);
+        return Result.ok();
     }
 
     /**
@@ -134,11 +137,11 @@ public class BaseCurdController<S extends IService<M>, M> extends BaseController
      * @return 所有数据
      */
     @GetMapping("list")
-    public Result list(M entity, Boolean asTree, String sortKey, String sortType) {
+    public Result<?> list(M entity, Boolean asTree, String sortKey, String sortType) {
         QueryWrapper queryWrapper = QueryWrapper.create(entity, buildOperators(entity));
         queryWrapper.orderBy(buildOrderBy(sortKey, sortType, getDefaultOrderBy()));
         List<M> list = Tree.tryToTree(service.list(queryWrapper), asTree);
-        return Result.success(list);
+        return Result.ok(list);
     }
 
 
@@ -149,11 +152,11 @@ public class BaseCurdController<S extends IService<M>, M> extends BaseController
      * @return 内容详情
      */
     @GetMapping("detail")
-    public Result detail(String id) {
+    public Result<?> detail(String id) {
         if (tech.aiflowy.common.util.StringUtil.noText(id)) {
             return Result.fail(0, "id is null");
         }
-        return Result.success(service.getById(id));
+        return Result.ok(service.getById(id));
     }
 
 
@@ -168,7 +171,7 @@ public class BaseCurdController<S extends IService<M>, M> extends BaseController
      * @return 查询的结果集
      */
     @GetMapping("page")
-    public Result page(HttpServletRequest request, String sortKey, String sortType, Long pageNumber, Long pageSize) {
+    public Result<?> page(HttpServletRequest request, String sortKey, String sortType, Long pageNumber, Long pageSize) {
         if (pageNumber == null || pageNumber < 1) {
             pageNumber = 1L;
         }
@@ -178,7 +181,7 @@ public class BaseCurdController<S extends IService<M>, M> extends BaseController
 
         QueryWrapper queryWrapper = buildQueryWrapper(request);
         queryWrapper.orderBy(buildOrderBy(sortKey, sortType, getDefaultOrderBy()));
-        return Result.success(queryPage(new Page<>(pageNumber, pageSize), queryWrapper));
+        return Result.ok(queryPage(new Page<>(pageNumber, pageSize), queryWrapper));
     }
 
 
@@ -235,10 +238,10 @@ public class BaseCurdController<S extends IService<M>, M> extends BaseController
 
 
     @PostMapping("intelligentFilling")
-    public Result intelligentFilling(@JsonBody("content") String content) {
+    public Result<?> intelligentFilling(@JsonBody("content") String content) {
         Class<?> entityClass = getEntityClass();
         if (entityClass == null) {
-            return Result.success();
+            return Result.ok();
         }
 
         String templateString = "请根据如下的 DDL 语句，帮我分析出用户给出的内容，可能对应的是哪个字段，并使用 JSON 数据格式的方式返回，" +
@@ -283,12 +286,12 @@ public class BaseCurdController<S extends IService<M>, M> extends BaseController
                 .set("content", content));
         String maybeJson = ChatManager.getInstance().chat(prompt);
         if (maybeJson == null || !maybeJson.contains("```")) {
-            return Result.success();
+            return Result.ok();
         } else {
             maybeJson = maybeJson.replace("```json", "").replace("```", "");
         }
 
-        return Result.success("result", JSON.parse(maybeJson));
+        return Result.ok("result", JSON.parse(maybeJson));
     }
 
 
@@ -333,7 +336,7 @@ public class BaseCurdController<S extends IService<M>, M> extends BaseController
         return service.page(page, queryWrapper);
     }
 
-    protected Result onSaveOrUpdateBefore(M entity, boolean isSave) {
+    protected Result<T> onSaveOrUpdateBefore(M entity, boolean isSave) {
         return null;
     }
 
@@ -341,7 +344,7 @@ public class BaseCurdController<S extends IService<M>, M> extends BaseController
         //void
     }
 
-    protected Result onRemoveBefore(Collection<Serializable> ids) {
+    protected Result<T> onRemoveBefore(Collection<Serializable> ids) {
         return null;
     }
 
