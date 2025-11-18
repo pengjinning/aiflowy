@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { FormInstance } from 'element-plus';
 
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 
 import {
+  ElAvatar,
   ElButton,
   ElForm,
   ElFormItem,
@@ -17,14 +18,22 @@ import {
 import { api } from '#/api/request';
 import PageData from '#/components/page/PageData.vue';
 import { $t } from '#/locales';
+import { useDictStore } from '#/store';
 
 import SysAccountModal from './SysAccountModal.vue';
 
+const dictStore = useDictStore();
 const formRef = ref<FormInstance>();
 const pageDataRef = ref();
 const saveDialog = ref();
 const formInline = ref({
   id: '',
+});
+onMounted(() => {
+  dictStore.fetchDictionary('dataStatus');
+  dictStore.fetchDictionary('dataScope');
+  dictStore.fetchDictionary('accountType');
+  dictStore.fetchDictionary('sysDept');
 });
 function search(formEl: FormInstance | undefined) {
   formEl?.validate((valid) => {
@@ -97,9 +106,15 @@ function remove(row: any) {
     >
       <template #default="{ pageList }">
         <ElTable :data="pageList" border>
-          <ElTableColumn prop="deptId" label="部门ID">
+          <ElTableColumn prop="avatar" label="账户头像">
             <template #default="{ row }">
-              {{ row.deptId }}
+              <ElAvatar v-if="row.avatar" :size="50" :src="row.avatar" />
+              <div v-else></div>
+            </template>
+          </ElTableColumn>
+          <ElTableColumn prop="deptId" label="部门">
+            <template #default="{ row }">
+              {{ dictStore.getDictLabel('sysDept', row.deptId) }}
             </template>
           </ElTableColumn>
           <ElTableColumn prop="loginName" label="登录账号">
@@ -107,14 +122,9 @@ function remove(row: any) {
               {{ row.loginName }}
             </template>
           </ElTableColumn>
-          <ElTableColumn prop="password" label="密码">
-            <template #default="{ row }">
-              {{ row.password }}
-            </template>
-          </ElTableColumn>
           <ElTableColumn prop="accountType" label="账户类型">
             <template #default="{ row }">
-              {{ row.accountType }}
+              {{ dictStore.getDictLabel('accountType', row.accountType) }}
             </template>
           </ElTableColumn>
           <ElTableColumn prop="nickname" label="昵称">
@@ -132,24 +142,14 @@ function remove(row: any) {
               {{ row.email }}
             </template>
           </ElTableColumn>
-          <ElTableColumn prop="avatar" label="账户头像">
-            <template #default="{ row }">
-              {{ row.avatar }}
-            </template>
-          </ElTableColumn>
           <ElTableColumn prop="dataScope" label="数据权限类型">
             <template #default="{ row }">
-              {{ row.dataScope }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="deptIdList" label="自定义部门权限">
-            <template #default="{ row }">
-              {{ row.deptIdList }}
+              {{ dictStore.getDictLabel('dataScope', row.dataScope) }}
             </template>
           </ElTableColumn>
           <ElTableColumn prop="status" label="数据状态">
             <template #default="{ row }">
-              {{ row.status }}
+              {{ dictStore.getDictLabel('dataStatus', row.status) }}
             </template>
           </ElTableColumn>
           <ElTableColumn prop="created" label="创建时间">
