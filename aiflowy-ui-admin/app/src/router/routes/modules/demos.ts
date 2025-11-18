@@ -23,6 +23,22 @@ const routes: RouteRecordRaw[] = [
       },
       {
         meta: {
+          title: '卡片组件',
+        },
+        name: 'NaiveDemos1',
+        path: '/demos/cardTest',
+        component: () => import('#/views/demos/cardTest/index.vue'),
+      },
+      {
+        meta: {
+          title: '分类组件',
+        },
+        name: 'NaiveDemos2',
+        path: '/demos/categoryPanel',
+        component: () => import('#/views/demos/categoryPanel/index.vue'),
+      },
+      {
+        meta: {
           title: $t('demos.form'),
         },
         name: 'BasicForm',
