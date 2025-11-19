@@ -10,6 +10,7 @@ import {
   ElFormItem,
   ElInput,
   ElMessage,
+  ElSwitch,
 } from 'element-plus';
 
 import { api } from '#/api/request';
@@ -109,6 +110,22 @@ function closeDialog() {
       </ElFormItem>
       <ElFormItem prop="remark" :label="$t('sysRole.remark')">
         <ElInput v-model.trim="entity.remark" />
+      </ElFormItem>
+      <ElFormItem :label="$t('sysRole.menuPermission')">
+        <ElSwitch
+          v-model="entity.menuCheckStrictly"
+          :active-text="$t('sysRole.checkStrictlyTrue')"
+          :inactive-text="$t('sysRole.checkStrictlyFalse')"
+        />
+      </ElFormItem>
+      <ElFormItem :label="$t('sysRole.dataPermission')">
+        <DictSelect v-model="entity.dataScope" dict-code="dataScope" />
+        <ElSwitch
+          v-if="entity.dataScope === 5"
+          v-model="entity.deptCheckStrictly"
+          :active-text="$t('sysRole.checkStrictlyTrue')"
+          :inactive-text="$t('sysRole.checkStrictlyFalse')"
+        />
       </ElFormItem>
     </ElForm>
     <template #footer>

@@ -9,5 +9,9 @@
     "modified": "Modified",
     "modifiedBy": "ModifiedBy",
     "remark": "Remark",
-    "isDeleted": "IsDeleted"
+    "isDeleted": "IsDeleted",
+    "menuPermission": "MenuPermission",
+    "dataPermission": "DataPermission",
+    "checkStrictlyTrue": "CheckStrictlyTrue",
+    "checkStrictlyFalse": "CheckStrictlyFalse"
 }
