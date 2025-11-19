@@ -33,7 +33,10 @@ const imageUrl = ref('');
 
 const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
 
-const handleAvatarSuccess: UploadProps['onSuccess'] = (uploadFile) => {
+const handleAvatarSuccess: UploadProps['onSuccess'] = (
+  _response,
+  uploadFile,
+) => {
   imageUrl.value = URL.createObjectURL(uploadFile.raw!);
 };
 
@@ -71,8 +74,8 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
 
 <style scoped>
 .avatar-uploader .avatar {
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
   display: block;
 }
 </style>
@@ -94,8 +97,8 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
 .el-icon.avatar-uploader-icon {
   font-size: 28px;
   color: var(--el-text-color-secondary);
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
   text-align: center;
 }
 </style>

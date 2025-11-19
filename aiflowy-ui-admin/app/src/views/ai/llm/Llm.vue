@@ -126,13 +126,13 @@ const handleClose = () => {};
               />
               <ElTableColumn fixed="right" label="操作" min-width="120">
                 <template #default>
-                  <ElButton link type="primary" size="small">
+                  <ElButton link type="primary">
                     <ElIcon class="mr-1">
                       <Edit />
                     </ElIcon>
                     编辑
                   </ElButton>
-                  <ElButton link type="primary" size="small">
+                  <ElButton link type="primary">
                     <ElIcon class="mr-1">
                       <Delete />
                     </ElIcon>
