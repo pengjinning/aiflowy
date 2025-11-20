@@ -15,6 +15,7 @@ import {
 
 import { api } from '#/api/request';
 import DictSelect from '#/components/dict/DictSelect.vue';
+import Tree from '#/components/tree/Tree.vue';
 import { $t } from '#/locales';
 
 const emit = defineEmits(['reload']);
@@ -117,15 +118,34 @@ function closeDialog() {
           :active-text="$t('sysRole.checkStrictlyTrue')"
           :inactive-text="$t('sysRole.checkStrictlyFalse')"
         />
+        <Tree
+          data-url="/api/v1/sysMenu/list?asTree=true"
+          v-model="entity.menuIds"
+          :default-props="{
+            label: 'menuTitle',
+            children: 'children',
+          }"
+          :check-strictly="!entity.menuCheckStrictly"
+        />
       </ElFormItem>
       <ElFormItem :label="$t('sysRole.dataPermission')">
         <DictSelect v-model="entity.dataScope" dict-code="dataScope" />
-        <ElSwitch
-          v-if="entity.dataScope === 5"
-          v-model="entity.deptCheckStrictly"
-          :active-text="$t('sysRole.checkStrictlyTrue')"
-          :inactive-text="$t('sysRole.checkStrictlyFalse')"
-        />
+        <div v-if="entity.dataScope === 5" style="width: 100%">
+          <ElSwitch
+            v-model="entity.deptCheckStrictly"
+            :active-text="$t('sysRole.checkStrictlyTrue')"
+            :inactive-text="$t('sysRole.checkStrictlyFalse')"
+          />
+          <Tree
+            data-url="/api/v1/sysDept/list?asTree=true"
+            v-model="entity.deptIds"
+            :default-props="{
+              label: 'deptName',
+              children: 'children',
+            }"
+            :check-strictly="!entity.deptCheckStrictly"
+          />
+        </div>
       </ElFormItem>
     </ElForm>
     <template #footer>
