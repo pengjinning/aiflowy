@@ -20,6 +20,7 @@ import CategoryPanel from '#/components/categoryPanel/CategoryPanel.vue';
 import HeaderSearch from '#/components/headerSearch/HeaderSearch.vue';
 import PageData from '#/components/page/PageData.vue';
 import LlmModal from '#/views/ai/llm/LlmModal.vue';
+import QuickAddLlm from '#/views/ai/llm/QuickAddLlm.vue';
 
 const brandListData = ref([]);
 const LlmAddOrUpdateDialog = ref(false);
@@ -63,8 +64,10 @@ const addLlm = async (isEdit = false) => {
     }
   }
 };
-
-const oneClickAdd = () => {};
+const oneClickAddLlmRef = ref();
+const oneClickAdd = () => {
+  oneClickAddLlmRef.value.openQuickAddLlmDialog();
+};
 // 处理搜索事件
 const handleSearch = (searchValue) => {
   pageDataRef.value.setQuery({ title: searchValue, isQueryOr: true });
@@ -197,6 +200,8 @@ const handleSuccess = () => {
       @success="handleSuccess"
       @close="LlmAddOrUpdateDialog = false"
     />
+    <!--    一键添加大模型模态框-->
+    <QuickAddLlm ref="oneClickAddLlmRef" @success="handleSuccess" />
   </div>
 </template>
 

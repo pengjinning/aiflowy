@@ -19,3 +19,8 @@ export async function deleteLlm(data: any) {
 export async function updateLlm(data: any) {
   return api.post(`/api/v1/aiLlm/update`, data);
 }
+
+// 一键添加LLM
+export async function quickAddLlm(data: any) {
+  return api.post(`/api/v1/aiLlm/quickAdd`, data);
+}

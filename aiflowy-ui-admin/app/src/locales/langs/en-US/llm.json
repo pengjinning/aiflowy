@@ -32,7 +32,8 @@
     "TitleRequired": "Please enter the name",
     "BrandRequired": "Please enter the brand",
     "ModelRequired": "Please enter the model",
-    "ApiKeyRequired": "Please enter the apiKey"
+    "ApiKeyRequired": "Please enter the apiKey",
+    "QuickAddLlm": "One-click addition of large models"
   },
   "placeholder": {
     "title": "Please enter the title",

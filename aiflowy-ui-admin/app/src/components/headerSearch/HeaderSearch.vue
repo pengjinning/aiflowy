@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 
-import { ArrowDown, Search } from '@element-plus/icons-vue';
+import { ArrowDown } from '@element-plus/icons-vue';
 import {
   ElButton,
   ElDropdown,
@@ -58,6 +58,10 @@ const handleSearch = () => {
   emit('search', searchValue.value);
 };
 
+const handleReset = () => {
+  searchValue.value = '';
+};
+
 // 处理按钮点击
 const handleButtonClick = (button) => {
   emit('buttonClick', {
@@ -84,19 +88,21 @@ const handleDropdownClick = (button) => {
     <!-- 左侧搜索区域 -->
     <div class="header-left">
       <div class="search-container">
-        <ElInput
-          v-model="searchValue"
-          placeholder="请输入搜索内容"
-          class="search-input"
-          @keyup.enter="handleSearch"
-          clearable
-        >
-          <template #append>
-            <ElButton @click="handleSearch">
-              <ElIcon><Search /></ElIcon>
-            </ElButton>
-          </template>
-        </ElInput>
+        <div>
+          <ElInput
+            v-model="searchValue"
+            placeholder="请输入搜索内容"
+            class="search-input"
+            @keyup.enter="handleSearch"
+            clearable
+          />
+        </div>
+        <div>
+          <ElButton type="primary" @click="handleSearch"> 搜索 </ElButton>
+        </div>
+        <div>
+          <ElButton @click="handleReset"> 重置 </ElButton>
+        </div>
       </div>
     </div>
 
@@ -159,11 +165,13 @@ const handleDropdownClick = (button) => {
 }
 
 .search-container {
-  width: 300px;
+  display: flex;
+  gap: 12px;
 }
 
 .search-input {
   border-radius: 4px;
+  width: 300px;
 }
 
 .header-right {
@@ -188,7 +196,6 @@ const handleDropdownClick = (button) => {
 
   .search-container {
     width: 100%;
-    max-width: 400px;
   }
 
   .header-right {
