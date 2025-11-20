@@ -22,6 +22,10 @@ const props = defineProps({
     type: Array<string>,
     default: () => ['image/gif', 'image/jpeg', 'image/png', 'image/webp'],
   },
+  imageUrl: {
+    type: String,
+    default: '',
+  },
 });
 
 const emit = defineEmits(['success']);
@@ -30,15 +34,13 @@ const headers = ref({
   'aiflowy-token': accessStore.accessToken,
 });
 
-const imageUrl = ref('');
-
 const { apiURL } = useAppConfig(import.meta.env, import.meta.env.PROD);
-
+const localImageUrl = ref(props.imageUrl);
 const handleAvatarSuccess: UploadProps['onSuccess'] = (
   _response,
   uploadFile,
 ) => {
-  imageUrl.value = URL.createObjectURL(uploadFile.raw!);
+  localImageUrl.value = URL.createObjectURL(uploadFile.raw!);
   emit('success', _response.data.path);
 };
 

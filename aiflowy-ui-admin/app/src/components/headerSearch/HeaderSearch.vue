@@ -89,6 +89,7 @@ const handleDropdownClick = (button) => {
           placeholder="请输入搜索内容"
           class="search-input"
           @keyup.enter="handleSearch"
+          clearable
         >
           <template #append>
             <ElButton @click="handleSearch">

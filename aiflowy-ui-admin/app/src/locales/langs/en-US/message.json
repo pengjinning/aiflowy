@@ -9,5 +9,6 @@
   "deleteOkMessage": "Deleted successfully",
   "deleteFailMessage": "Delete failed",
   "loading": "Loading...",
-  "getDataError": "Get data error"
+  "getDataError": "Get data error",
+  "updateOkMessage": "Updated successfully"
 }

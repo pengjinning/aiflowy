@@ -14,3 +14,8 @@ export async function saveLlm(data: string) {
 export async function deleteLlm(data: any) {
   return api.post(`/api/v1/aiLlm/remove`, data);
 }
+
+// 修改LLM
+export async function updateLlm(data: any) {
+  return api.post(`/api/v1/aiLlm/update`, data);
+}
