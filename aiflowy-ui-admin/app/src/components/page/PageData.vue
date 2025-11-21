@@ -1,30 +1,21 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, reactive, ref, watch } from 'vue';
 
 import { ElEmpty, ElPagination } from 'element-plus';
 
 import { api } from '#/api/request';
-// Props
-const props = defineProps({
-  // 列表接口地址
-  pageUrl: {
-    type: String,
-    required: true,
-  },
-  // 每页显示的记录数
-  pageSize: {
-    type: Number,
-    default: 10,
-  },
-  pageSizes: {
-    type: Array,
-    default: () => [10, 20, 50, 100],
-  },
-  // 额外的查询参数，比如一些必带的参数
-  extraQueryParams: {
-    type: Object,
-    default: () => ({}),
-  },
+
+interface PageDataProps {
+  pageUrl: string;
+  pageSize?: number;
+  pageSizes?: number[];
+  extraQueryParams?: Record<string, any>;
+}
+
+const props = withDefaults(defineProps<PageDataProps>(), {
+  pageSize: 10,
+  pageSizes: () => [10, 20, 50, 100],
+  extraQueryParams: () => ({}),
 });
 
 // 响应式数据
@@ -39,7 +30,7 @@ const pageInfo = reactive({
 });
 
 // 模拟 API 调用 - 这里需要根据你的实际 API 调用方式调整
-const doGet = async (params) => {
+const doGet = async (params: any) => {
   loading.value = true;
   try {
     // 这里替换为你的实际 API 调用
@@ -73,17 +64,17 @@ const getPageList = async () => {
 };
 
 // 分页事件处理
-const handleSizeChange = (newSize) => {
+const handleSizeChange = (newSize: number) => {
   pageInfo.pageSize = newSize;
   pageInfo.pageNumber = 1; // 重置到第一页
 };
 
-const handleCurrentChange = (newPage) => {
+const handleCurrentChange = (newPage: number) => {
   pageInfo.pageNumber = newPage;
 };
 
 // 暴露给父组件的方法 (替代 useImperativeHandle)
-const setQuery = (newQueryParams) => {
+const setQuery = (newQueryParams: string) => {
   pageInfo.pageNumber = 1;
   pageInfo.pageSize = props.pageSize;
   queryParams.value = newQueryParams;
