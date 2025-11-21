@@ -11,8 +11,7 @@ export const APP_DOC_URL = 'https://doc.aiflowy.tech';
 /**
  * @zh_CN AIFlowy Logo
  */
-export const APP_LOGO_URL =
-  'https://unpkg.com/@aiflowy/static-source@0.1.7/source/logo-v1.webp';
+export const APP_LOGO_URL = 'http://mm.agentscenter.cn/tabIcon.svg';
 
 /**
  * @zh_CN AIFlowy Admin 首页地址
