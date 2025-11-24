@@ -30,7 +30,7 @@ const formRef = ref<FormInstance>();
 const pageDataRef = ref();
 const saveDialog = ref();
 const formInline = ref({
-  id: '',
+  tableName: '',
 });
 const dictStore = useDictStore();
 function initDict() {
@@ -59,7 +59,7 @@ function remove(row: any) {
       if (action === 'confirm') {
         instance.confirmButtonLoading = true;
         api
-          .post('/api/v1/datacenterTable/remove', { id: row.id })
+          .get(`/api/v1/datacenterTable/removeTable?tableId=${row.id}`)
           .then((res) => {
             instance.confirmButtonLoading = false;
             if (res.errorCode === 0) {
@@ -83,10 +83,10 @@ function remove(row: any) {
   <div class="page-container">
     <DatacenterTableModal ref="saveDialog" @reload="reset" />
     <ElForm ref="formRef" :inline="true" :model="formInline">
-      <ElFormItem :label="$t('datacenterTable.id')" prop="id">
+      <ElFormItem :label="$t('datacenterTable.tableName')" prop="tableName">
         <ElInput
-          v-model="formInline.id"
-          :placeholder="$t('datacenterTable.id')"
+          v-model="formInline.tableName"
+          :placeholder="$t('datacenterTable.tableName')"
         />
       </ElFormItem>
       <ElFormItem>
@@ -117,11 +117,6 @@ function remove(row: any) {
     >
       <template #default="{ pageList }">
         <ElTable :data="pageList" border>
-          <ElTableColumn prop="deptId" :label="$t('datacenterTable.deptId')">
-            <template #default="{ row }">
-              {{ row.deptId }}
-            </template>
-          </ElTableColumn>
           <ElTableColumn
             prop="tableName"
             :label="$t('datacenterTable.tableName')"
@@ -138,27 +133,9 @@ function remove(row: any) {
               {{ row.tableDesc }}
             </template>
           </ElTableColumn>
-          <ElTableColumn
-            prop="actualTable"
-            :label="$t('datacenterTable.actualTable')"
-          >
-            <template #default="{ row }">
-              {{ row.actualTable }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="status" :label="$t('datacenterTable.status')">
-            <template #default="{ row }">
-              {{ row.status }}
-            </template>
-          </ElTableColumn>
           <ElTableColumn prop="created" :label="$t('datacenterTable.created')">
             <template #default="{ row }">
               {{ row.created }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="options" :label="$t('datacenterTable.options')">
-            <template #default="{ row }">
-              {{ row.options }}
             </template>
           </ElTableColumn>
           <ElTableColumn :label="$t('common.handle')" width="150">
