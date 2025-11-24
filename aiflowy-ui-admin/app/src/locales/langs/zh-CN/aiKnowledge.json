@@ -22,10 +22,10 @@
   "englishName": "英文名称",
   "documentType": "文件类型",
   "fileName": "文件名",
-  "knowledgeCount":  "知识条数",
-  "createdModifyTime":  "创建/更新时间",
-  "documentList":  "文档列表",
-  "knowledgeRetrieval":  "知识检索",
+  "knowledgeCount": "知识条数",
+  "createdModifyTime": "创建/更新时间",
+  "documentList": "文档列表",
+  "knowledgeRetrieval": "知识检索",
   "sorting": "排序",
   "content": "内容",
   "placeholder": {
@@ -37,5 +37,11 @@
     "rerankLlm": "请选择重排模型",
     "vectorStoreCollection": "只能包含字母、数字和下划线且长度在3-20个字符之间",
     "vectorStoreType": "请选择向量数据库类型"
+  },
+  "importDoc": {
+    "fileUpload": "文件上传",
+    "parameterSettings": "参数设置",
+    "segmentedPreview": "分段预览",
+    "confirmImport": "确认导入"
   }
 }

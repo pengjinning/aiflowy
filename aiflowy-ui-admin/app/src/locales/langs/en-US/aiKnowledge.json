@@ -37,5 +37,11 @@
     "rerankLlm": "Please choose to rearrange the model",
     "vectorStoreCollection": "Can only contain letters, numbers, and underscores with a length between 3-20 characters",
     "vectorStoreType": "Please select the vector database type"
+  },
+  "importDoc": {
+    "fileUpload": "File upload",
+    "parameterSettings": "ParameterSettings",
+    "segmentedPreview": "SegmentedPreview",
+    "confirmImport": "ConfirmImport"
   }
 }

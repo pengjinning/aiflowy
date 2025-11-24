@@ -10,6 +10,8 @@ import CategoryPanel from '#/components/categoryPanel/CategoryPanel.vue';
 import HeaderSearch from '#/components/headerSearch/HeaderSearch.vue';
 import ChunkDocumentTable from '#/views/ai/knowledge/ChunkDocumentTable.vue';
 import DocumentTable from '#/views/ai/knowledge/DocumentTable.vue';
+import ImportKnowledgeDocFile from '#/views/ai/knowledge/ImportKnowledgeDocFile.vue';
+import KnowledgeSearch from '#/views/ai/knowledge/KnowledgeSearch.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -35,6 +37,7 @@ const headerButtons = [
     data: { action: 'importFile' },
   },
 ];
+const isImportFileVisible = ref(false);
 const selectedCategory = ref('docList');
 const handleSearch = () => {};
 const handleButtonClick = (event: any) => {
@@ -45,6 +48,7 @@ const handleButtonClick = (event: any) => {
       break;
     }
     case 'importFile': {
+      isImportFileVisible.value = true;
       break;
     }
   }
@@ -60,44 +64,58 @@ const viewDoc = (docId: string) => {
   viewDocVisible.value = true;
   documentId.value = docId;
 };
+const backDoc = () => {
+  isImportFileVisible.value = false;
+};
 </script>
 
 <template>
-  <div class="doc-container">
-    <div class="doc-header">
-      <HeaderSearch
-        :buttons="headerButtons"
-        search-placeholder="搜索用户"
-        @search="handleSearch"
-        @button-click="handleButtonClick"
-      />
-    </div>
-    <div class="doc-content">
-      <CategoryPanel
-        :default-selected-category="$t('aiKnowledge.documentList')"
-        :categories="categoryData"
-        title-key="name"
-        :use-img-for-svg="true"
-        :need-hide-collapse="true"
-        :expand-width="200"
-        @click="handleCategoryClick"
-      />
-      <div v-if="selectedCategory === 'docList'" class="doc-table">
-        <DocumentTable
-          :knowledge-id="knowledgeId"
-          @view-doc="viewDoc"
-          v-if="!viewDocVisible"
+  <div class="document-container">
+    <div v-if="!isImportFileVisible" class="doc-container">
+      <div class="doc-header">
+        <HeaderSearch
+          :buttons="headerButtons"
+          search-placeholder="搜索用户"
+          @search="handleSearch"
+          @button-click="handleButtonClick"
         />
-        <ChunkDocumentTable v-else :document-id="documentId" />
       </div>
-      <div v-if="selectedCategory === 'knowledgeSearch'" class="doc-table">
-        <DocumentTable :knowledge-id="knowledgeId" />
+      <div class="doc-content">
+        <CategoryPanel
+          :default-selected-category="$t('aiKnowledge.documentList')"
+          :categories="categoryData"
+          title-key="name"
+          :use-img-for-svg="true"
+          :need-hide-collapse="true"
+          :expand-width="200"
+          @click="handleCategoryClick"
+        />
+        <div v-if="selectedCategory === 'docList'" class="doc-table">
+          <DocumentTable
+            :knowledge-id="knowledgeId"
+            @view-doc="viewDoc"
+            v-if="!viewDocVisible"
+          />
+          <ChunkDocumentTable v-else :document-id="documentId" />
+        </div>
+        <div v-if="selectedCategory === 'knowledgeSearch'" class="doc-table">
+          <KnowledgeSearch :knowledge-id="knowledgeId" />
+        </div>
       </div>
+    </div>
+
+    <div v-else class="doc-imp-container">
+      <ImportKnowledgeDocFile @import-back="backDoc" />
     </div>
   </div>
 </template>
 
 <style scoped>
+.document-container {
+  width: 100%;
+  display: flex;
+  height: 100%;
+}
 .doc-container {
   padding: 20px;
   width: 100%;
@@ -119,5 +137,10 @@ const viewDoc = (docId: string) => {
   width: 100%;
   height: 100%;
   overflow: auto;
+}
+.doc-imp-container {
+  flex: 1;
+  width: 100%;
+  padding: 20px;
 }
 </style>
