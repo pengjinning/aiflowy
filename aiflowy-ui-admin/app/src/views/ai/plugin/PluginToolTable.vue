@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 import { $t } from '@aiflowy/locales';
 
@@ -23,6 +24,7 @@ const props = defineProps({
     type: String,
   },
 });
+const router = useRouter();
 defineExpose({
   openPluginToolModal() {
     aiPluginToolRef.value.openDialog();
@@ -40,7 +42,13 @@ defineExpose({
 });
 const pageDataRef = ref();
 const handleEdit = (row: any) => {
-  aiPluginToolRef.value.openDialog(row);
+  router.push({
+    path: '/ai/plugin/tool/edit',
+    query: {
+      id: row.id,
+      pageKey: '/ai/plugin',
+    },
+  });
 };
 
 const handleDelete = (row: any) => {

@@ -95,10 +95,9 @@ const handleAction = ({ action, item }) => {
       break;
     }
     case 'tools': {
-      router.replace({
+      router.push({
         path: '/ai/plugin/tools',
         query: {
-          // 关键：传递 pageKey 与原页面一致（复用 Tab Key）
           id: item.id,
           pageKey: '/ai/plugin',
         },

@@ -78,12 +78,22 @@ const routes: RouteRecordRaw[] = [
       hideInTab: true,
       hideInBreadcrumb: true,
       fullPathKey: true,
-      activePath: '/ai/plugin',
-      activePathKey: '/ai/plugin',
     },
     name: 'PluginTools',
     path: '/ai/plugin/tools',
     component: () => import('#/views/ai/plugin/PluginTools.vue'),
+  },
+  {
+    meta: {
+      title: $t('plugin.toolsManagement'),
+      hideInMenu: true,
+      hideInTab: true,
+      hideInBreadcrumb: true,
+      fullPathKey: true,
+    },
+    name: 'PluginToolEdit',
+    path: '/ai/plugin/tool/edit',
+    component: () => import('#/views/ai/plugin/PluginToolEdit.vue'),
   },
 ];
 
