@@ -304,7 +304,7 @@ const handleDeleteClick = (event: any, item: any) => {
 }
 
 .crud-category-item:hover {
-  background-color: #f9fafb;
+  background-color: var(--el-color-primary-light-9);
   cursor: pointer;
 }
 
@@ -326,7 +326,6 @@ const handleDeleteClick = (event: any, item: any) => {
   padding: 8px 12px;
   height: 40px;
   border-radius: 8px;
-  border-bottom: 1px solid #f0f0f0;
 }
 
 .crud-category-item :deep(.el-icon) {

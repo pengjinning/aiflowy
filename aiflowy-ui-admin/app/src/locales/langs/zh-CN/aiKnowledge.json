@@ -62,5 +62,6 @@
     "completed": "已完成",
     "uploading": "解析中",
     "importSuccess": "导入成功"
-  }
+  },
+  "documentManagement": "文档管理"
 }

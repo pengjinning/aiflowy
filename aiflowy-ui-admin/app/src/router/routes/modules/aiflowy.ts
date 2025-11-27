@@ -60,7 +60,7 @@ const routes: RouteRecordRaw[] = [
   },
   {
     meta: {
-      title: '知识库文档管理',
+      title: $t('aiKnowledge.documentManagement'),
       hideInMenu: true,
       hideInTab: true,
       hideInBreadcrumb: true,
@@ -70,6 +70,20 @@ const routes: RouteRecordRaw[] = [
     name: 'Document',
     path: '/ai/knowledge/document',
     component: () => import('#/views/ai/knowledge/Document.vue'),
+  },
+  {
+    meta: {
+      title: $t('plugin.toolsManagement'),
+      hideInMenu: true,
+      hideInTab: true,
+      hideInBreadcrumb: true,
+      fullPathKey: true,
+      activePath: '/ai/plugin',
+      activePathKey: '/ai/plugin',
+    },
+    name: 'PluginTools',
+    path: '/ai/plugin/tools',
+    component: () => import('#/views/ai/plugin/PluginTools.vue'),
   },
 ];
 

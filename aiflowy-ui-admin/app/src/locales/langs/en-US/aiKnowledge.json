@@ -62,5 +62,6 @@
     "completed": "Completed",
     "uploading": "Parsing in progress",
     "importSuccess": "ImportSuccess"
-  }
+  },
+  "documentManagement": "Document management"
 }

@@ -4,42 +4,43 @@ import { useRouter } from 'vue-router';
 
 import { $t } from '@aiflowy/locales';
 
-import { Delete, Edit, Plus, View } from '@element-plus/icons-vue';
+import { Delete, Edit, Plus } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 import { api } from '#/api/request';
 import CardPage from '#/components/cardPage/CardPage.vue';
 import CategoryCrudPanel from '#/components/categoryPanel/CategoryCrudPanel.vue';
 import HeaderSearch from '#/components/headerSearch/HeaderSearch.vue';
+import CategorizeIcon from '#/components/icons/CategorizeIcon.vue';
+import PluginToolIcon from '#/components/icons/PluginToolIcon.vue';
 import PageData from '#/components/page/PageData.vue';
 import AddPluginModal from '#/views/ai/plugin/AddPluginModal.vue';
+import CategoryPluginModal from '#/views/ai/plugin/CategoryPluginModal.vue';
 
 const router = useRouter();
-
 // 操作按钮配置
 const actions = ref([
   {
     name: 'edit',
-    label: '编辑',
+    label: $t('button.edit'),
     type: 'primary',
     icon: markRaw(Edit),
     permission: '/api/v1/aiPlugin/save',
   },
   {
-    name: 'view',
-    label: '列表',
+    name: 'tools',
+    label: $t('plugin.button.tools'),
     type: 'success',
-    icon: markRaw(View),
+    icon: markRaw(PluginToolIcon),
+  },
+  {
+    name: 'categorize',
+    label: $t('plugin.button.categorize'),
+    icon: markRaw(CategorizeIcon),
   },
   {
     name: 'delete',
-    label: '检索',
-    type: 'danger',
-    icon: markRaw(View),
-  },
-  {
-    name: 'delete',
-    label: '删除',
+    label: $t('button.delete'),
     type: 'info',
     icon: markRaw(Delete),
     permission: '/api/v1/aiPlugin/remove',
@@ -81,6 +82,10 @@ const handleDelete = (item) => {
 const handleAction = ({ action, item }) => {
   // 根据不同的操作执行不同的逻辑
   switch (action.name) {
+    case 'categorize': {
+      categoryCategoryModal.value.openDialog(item);
+      break;
+    }
     case 'delete': {
       handleDelete(item);
       break;
@@ -89,30 +94,27 @@ const handleAction = ({ action, item }) => {
       aiPluginModalRef.value.openDialog(item);
       break;
     }
-    case 'view': {
+    case 'tools': {
       router.replace({
-        path: '/ai/knowledge/document',
+        path: '/ai/plugin/tools',
         query: {
           // 关键：传递 pageKey 与原页面一致（复用 Tab Key）
           id: item.id,
-          pageKey: '/ai/knowledge',
+          pageKey: '/ai/plugin',
         },
-        // meta: {
-        //   pageKey: '/ai/knowledge', // 隐藏在路由元信息中
-        // },
       });
       break;
     }
-    // 其他操作...
   }
 };
 
 const pageDataRef = ref();
 const aiPluginModalRef = ref();
+const categoryCategoryModal = ref();
 const headerButtons = [
   {
     key: 'add',
-    text: '新增知识库',
+    text: $t('plugin.button.addPlugin'),
     icon: markRaw(Plus),
     type: 'primary',
     data: { action: 'add' },
@@ -217,6 +219,7 @@ const handleClickCategory = (item) => {
       </div>
     </div>
     <AddPluginModal ref="aiPluginModalRef" @reload="handleSearch" />
+    <CategoryPluginModal ref="categoryCategoryModal" @reload="handleSearch" />
   </div>
 </template>
 

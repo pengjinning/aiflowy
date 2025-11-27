@@ -295,7 +295,7 @@ onMounted(() => {
 }
 
 .category-item-content:hover {
-  background-color: #f9fafb;
+  background-color: var(--el-color-primary-light-9);
 }
 
 .category-icon {

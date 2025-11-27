@@ -16,8 +16,16 @@
   "deptId": "DeptId",
   "tenantId": "TenantId",
   "createdBy": "CreatedBy",
+  "category": "Category",
   "placeholder": {
     "name": "Please enter plugin name",
-    "description": "Please enter plugin description"
-  }
+    "description": "Please enter plugin description",
+    "categorize": "Please enter categorize"
+  },
+  "button": {
+    "addPlugin": "Add Plugin",
+    "categorize": "categorize",
+    "tools": "tools"
+  },
+  "toolsManagement": "Tools Management",
 }

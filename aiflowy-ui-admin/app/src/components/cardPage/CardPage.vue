@@ -212,7 +212,13 @@ const filteredActions = computed(() => {
   display: flex;
   align-items: center;
   height: 48px;
-  background: linear-gradient(180deg, #f3f8ff 0%, #ffffff 100%) !important;
+  background:
+    linear-gradient(
+      180deg,
+      var(--el-color-primary-light-9),
+      var(--el-bg-color)
+    ),
+    var(--el-bg-color);
 }
 
 .action-btn {
