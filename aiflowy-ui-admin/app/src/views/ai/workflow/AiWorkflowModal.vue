@@ -13,8 +13,8 @@ import {
 } from 'element-plus';
 
 import { api } from '#/api/request';
+import Cropper from '#/components/upload/Cropper.vue';
 import { $t } from '#/locales';
-import Cropper from "#/components/upload/Cropper.vue";
 
 const emit = defineEmits(['reload']);
 // vue

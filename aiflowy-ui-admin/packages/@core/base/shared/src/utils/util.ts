@@ -89,3 +89,21 @@ export function formatBytes(bytes: any, decimals = 2) {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return `${Number.parseFloat((bytes / k ** i).toFixed(decimals))} ${sizes[i]}`;
 }
+
+/**
+ * 获取选项
+ * @param labelKey
+ * @param valueKey
+ * @param options
+ */
+export function getOptions(labelKey: string, valueKey: string, options: any[]) {
+  if (options && options.length > 0) {
+    return options.map((item: any) => {
+      return {
+        label: item[labelKey],
+        value: item[valueKey],
+      };
+    });
+  }
+  return [];
+}
