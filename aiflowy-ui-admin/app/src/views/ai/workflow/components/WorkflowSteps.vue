@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ServerSentEventMessage } from 'fetch-event-stream';
 
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import { preferences } from '@aiflowy/preferences';
 
@@ -25,10 +25,11 @@ watch(
   },
 );
 const nodes = ref<any[]>([]);
+const nodeStatusMap = ref<Record<string, any>>({});
 watch(
   () => props.nodeJson,
   (newVal) => {
-    if (nodes.value.length === 0 && newVal && newVal.length > 0) {
+    if (newVal) {
       nodes.value = [...newVal];
     }
   },
@@ -41,14 +42,10 @@ watch(
       try {
         const msg = JSON.parse(newMsg.data).content;
         if (msg.nodeId && msg.status) {
-          // 直接在原数组中找到该对象
-          const targetNode = nodes.value.find(
-            (node) => node.key === msg.nodeId,
-          );
-          if (targetNode) {
-            targetNode.status = msg.status;
-            targetNode.content = msg.res || msg.errorMsg;
-          }
+          nodeStatusMap.value[msg.nodeId] = {
+            status: msg.status,
+            content: msg.res || msg.errorMsg,
+          };
         }
       } catch (error) {
         console.error('parse sse message error:', error);
@@ -57,6 +54,12 @@ watch(
   },
   { deep: true },
 );
+const displayNodes = computed(() => {
+  return nodes.value.map((node) => ({
+    ...node,
+    ...nodeStatusMap.value[node.key],
+  }));
+});
 const activeName = ref('1');
 </script>
 
@@ -64,7 +67,7 @@ const activeName = ref('1');
   <div>
     <ElCollapse v-model="activeName" accordion expand-icon-position="left">
       <ElCollapseItem
-        v-for="node in nodes"
+        v-for="node in displayNodes"
         :key="node.key"
         :title="`${node.label}-${node.status}`"
         :name="node.key"

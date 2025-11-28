@@ -79,6 +79,7 @@ watch(
 async function runWorkflow() {
   if (!saveLoading.value) {
     await handleSave().then(() => {
+      getWorkflowInfo(workflowId.value);
       getRunningParams();
     });
   }
