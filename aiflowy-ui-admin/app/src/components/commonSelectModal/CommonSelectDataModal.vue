@@ -16,11 +16,15 @@ import HeaderSearch from '#/components/headerSearch/HeaderSearch.vue';
 import PageData from '#/components/page/PageData.vue';
 
 const props = defineProps({
-  data: { type: Array, default: () => [] },
   title: { type: String, default: '' },
   width: { type: String, default: '80%' },
   extraQueryParams: { type: Object, default: () => ({}) },
-  pageUrl: { type: String, default: '/api/v1/aiPlugin/page' },
+  searchParams: {
+    type: Array as PropType<string[]>,
+    default: () => [],
+  },
+  pageUrl: { type: String, default: '' },
+  isSelectPlugin: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(['getData']);
@@ -58,11 +62,15 @@ const handleSubmitRun = () => {
   dialogVisible.value = false;
   return selectedIds.value;
 };
-const handleSearch = (query) => {
-  pageDataRef.value.setQuery({
+const handleSearch = (query: string) => {
+  const tempParams = {} as Record<string, string>;
+  props.searchParams.forEach((paramName) => {
+    tempParams[paramName] = query;
+  });
+
+  pageDataRef.value?.setQuery({
     isQueryOr: true,
-    name: query,
-    description: query,
+    ...tempParams,
   });
 };
 </script>
@@ -84,41 +92,72 @@ const handleSearch = (query) => {
         ref="pageDataRef"
         :page-url="pageUrl"
         :page-size="10"
-        :extra-query-params="{ category: 0, ...extraQueryParams }"
+        :extra-query-params="extraQueryParams"
       >
         <template #default="{ pageList }">
-          <ElCollapse accordion v-for="(item, index) in pageList" :key="index">
-            <ElCollapseItem>
-              <template #title="{ isActive }">
-                <div class="title-wrapper" :class="[{ 'is-active': isActive }]">
+          <template v-if="isSelectPlugin">
+            <ElCollapse
+              accordion
+              v-for="(item, index) in pageList"
+              :key="index"
+            >
+              <ElCollapseItem>
+                <template #title="{ isActive }">
+                  <div
+                    class="title-wrapper"
+                    :class="[{ 'is-active': isActive }]"
+                  >
+                    <div>
+                      <ElAvatar :src="item.icon" v-if="item.icon" />
+                      <ElAvatar v-else src="/favicon.png" shape="circle" />
+                    </div>
+                    <div class="title-right-container">
+                      <div class="title">{{ item.name }}</div>
+                      <div class="desc">{{ item.description }}</div>
+                    </div>
+                  </div>
+                </template>
+                <div v-for="tool in item.tools" :key="tool.id">
+                  <div class="content-title-wrapper">
+                    <div class="content-left-container">
+                      <div class="title-right-container">
+                        <div class="title">{{ tool.name }}</div>
+                        <div class="desc">{{ tool.description }}</div>
+                      </div>
+                    </div>
+                    <div>
+                      <ElCheckbox
+                        :model-value="isSelected(tool.id)"
+                        @change="(val) => toggleSelection(tool.id, val)"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </ElCollapseItem>
+            </ElCollapse>
+          </template>
+          <template v-else>
+            <div v-for="(item, index) in pageList" :key="index">
+              <div class="content-title-wrapper">
+                <div class="content-sec-left-container">
                   <div>
                     <ElAvatar :src="item.icon" v-if="item.icon" />
                     <ElAvatar v-else src="/favicon.png" shape="circle" />
                   </div>
-                  <div class="title-right-container">
-                    <div class="title">{{ item.name }}</div>
+                  <div class="title-sec-right-container">
+                    <div class="title">{{ item.title }}</div>
                     <div class="desc">{{ item.description }}</div>
                   </div>
                 </div>
-              </template>
-              <div v-for="tool in item.tools" :key="tool.id">
-                <div class="content-title-wrapper">
-                  <div class="content-left-container">
-                    <div class="title-right-container">
-                      <div class="title">{{ tool.name }}</div>
-                      <div class="desc">{{ tool.description }}</div>
-                    </div>
-                  </div>
-                  <div>
-                    <ElCheckbox
-                      :model-value="isSelected(tool.id)"
-                      @change="(val) => toggleSelection(tool.id, val)"
-                    />
-                  </div>
+                <div>
+                  <ElCheckbox
+                    :model-value="isSelected(item.id)"
+                    @change="(val) => toggleSelection(item.id, val)"
+                  />
                 </div>
               </div>
-            </ElCollapseItem>
-          </ElCollapse>
+            </div>
+          </template>
         </template>
       </PageData>
     </div>
@@ -165,6 +204,9 @@ const handleSearch = (query) => {
   display: flex;
   align-items: center;
 }
+.content-sec-left-container {
+  display: flex;
+}
 .desc {
   margin: 0;
   width: 100%;
@@ -185,5 +227,12 @@ const handleSearch = (query) => {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.title-sec-right-container {
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 </style>
