@@ -33,4 +33,32 @@ interface BotInfo {
   title: string;
 }
 
-export type { BotInfo };
+interface Session {
+  botId: string;
+  sessionId: string;
+  title: string;
+}
+
+interface BaseMessage {
+  created: number;
+  updateAt: number;
+  id: string;
+  content: string;
+}
+
+interface UserMessage extends BaseMessage {
+  role: 'user';
+  options: {
+    type: number;
+    user_input: string;
+  };
+}
+
+interface AssistantMessage extends BaseMessage {
+  role: 'assistant';
+  // options 不应该出现在 assistant 消息中
+}
+
+type Message = AssistantMessage | UserMessage;
+
+export type { BotInfo, Message, Session };
