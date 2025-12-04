@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, ref, watch} from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 import {
   ElCard,
@@ -10,16 +10,17 @@ import {
   ElRow,
   ElText,
   ElTooltip,
-  ElTag,
 } from 'element-plus';
 
-import audioIcon from '#/assets/ai/resource/audio-icon.png';
-import docIcon from '#/assets/ai/resource/doc-icon.png';
-import otherIcon from '#/assets/ai/resource/other-icon.png';
-import videoIcon from '#/assets/ai/resource/video-icon.png';
+import Tag from '#/components/tag/Tag.vue';
 import { $t } from '#/locales';
+import { useDictStore } from '#/store';
+import {
+  getResourceOriginColor,
+  getResourceTypeColor,
+  getSrc,
+} from '#/utils/resource';
 import PreviewModal from '#/views/ai/resource/PreviewModal.vue';
-import {useDictStore} from "#/store";
 
 export interface ResourceCardProps {
   data: any[];
@@ -30,6 +31,7 @@ const props = withDefaults(defineProps<ResourceCardProps>(), {
   multiple: false,
   valueProp: 'id',
 });
+const emit = defineEmits(['update:modelValue']);
 onMounted(() => {
   initDict();
 });
@@ -38,7 +40,6 @@ function initDict() {
   dictStore.fetchDictionary('resourceType');
   dictStore.fetchDictionary('resourceOriginType');
 }
-const emit = defineEmits(['update:modelValue']);
 const previewDialog = ref();
 const radioValue = ref('');
 const checkAll = ref(false);
@@ -72,59 +73,8 @@ function handleCheckAllChange(val: any) {
     }
   }
 }
-function getSrc(item: any) {
-  switch (item.resourceType) {
-    case 0: {
-      return item.resourceUrl;
-    }
-    case 1: {
-      return audioIcon;
-    }
-    case 2: {
-      return videoIcon;
-    }
-    case 3: {
-      return docIcon;
-    }
-    default: {
-      return otherIcon;
-    }
-  }
-}
 function preview(row: any) {
   previewDialog.value.openDialog({ ...row });
-}
-function getResourceTypeColor(item: any) {
-  switch (item.resourceType) {
-    case 0: {
-      return '#0066FF';
-    }
-    case 1: {
-      return '#FFA200';
-    }
-    case 2: {
-      return '#5600FF';
-    }
-    case 3: {
-      return '#0099CC';
-    }
-    default: {
-      return '#757575';
-    }
-  }
-}
-function getResourceOriginColor(item: any) {
-  switch (item.origin) {
-    case 0: {
-      return '#00B8A9';
-    }
-    case 1: {
-      return '#0066FF';
-    }
-    default: {
-      return '';
-    }
-  }
 }
 watch(
   [() => radioValue.value, () => props.data],
@@ -178,12 +128,22 @@ watch(
               </ElTooltip>
             </div>
             <div class="flex gap-1.5">
-              <ElTag :color="getResourceOriginColor(item)" effect="dark">
-                {{ dictStore.getDictLabel('resourceOriginType', item.origin) }}
-              </ElTag>
-              <ElTag :color="getResourceTypeColor(item)" effect="dark">
-                {{ dictStore.getDictLabel('resourceType', item.resourceType) }}
-              </ElTag>
+              <Tag
+                size="small"
+                :background-color="`${getResourceOriginColor(item)}15`"
+                :text-color="getResourceOriginColor(item)"
+                :text="
+                  dictStore.getDictLabel('resourceOriginType', item.origin)
+                "
+              />
+              <Tag
+                size="small"
+                :background-color="`${getResourceTypeColor(item)}15`"
+                :text-color="getResourceTypeColor(item)"
+                :text="
+                  dictStore.getDictLabel('resourceType', item.resourceType)
+                "
+              />
             </div>
           </div>
         </ElCard>

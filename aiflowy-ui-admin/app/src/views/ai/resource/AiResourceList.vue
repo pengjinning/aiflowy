@@ -7,6 +7,7 @@ import { formatBytes } from '@aiflowy/utils';
 
 import { Delete, Download, Edit, Plus, View } from '@element-plus/icons-vue';
 import {
+  ElAvatar,
   ElButton,
   ElForm,
   ElFormItem,
@@ -16,12 +17,21 @@ import {
   ElMessageBox,
   ElTable,
   ElTableColumn,
+  ElText,
+  ElTooltip,
 } from 'element-plus';
 
 import { api } from '#/api/request';
+import DictSelect from '#/components/dict/DictSelect.vue';
 import PageData from '#/components/page/PageData.vue';
+import Tag from '#/components/tag/Tag.vue';
 import { $t } from '#/locales';
 import { useDictStore } from '#/store';
+import {
+  getResourceOriginColor,
+  getResourceTypeColor,
+  getSrc,
+} from '#/utils/resource';
 import PreviewModal from '#/views/ai/resource/PreviewModal.vue';
 
 import AiResourceModal from './AiResourceModal.vue';
@@ -35,6 +45,7 @@ const saveDialog = ref();
 const previewDialog = ref();
 const formInline = ref({
   resourceName: '',
+  resourceType: '',
 });
 const dictStore = useDictStore();
 function initDict() {
@@ -95,6 +106,13 @@ function download(row: any) {
     <PreviewModal ref="previewDialog" />
     <AiResourceModal ref="saveDialog" @reload="reset" />
     <ElForm ref="formRef" :inline="true" :model="formInline">
+      <ElFormItem :label="$t('aiResource.resourceType')" prop="resourceType">
+        <DictSelect
+          v-model="formInline.resourceType"
+          dict-code="resourceType"
+          :placeholder="$t('aiResource.resourceType')"
+        />
+      </ElFormItem>
       <ElFormItem :label="$t('aiResource.resourceName')" prop="resourceName">
         <ElInput
           v-model="formInline.resourceName"
@@ -130,23 +148,28 @@ function download(row: any) {
       <template #default="{ pageList }">
         <ElTable :data="pageList" border>
           <ElTableColumn
-            prop="resourceType"
-            :label="$t('aiResource.resourceType')"
+            prop="resourceName"
+            :label="$t('aiResource.resourceName')"
+            width="300"
           >
             <template #default="{ row }">
-              {{ dictStore.getDictLabel('resourceType', row.resourceType) }}
+              <div class="flex items-center gap-2.5">
+                <ElAvatar :src="getSrc(row)" shape="square" :size="50" />
+                <div class="w-[200px]">
+                  <ElTooltip :content="`${row.resourceName}`" placement="top">
+                    <ElText truncated>
+                      {{ row.resourceName }}
+                    </ElText>
+                  </ElTooltip>
+                </div>
+              </div>
             </template>
           </ElTableColumn>
           <ElTableColumn
-            show-overflow-tooltip
-            prop="resourceName"
-            :label="$t('aiResource.resourceName')"
+            prop="suffix"
+            :label="$t('aiResource.suffix')"
+            width="60"
           >
-            <template #default="{ row }">
-              {{ row.resourceName }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="suffix" :label="$t('aiResource.suffix')">
             <template #default="{ row }">
               {{ row.suffix }}
             </template>
@@ -158,7 +181,25 @@ function download(row: any) {
           </ElTableColumn>
           <ElTableColumn prop="origin" :label="$t('aiResource.origin')">
             <template #default="{ row }">
-              {{ dictStore.getDictLabel('resourceOriginType', row.origin) }}
+              <Tag
+                size="small"
+                :background-color="`${getResourceOriginColor(row)}15`"
+                :text-color="getResourceOriginColor(row)"
+                :text="dictStore.getDictLabel('resourceOriginType', row.origin)"
+              />
+            </template>
+          </ElTableColumn>
+          <ElTableColumn
+            prop="resourceType"
+            :label="$t('aiResource.resourceType')"
+          >
+            <template #default="{ row }">
+              <Tag
+                size="small"
+                :background-color="`${getResourceTypeColor(row)}15`"
+                :text-color="getResourceTypeColor(row)"
+                :text="dictStore.getDictLabel('resourceType', row.resourceType)"
+              />
             </template>
           </ElTableColumn>
           <ElTableColumn prop="created" :label="$t('aiResource.created')">
@@ -166,7 +207,7 @@ function download(row: any) {
               {{ row.created }}
             </template>
           </ElTableColumn>
-          <ElTableColumn :label="$t('common.handle')" width="150">
+          <ElTableColumn :label="$t('common.handle')" width="280">
             <template #default="{ row }">
               <div>
                 <ElButton @click="preview(row)" link type="primary">

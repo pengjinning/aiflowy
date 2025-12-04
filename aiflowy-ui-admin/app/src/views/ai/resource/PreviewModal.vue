@@ -24,6 +24,7 @@ function closeDialog() {
     :title="$t('message.preview')"
     :before-close="closeDialog"
     :close-on-click-modal="false"
+    destroy-on-close
   >
     <div class="flex justify-center">
       <ElImage
