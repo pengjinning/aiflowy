@@ -48,7 +48,7 @@ const handleSubmit = async () => {
 
   if (!err && res.errorCode === 0) {
     emit('success');
-    ElMessage.success(res.message);
+    ElMessage.success($t('message.saveOkMessage'));
     dialogVisible.value = false;
   }
   loading.value = false;
@@ -79,16 +79,16 @@ defineExpose({
     align-center
   >
     <ElForm ref="formRef" :model="formData" :rules="rules" label-width="150px">
-      <ElFormItem label="头像" prop="icon">
+      <ElFormItem :label="$t('common.avatar')" prop="icon">
         <UploadAvatar v-model="formData.icon" />
       </ElFormItem>
-      <ElFormItem label="名称" prop="title">
+      <ElFormItem :label="$t('aiWorkflow.title')" prop="title">
         <ElInput v-model="formData.title" />
       </ElFormItem>
-      <ElFormItem label="别名" prop="alias">
+      <ElFormItem :label="$t('plugin.alias')" prop="alias">
         <ElInput v-model="formData.alias" />
       </ElFormItem>
-      <ElFormItem label="描述" prop="description">
+      <ElFormItem :label="$t('plugin.description')" prop="description">
         <ElInput type="textarea" :rows="3" v-model="formData.description" />
       </ElFormItem>
     </ElForm>
