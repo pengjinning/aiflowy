@@ -1,8 +1,10 @@
 package tech.aiflowy.ai.tinyflow.entity;
 
 import dev.tinyflow.core.chain.NodeStatus;
+import dev.tinyflow.core.chain.Parameter;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 public class NodeInfo implements Serializable {
@@ -30,6 +32,10 @@ public class NodeInfo implements Serializable {
      * 执行结果
      */
     private Map<String, Object> result;
+    /**
+     * 挂起时需要填写的参数
+     */
+    private List<Parameter> suspendForParameters;
 
     public String getNodeId() {
         return nodeId;
@@ -71,13 +77,23 @@ public class NodeInfo implements Serializable {
         this.result = result;
     }
 
+    public List<Parameter> getSuspendForParameters() {
+        return suspendForParameters;
+    }
+
+    public void setSuspendForParameters(List<Parameter> suspendForParameters) {
+        this.suspendForParameters = suspendForParameters;
+    }
+
     @Override
     public String toString() {
         return "NodeInfo{" +
                 "nodeId='" + nodeId + '\'' +
+                ", nodeName='" + nodeName + '\'' +
                 ", status=" + status +
                 ", message='" + message + '\'' +
                 ", result=" + result +
+                ", suspendForParameters=" + suspendForParameters +
                 '}';
     }
 }

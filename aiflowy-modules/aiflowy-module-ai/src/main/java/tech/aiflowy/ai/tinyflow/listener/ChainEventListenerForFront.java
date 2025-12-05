@@ -107,6 +107,9 @@ public class ChainEventListenerForFront implements ChainEventListener {
             nodeInfo.setStatus(nodeStatus.getValue());
             nodeInfo.setResult(event.getResult());
             nodeInfo.setMessage(error != null ? error.getMessage() : "");
+            if (NodeStatus.SUSPEND.equals(nodeStatus)) {
+                nodeInfo.setSuspendForParameters(chain.getState().getSuspendForParameters());
+            }
             nodes.put(node.getId(), nodeInfo);
             status.setNodes(nodes);
             setChainInfoCache(executeId, status);

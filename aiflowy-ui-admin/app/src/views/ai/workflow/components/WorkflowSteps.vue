@@ -39,6 +39,9 @@ watch(
     const nodes = newVal.nodes;
     for (const nodeId in nodes) {
       nodeStatusMap.value[nodeId] = nodes[nodeId];
+      if (nodes[nodeId].status === 6) {
+        activeName.value = nodeId;
+      }
     }
   },
   { deep: true },

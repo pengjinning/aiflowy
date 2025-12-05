@@ -103,7 +103,8 @@ function executePolling(executeId: any) {
       },
     })
     .then((res) => {
-      if (res.data.status !== 1) {
+      // 5 是挂起状态
+      if (res.data.status !== 1 || res.data.status === 5) {
         stopPolling();
       }
       props.onAsyncExecute?.(res.data);
