@@ -58,4 +58,34 @@ interface ChatMessage {
   isFog?: boolean;
 }
 
-export type { BotInfo, ChatMessage, Session };
+interface AiLlm {
+  brand: string;
+  deptId: number;
+  description: string;
+  icon: string;
+  id: string;
+  llmApiKey: string;
+  llmEndpoint: string;
+  llmModel: string;
+  options: {
+    chatPath: string;
+    embedPath: string;
+    llmEndpoint: string;
+    rerankPath: string;
+  };
+  supportAudioToAudio: boolean;
+  supportChat: boolean;
+  supportEmbed: boolean;
+  supportFeatures: string[];
+  supportFunctionCalling: boolean;
+  supportImageToImage: boolean;
+  supportImageToVideo: boolean;
+  supportReranker: boolean;
+  supportTextToAudio: boolean;
+  supportTextToImage: boolean;
+  supportTextToVideo: boolean;
+  tenantId: number;
+  title: string;
+}
+
+export type { AiLlm, BotInfo, ChatMessage, Session };

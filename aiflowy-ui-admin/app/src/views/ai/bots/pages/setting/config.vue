@@ -1,4 +1,10 @@
 <script setup lang="ts">
+import type { AiLlm, BotInfo } from '@aiflowy/types';
+
+import { onMounted, ref, watch } from 'vue';
+
+import { tryit } from '@aiflowy/utils';
+
 import { Plus } from '@element-plus/icons-vue';
 import {
   ElCol,
@@ -6,10 +12,60 @@ import {
   ElCollapseItem,
   ElIcon,
   ElInputNumber,
+  ElMessage,
   ElRow,
   ElSelect,
   ElSlider,
 } from 'element-plus';
+
+import { getAiLlmList, updateLlmId } from '#/api';
+
+const props = defineProps<{
+  bot?: BotInfo;
+  hasSavePermission?: boolean;
+}>();
+const options = ref<AiLlm[]>([]);
+const selectedId = ref<string>('');
+
+watch(
+  () => ({
+    llmId: props.bot?.llmId,
+    hasSavePermission: props.hasSavePermission,
+  }),
+  (newValue) => {
+    if (!newValue.hasSavePermission) {
+      selectedId.value = '没有权限';
+    } else if (newValue.llmId) {
+      selectedId.value = newValue.llmId;
+    }
+  },
+  { immediate: true },
+);
+
+onMounted(async () => {
+  const [, res] = await tryit(getAiLlmList({ supportFunctionCalling: true }));
+
+  if (res?.errorCode === 0) {
+    options.value = res.data;
+  }
+});
+
+const handleLlmChange = async (value: string) => {
+  if (!props.bot) return;
+
+  const [, res] = await tryit(
+    updateLlmId({
+      id: props.bot?.id || '',
+      llmId: value,
+    }),
+  );
+
+  if (res?.errorCode === 0) {
+    ElMessage.success('保存成功');
+  } else {
+    ElMessage.error(res?.message || '保存失败');
+  }
+};
 </script>
 
 <template>
@@ -20,7 +76,13 @@ import {
       <div
         class="flex w-full flex-col justify-between gap-1 rounded-lg bg-[#F7F7F7] p-3"
       >
-        <ElSelect />
+        <ElSelect
+          v-model="selectedId"
+          :options="options"
+          :props="{ value: 'id', label: 'title' }"
+          :disabled="!hasSavePermission"
+          @change="handleLlmChange"
+        />
         <ElRow :gutter="12" align="middle">
           <ElCol :span="6" class="">温度</ElCol>
           <ElCol :span="10">

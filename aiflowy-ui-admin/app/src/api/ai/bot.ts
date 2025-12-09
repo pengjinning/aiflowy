@@ -1,4 +1,5 @@
 import type {
+  AiLlm,
   BotInfo,
   ChatMessage,
   RequestResult,
@@ -75,6 +76,27 @@ export interface UpdateLlmOptionsParams {
 }
 export const updateLlmOptions = (params: UpdateLlmOptionsParams) => {
   return api.post<RequestResult>('/api/v1/aiBot/updateLlmOptions', {
+    ...params,
+  });
+};
+
+/** 更新Bot的LLM配置 */
+export interface GetAiLlmListParams {
+  [key: string]: any;
+}
+export const getAiLlmList = (params: GetAiLlmListParams) => {
+  return api.get<RequestResult<AiLlm[]>>('/api/v1/aiLlm/list', {
+    params,
+  });
+};
+
+/** 更新LlmId */
+export interface UpdateLlmIdParams {
+  id: string;
+  llmId: string;
+}
+export const updateLlmId = (params: UpdateLlmIdParams) => {
+  return api.post<RequestResult>('/api/v1/aiBot/updateLlmId', {
     ...params,
   });
 };

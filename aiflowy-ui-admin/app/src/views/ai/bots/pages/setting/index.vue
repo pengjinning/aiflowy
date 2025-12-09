@@ -16,7 +16,9 @@ import Preview from './preview.vue';
 import Prompt from './prompt.vue';
 
 const route = useRoute();
-const hasSavePermission = computed(() => hasPermission(['/api/v1/aiBot/save']));
+const hasSavePermission = computed(() =>
+  hasPermission(['/api/v1/aiBot/save', '/api/v1/aiBot/updateLlmId']),
+);
 const bot = ref<BotInfo>();
 
 onMounted(() => {
@@ -40,7 +42,7 @@ const fetchBotDetail = async (id: string) => {
       <Prompt :bot="bot" :has-save-permission="hasSavePermission" />
     </ElCol>
     <ElCol :span="8">
-      <Config />
+      <Config :bot="bot" :has-save-permission="hasSavePermission" />
     </ElCol>
     <ElCol :span="8">
       <Preview />
