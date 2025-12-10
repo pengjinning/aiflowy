@@ -2,6 +2,7 @@
 import type { AiLlm, BotInfo } from '@aiflowy/types';
 
 import { onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
 import { tryit } from '@aiflowy/utils';
 
@@ -20,11 +21,15 @@ import {
 } from 'element-plus';
 
 import { getAiLlmList, updateLlmId, updateLlmOptions } from '#/api';
+import { api } from '#/api/request';
+import CommonSelectDataModal from '#/components/commonSelectModal/CommonSelectDataModal.vue';
 
 const props = defineProps<{
   bot?: BotInfo;
   hasSavePermission?: boolean;
 }>();
+const route = useRoute();
+const id = ref<string>((route.params.id as string) || '');
 const options = ref<AiLlm[]>([]);
 const selectedId = ref<string>('');
 const llmConfig = ref({
@@ -50,10 +55,14 @@ watch(
   },
   { immediate: true },
 );
-
+const pluginToolData = ref<any>([]);
 onMounted(async () => {
   const [, res] = await tryit(getAiLlmList({ supportFunctionCalling: true }));
-
+  api
+    .post('/api/v1/aiPluginTool/tool/list', { botId: id.value })
+    .then((res) => {
+      pluginToolData.value = res.data;
+    });
   if (res?.errorCode === 0) {
     options.value = res.data;
   }
@@ -110,6 +119,12 @@ const handleInvalidNumber = (
 
   return value;
 };
+const pluginToolDataRef = ref();
+const selectKnowledgeModalVisible = ref(false);
+const selectPluginToolModalVisible = ref(false);
+const handleAddPlugin = () => {
+  pluginToolDataRef.value.openDialog();
+};
 </script>
 
 <template>
@@ -160,37 +175,113 @@ const handleInvalidNumber = (
         <ElRow :gutter="12" align="middle">
           <ElCol :span="6" class="">TopK</ElCol>
           <ElCol :span="10">
-            <ElSlider />
+            <ElSlider
+              :min="1"
+              :max="10"
+              :step="1"
+              :disabled="!hasSavePermission"
+              v-model="llmConfig.topK"
+              @change="
+                (value) => handleLlmOptionsChange('topK', value as number)
+              "
+            />
           </ElCol>
           <ElCol :span="8">
-            <ElInputNumber />
+            <ElInputNumber
+              :min="1"
+              :max="10"
+              :step="1"
+              :disabled="!hasSavePermission"
+              v-model="llmConfig.topK"
+              @change="
+                (value) => handleLlmOptionsChange('topK', value as number)
+              "
+            />
           </ElCol>
         </ElRow>
         <ElRow :gutter="12" align="middle">
           <ElCol :span="6" class="">TopP</ElCol>
           <ElCol :span="10">
-            <ElSlider />
+            <ElSlider
+              :min="0.1"
+              :max="1"
+              :step="0.1"
+              :disabled="!hasSavePermission"
+              v-model="llmConfig.topP"
+              @change="
+                (value) => handleLlmOptionsChange('topP', value as number)
+              "
+            />
           </ElCol>
           <ElCol :span="8">
-            <ElInputNumber />
+            <ElInputNumber
+              :min="0.1"
+              :max="1"
+              :step="0.1"
+              :disabled="!hasSavePermission"
+              v-model="llmConfig.topP"
+              @change="
+                (value) => handleLlmOptionsChange('topP', value as number)
+              "
+            />
           </ElCol>
         </ElRow>
         <ElRow :gutter="12" align="middle">
           <ElCol :span="6" class="">最大回复长度</ElCol>
           <ElCol :span="10">
-            <ElSlider />
+            <ElSlider
+              :min="1024"
+              :max="20000"
+              :step="1000"
+              :disabled="!hasSavePermission"
+              v-model="llmConfig.maxReplyLength"
+              @change="
+                (value) =>
+                  handleLlmOptionsChange('maxReplyLength', value as number)
+              "
+            />
           </ElCol>
           <ElCol :span="8">
-            <ElInputNumber />
+            <ElInputNumber
+              :min="1024"
+              :max="20000"
+              :step="1000"
+              :disabled="!hasSavePermission"
+              v-model="llmConfig.maxReplyLength"
+              @change="
+                (value) =>
+                  handleLlmOptionsChange('maxReplyLength', value as number)
+              "
+            />
           </ElCol>
         </ElRow>
         <ElRow :gutter="12" align="middle">
           <ElCol :span="6" class="">携带历史条数</ElCol>
           <ElCol :span="10">
-            <ElSlider />
+            <ElSlider
+              :min="1"
+              :max="100"
+              :step="10"
+              :disabled="!hasSavePermission"
+              v-model="llmConfig.maxMessageCount"
+              @change="
+                (value) =>
+                  handleLlmOptionsChange('maxMessageCount', value as number)
+              "
+            />
           </ElCol>
           <ElCol :span="8">
-            <ElInputNumber />
+            <ElInputNumber
+              :min="1"
+              :max="100"
+              :step="1"
+              :disabled="!hasSavePermission"
+              v-model="llmConfig.maxMessageCount"
+              @change="
+                (value) =>
+                  handleLlmOptionsChange('maxMessageCount', value as number)
+              "
+            />
           </ElCol>
         </ElRow>
       </div>
@@ -227,9 +318,11 @@ const handleInvalidNumber = (
             <template #title>
               <div class="flex items-center justify-between pr-2">
                 <span>插件</span>
-                <ElIcon>
-                  <Plus />
-                </ElIcon>
+                <span @click="handleAddPlugin()">
+                  <ElIcon>
+                    <Plus />
+                  </ElIcon>
+                </span>
               </div>
             </template>
           </ElCollapseItem>
@@ -271,5 +364,24 @@ const handleInvalidNumber = (
         </ElCollapse>
       </div>
     </div>
+
+    <!-- 选择插件-->
+    <CommonSelectDataModal
+      ref="pluginToolDataRef"
+      page-url="/api/v1/aiPlugin/pageByCategory"
+      :is-select-plugin="true"
+      :extra-query-params="{
+        category: 0,
+      }"
+    />
+    <!-- 选择插件-->
+    <CommonSelectDataModal
+      ref="pluginToolDataRef"
+      page-url="/api/v1/aiPlugin/pageByCategory"
+      :is-select-plugin="true"
+      :extra-query-params="{
+        category: 0,
+      }"
+    />
   </div>
 </template>

@@ -30,7 +30,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['getData']);
-const dialogVisible = ref(false);
+const dialogVisible = ref(true);
 const pageDataRef = ref();
 const loading = ref(false);
 const selectedIds = ref<(number | string)[]>([]);

@@ -100,3 +100,9 @@ export const updateLlmId = (params: UpdateLlmIdParams) => {
     ...params,
   });
 };
+
+export const doPostBotPluginTools = (botId: string) => {
+  return api.post<RequestResult<any[]>>('/api/v1/aiPluginTool/tool/list', {
+    id: botId,
+  });
+};
