@@ -16,8 +16,8 @@ import javax.annotation.Resource;
  * 文件上传
  */
 @RestController
-@RequestMapping("/api/v1/commons/")
-public class UploadController {
+@RequestMapping("/userCenter/commons/")
+public class UcUploadController {
 
     @Resource(name = "default")
     private FileStorageService storageService;

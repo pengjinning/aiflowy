@@ -20,8 +20,8 @@ import java.util.Map;
  * 字典
  */
 @RestController
-@RequestMapping("/api/v1/dict/")
-public class DictController {
+@RequestMapping("/userCenter/dict/")
+public class UcDictController {
 
     @Resource
     DictManager dictManager;

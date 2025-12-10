@@ -88,7 +88,7 @@ public class SysApiKeyController extends BaseCurdController<SysApiKeyService, Sy
 
     @Override
     @GetMapping("/page")
-    public Result<?> page(HttpServletRequest request, String sortKey, String sortType, Long pageNumber, Long pageSize) {
+    public Result<Page<SysApiKey>> page(HttpServletRequest request, String sortKey, String sortType, Long pageNumber, Long pageSize) {
         Result<Page<SysApiKey>> pageResult = (Result<Page<SysApiKey>>) super.page(request, sortKey, sortType, pageNumber, pageSize);
         Page<SysApiKey> data = pageResult.getData();
         List<SysApiKey> records = data.getRecords();

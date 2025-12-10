@@ -38,7 +38,7 @@ public class AiBotMessageController extends BaseCurdController<AiBotMessageServi
 
     @GetMapping("list")
     @Override
-    public Result<?> list(AiBotMessage entity, Boolean asTree, String sortKey, String sortType) {
+    public Result list(AiBotMessage entity, Boolean asTree, String sortKey, String sortType) {
 
         if (entity.getBotId() == null || StringUtil.noText(entity.getSessionId())) {
             return Result.fail("查询失败");

@@ -23,6 +23,8 @@ import org.springframework.util.StringUtils;
 import tech.aiflowy.common.web.exceptions.BusinessException;
 import tech.aiflowy.common.web.jsonbody.JsonBody;
 
+import java.util.List;
+
 /**
  * 控制层。
  *
@@ -42,7 +44,7 @@ public class AiLlmController extends BaseCurdController<AiLlmService, AiLlm> {
 
     @GetMapping("list")
     @SaCheckPermission("/api/v1/aiLlm/query")
-    public Result<?> list(AiLlm entity, Boolean asTree, String sortKey, String sortType) {
+    public Result<List<AiLlm>> list(AiLlm entity, Boolean asTree, String sortKey, String sortType) {
         return super.list(entity, asTree, sortKey, sortType);
     }
 

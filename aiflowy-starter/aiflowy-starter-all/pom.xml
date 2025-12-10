@@ -26,6 +26,10 @@
         </dependency>
         <dependency>
             <groupId>tech.aiflowy</groupId>
+            <artifactId>aiflowy-api-usercenter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>tech.aiflowy</groupId>
             <artifactId>aiflowy-module-job</artifactId>
         </dependency>
         <dependency>

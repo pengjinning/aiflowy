@@ -14,8 +14,8 @@ import java.util.List;
  * 认证
  */
 @RestController
-@RequestMapping("/api/v1/auth/")
-public class AuthController {
+@RequestMapping("/userCenter/auth/")
+public class UcAuthController {
 
     @Resource
     private AuthService authService;

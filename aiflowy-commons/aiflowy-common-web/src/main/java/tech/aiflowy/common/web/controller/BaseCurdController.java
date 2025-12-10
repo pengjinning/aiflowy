@@ -16,6 +16,7 @@ import tech.aiflowy.common.satoken.util.SaTokenUtil;
 import tech.aiflowy.common.tree.Tree;
 import tech.aiflowy.common.util.SqlOperatorsUtil;
 import tech.aiflowy.common.util.SqlUtil;
+import tech.aiflowy.common.web.exceptions.BusinessException;
 import tech.aiflowy.common.web.exceptions.ProgramException;
 import tech.aiflowy.common.web.jsonbody.JsonBody;
 
@@ -130,7 +131,7 @@ public class BaseCurdController<S extends IService<M>, M> extends BaseController
      * @return 所有数据
      */
     @GetMapping("list")
-    public Result<?> list(M entity, Boolean asTree, String sortKey, String sortType) {
+    public Result<List<M>> list(M entity, Boolean asTree, String sortKey, String sortType) {
         QueryWrapper queryWrapper = QueryWrapper.create(entity, buildOperators(entity));
         queryWrapper.orderBy(buildOrderBy(sortKey, sortType, getDefaultOrderBy()));
         List<M> list = Tree.tryToTree(service.list(queryWrapper), asTree);
@@ -145,9 +146,9 @@ public class BaseCurdController<S extends IService<M>, M> extends BaseController
      * @return 内容详情
      */
     @GetMapping("detail")
-    public Result<?> detail(String id) {
+    public Result<M> detail(String id) {
         if (tech.aiflowy.common.util.StringUtil.noText(id)) {
-            return Result.fail(0, "id is null");
+            throw new BusinessException("id must not be null");
         }
         return Result.ok(service.getById(id));
     }
@@ -164,7 +165,7 @@ public class BaseCurdController<S extends IService<M>, M> extends BaseController
      * @return 查询的结果集
      */
     @GetMapping("page")
-    public Result<?> page(HttpServletRequest request, String sortKey, String sortType, Long pageNumber, Long pageSize) {
+    public Result<Page<M>> page(HttpServletRequest request, String sortKey, String sortType, Long pageNumber, Long pageSize) {
         if (pageNumber == null || pageNumber < 1) {
             pageNumber = 1L;
         }
