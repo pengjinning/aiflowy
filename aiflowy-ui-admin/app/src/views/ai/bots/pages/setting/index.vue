@@ -39,13 +39,13 @@ const fetchBotDetail = async (id: string) => {
 <template>
   <div class="settings-container">
     <div class="row-container">
-      <div :span="8" class="row-item">
+      <div class="row-item">
         <Prompt :bot="bot" :has-save-permission="hasSavePermission" />
       </div>
-      <div :span="8" class="row-item">
+      <div class="row-item">
         <Config :bot="bot" :has-save-permission="hasSavePermission" />
       </div>
-      <div :span="8" class="row-item">
+      <div class="row-item">
         <Preview />
       </div>
     </div>
@@ -53,7 +53,7 @@ const fetchBotDetail = async (id: string) => {
 </template>
 <style scoped>
 .settings-container {
-  height: calc(100vh - 160px);
+  height: calc(100vh - 90px);
   padding: 20px;
 }
 .row-container {

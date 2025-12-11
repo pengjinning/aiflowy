@@ -677,6 +677,8 @@ const handleProblemPresuppositionSuccess = (data: any) => {
   height: 100%;
   overflow-y: auto;
   width: 100%;
+  background-color: var(--el-bg-color);
+  border-radius: 8px;
 }
 .collapse-right-container {
   display: flex;
