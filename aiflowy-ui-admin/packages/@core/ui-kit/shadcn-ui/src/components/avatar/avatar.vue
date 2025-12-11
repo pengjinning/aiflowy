@@ -49,7 +49,8 @@ const text = computed(() => {
 const rootStyle = computed(() => {
   return props.size !== undefined && props.size > 0
     ? {
-        height: `${props.size}px`,
+        // height: `${props.size}px`,
+        height: 'fit-content',
         width: `${props.size}px`,
       }
     : {};

@@ -5,10 +5,20 @@ import { onMounted, ref } from 'vue';
 
 import { formatBytes } from '@aiflowy/utils';
 
-import { Delete, Download, Edit, Plus, View } from '@element-plus/icons-vue';
+import {
+  Delete,
+  Download,
+  Edit,
+  More,
+  Plus,
+  View,
+} from '@element-plus/icons-vue';
 import {
   ElAvatar,
   ElButton,
+  ElDropdown,
+  ElDropdownItem,
+  ElDropdownMenu,
   ElForm,
   ElFormItem,
   ElIcon,
@@ -102,154 +112,173 @@ function download(row: any) {
 </script>
 
 <template>
-  <div class="page-container">
+  <div class="flex flex-col gap-1.5 p-6">
     <PreviewModal ref="previewDialog" />
     <AiResourceModal ref="saveDialog" @reload="reset" />
-    <ElForm ref="formRef" :inline="true" :model="formInline">
-      <ElFormItem :label="$t('aiResource.resourceType')" prop="resourceType">
-        <DictSelect
-          v-model="formInline.resourceType"
-          dict-code="resourceType"
-          :placeholder="$t('aiResource.resourceType')"
-        />
-      </ElFormItem>
-      <ElFormItem :label="$t('aiResource.resourceName')" prop="resourceName">
-        <ElInput
-          v-model="formInline.resourceName"
-          :placeholder="$t('aiResource.resourceName')"
-        />
-      </ElFormItem>
-      <ElFormItem>
-        <ElButton @click="search(formRef)" type="primary">
-          {{ $t('button.query') }}
+    <div class="flex items-center justify-between">
+      <ElForm ref="formRef" :inline="true" :model="formInline">
+        <ElFormItem :label="$t('aiResource.resourceType')" prop="resourceType">
+          <DictSelect
+            v-model="formInline.resourceType"
+            dict-code="resourceType"
+            :placeholder="$t('aiResource.resourceType')"
+          />
+        </ElFormItem>
+        <ElFormItem :label="$t('aiResource.resourceName')" prop="resourceName">
+          <ElInput
+            v-model="formInline.resourceName"
+            :placeholder="$t('aiResource.resourceName')"
+          />
+        </ElFormItem>
+        <ElFormItem>
+          <ElButton @click="search(formRef)" type="primary">
+            {{ $t('button.query') }}
+          </ElButton>
+          <ElButton @click="reset(formRef)">
+            {{ $t('button.reset') }}
+          </ElButton>
+        </ElFormItem>
+      </ElForm>
+      <div class="handle-div">
+        <ElButton
+          v-access:code="'/api/v1/aiResource/save'"
+          @click="showDialog({})"
+          type="primary"
+        >
+          <ElIcon class="mr-1">
+            <Plus />
+          </ElIcon>
+          {{ $t('button.add') }}
         </ElButton>
-        <ElButton @click="reset(formRef)">
-          {{ $t('button.reset') }}
-        </ElButton>
-      </ElFormItem>
-    </ElForm>
-    <div class="handle-div">
-      <ElButton
-        v-access:code="'/api/v1/aiResource/save'"
-        @click="showDialog({})"
-        type="primary"
-      >
-        <ElIcon class="mr-1">
-          <Plus />
-        </ElIcon>
-        {{ $t('button.add') }}
-      </ElButton>
+      </div>
     </div>
-    <PageData
-      ref="pageDataRef"
-      page-url="/api/v1/aiResource/page"
-      :page-size="10"
-    >
-      <template #default="{ pageList }">
-        <ElTable :data="pageList" border>
-          <ElTableColumn
-            prop="resourceName"
-            :label="$t('aiResource.resourceName')"
-            width="300"
-          >
-            <template #default="{ row }">
-              <div class="flex items-center gap-2.5">
-                <ElAvatar :src="getSrc(row)" shape="square" :size="50" />
-                <div class="w-[200px]">
-                  <ElTooltip :content="`${row.resourceName}`" placement="top">
-                    <ElText truncated>
-                      {{ row.resourceName }}
-                    </ElText>
-                  </ElTooltip>
+
+    <div class="bg-background rounded-lg p-5">
+      <PageData
+        ref="pageDataRef"
+        page-url="/api/v1/aiResource/page"
+        :page-size="10"
+      >
+        <template #default="{ pageList }">
+          <ElTable :data="pageList" border>
+            <ElTableColumn
+              prop="resourceName"
+              :label="$t('aiResource.resourceName')"
+              width="300"
+            >
+              <template #default="{ row }">
+                <div class="flex items-center gap-2.5">
+                  <ElAvatar :src="getSrc(row)" shape="square" :size="50" />
+                  <div class="w-[200px]">
+                    <ElTooltip :content="`${row.resourceName}`" placement="top">
+                      <ElText truncated>
+                        {{ row.resourceName }}
+                      </ElText>
+                    </ElTooltip>
+                  </div>
                 </div>
-              </div>
-            </template>
-          </ElTableColumn>
-          <ElTableColumn
-            prop="suffix"
-            :label="$t('aiResource.suffix')"
-            width="60"
-          >
-            <template #default="{ row }">
-              {{ row.suffix }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="fileSize" :label="$t('aiResource.fileSize')">
-            <template #default="{ row }">
-              {{ formatBytes(row.fileSize) }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="origin" :label="$t('aiResource.origin')">
-            <template #default="{ row }">
-              <Tag
-                size="small"
-                :background-color="`${getResourceOriginColor(row)}15`"
-                :text-color="getResourceOriginColor(row)"
-                :text="dictStore.getDictLabel('resourceOriginType', row.origin)"
-              />
-            </template>
-          </ElTableColumn>
-          <ElTableColumn
-            prop="resourceType"
-            :label="$t('aiResource.resourceType')"
-          >
-            <template #default="{ row }">
-              <Tag
-                size="small"
-                :background-color="`${getResourceTypeColor(row)}15`"
-                :text-color="getResourceTypeColor(row)"
-                :text="dictStore.getDictLabel('resourceType', row.resourceType)"
-              />
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="created" :label="$t('aiResource.created')">
-            <template #default="{ row }">
-              {{ row.created }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn :label="$t('common.handle')" width="280">
-            <template #default="{ row }">
-              <div>
-                <ElButton @click="preview(row)" link type="primary">
-                  <ElIcon class="mr-1">
-                    <View />
-                  </ElIcon>
-                  {{ $t('button.preview') }}
-                </ElButton>
-                <ElButton @click="download(row)" link type="primary">
-                  <ElIcon class="mr-1">
-                    <Download />
-                  </ElIcon>
-                  {{ $t('button.download') }}
-                </ElButton>
-                <ElButton
-                  v-access:code="'/api/v1/aiResource/save'"
-                  @click="showDialog(row)"
-                  link
-                  type="primary"
-                >
-                  <ElIcon class="mr-1">
-                    <Edit />
-                  </ElIcon>
-                  {{ $t('button.edit') }}
-                </ElButton>
-                <ElButton
-                  v-access:code="'/api/v1/aiResource/remove'"
-                  @click="remove(row)"
-                  link
-                  type="danger"
-                >
-                  <ElIcon class="mr-1">
-                    <Delete />
-                  </ElIcon>
-                  {{ $t('button.delete') }}
-                </ElButton>
-              </div>
-            </template>
-          </ElTableColumn>
-        </ElTable>
-      </template>
-    </PageData>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              prop="suffix"
+              :label="$t('aiResource.suffix')"
+              width="60"
+            >
+              <template #default="{ row }">
+                {{ row.suffix }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn prop="fileSize" :label="$t('aiResource.fileSize')">
+              <template #default="{ row }">
+                {{ formatBytes(row.fileSize) }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn prop="origin" :label="$t('aiResource.origin')">
+              <template #default="{ row }">
+                <Tag
+                  size="small"
+                  :background-color="`${getResourceOriginColor(row)}15`"
+                  :text-color="getResourceOriginColor(row)"
+                  :text="
+                    dictStore.getDictLabel('resourceOriginType', row.origin)
+                  "
+                />
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              prop="resourceType"
+              :label="$t('aiResource.resourceType')"
+            >
+              <template #default="{ row }">
+                <Tag
+                  size="small"
+                  :background-color="`${getResourceTypeColor(row)}15`"
+                  :text-color="getResourceTypeColor(row)"
+                  :text="
+                    dictStore.getDictLabel('resourceType', row.resourceType)
+                  "
+                />
+              </template>
+            </ElTableColumn>
+            <ElTableColumn prop="created" :label="$t('aiResource.created')">
+              <template #default="{ row }">
+                {{ row.created }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              align="center"
+              :label="$t('common.handle')"
+              width="80"
+            >
+              <template #default="{ row }">
+                <ElDropdown>
+                  <ElButton link>
+                    <ElIcon>
+                      <More />
+                    </ElIcon>
+                  </ElButton>
+
+                  <template #dropdown>
+                    <ElDropdownMenu>
+                      <ElDropdownItem @click="preview(row)">
+                        <ElIcon class="mr-1">
+                          <View />
+                        </ElIcon>
+                        {{ $t('button.preview') }}
+                      </ElDropdownItem>
+                      <ElDropdownItem @click="download(row)">
+                        <ElIcon class="mr-1">
+                          <Download />
+                        </ElIcon>
+                        {{ $t('button.download') }}
+                      </ElDropdownItem>
+                      <ElDropdownItem
+                        v-access:code="'/api/v1/aiResource/save'"
+                        @click="showDialog(row)"
+                      >
+                        <ElIcon class="mr-1">
+                          <Edit />
+                        </ElIcon>
+                        {{ $t('button.edit') }}
+                      </ElDropdownItem>
+                      <ElDropdownItem
+                        v-access:code="'/api/v1/aiResource/remove'"
+                        @click="remove(row)"
+                      >
+                        <ElIcon class="mr-1">
+                          <Delete />
+                        </ElIcon>
+                        {{ $t('button.delete') }}
+                      </ElDropdownItem>
+                    </ElDropdownMenu>
+                  </template>
+                </ElDropdown>
+              </template>
+            </ElTableColumn>
+          </ElTable>
+        </template>
+      </PageData>
+    </div>
   </div>
 </template>
 
