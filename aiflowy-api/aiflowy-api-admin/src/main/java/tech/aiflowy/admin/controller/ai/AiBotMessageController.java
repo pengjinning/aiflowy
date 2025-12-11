@@ -1,8 +1,11 @@
 package tech.aiflowy.admin.controller.ai;
 
 import cn.dev33.satoken.annotation.SaIgnore;
+import com.agentsflex.core.message.Message;
+import com.agentsflex.core.message.ToolMessage;
 import org.springframework.web.bind.annotation.*;
 import tech.aiflowy.ai.entity.AiBotMessage;
+import tech.aiflowy.ai.entity.AiBotMessageMemory;
 import tech.aiflowy.ai.service.AiBotMessageService;
 import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.domain.Result;
@@ -40,7 +43,7 @@ public class AiBotMessageController extends BaseCurdController<AiBotMessageServi
     @Override
     public Result list(AiBotMessage entity, Boolean asTree, String sortKey, String sortType) {
 
-        if (entity.getBotId() == null || StringUtil.noText(entity.getSessionId())) {
+        if (entity.getBotId() == null) {
             return Result.fail("查询失败");
         }
 
@@ -58,26 +61,12 @@ public class AiBotMessageController extends BaseCurdController<AiBotMessageServi
 
         List<Maps> maps = new ArrayList<>();
         for (AiBotMessage aiBotMessage : list) {
-            Map<String, Object> options = aiBotMessage.getOptions();
-            if (
-                options != null && 
-                options.get("type") != null &&
-                ((Integer) options.get("type") == 2 && 
-                "user".equalsIgnoreCase(aiBotMessage.getRole()))
-            ) {
-                continue;
+            Message message = AiBotMessageMemory.parseByRole(aiBotMessage);
+            if (message instanceof ToolMessage) {
+               continue;
             }
-
-            if (
-                options != null && 
-                options.get("type") != null &&
-                (Integer) options.get("type") == 1
-            ) {
-                aiBotMessage.setContent((String) options.get("user_input"));
-            }
-
             maps.add(Maps.of("id", aiBotMessage.getId())
-                    .set("content", aiBotMessage.getContent())
+                    .set("content", message.getTextContent())
                     .set("role", aiBotMessage.getRole())
                     .set("options", aiBotMessage.getOptions())
                     .set("created", aiBotMessage.getCreated().getTime())

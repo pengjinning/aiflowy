@@ -14,6 +14,7 @@ import {
   ElCollapse,
   ElCollapseItem,
   ElIcon,
+  ElInput,
   ElInputNumber,
   ElMessage,
   ElRow,
@@ -40,6 +41,7 @@ const llmConfig = ref({
   temperature: 0,
   topK: 0,
   topP: 0,
+  welcomeMessage: '',
 });
 
 watch(
@@ -143,6 +145,18 @@ const handleLlmOptionsChange = useDebounceFn(
       id: props.bot?.id || '',
       llmOptions: {
         [key]: _value,
+      },
+    });
+  },
+  300,
+);
+
+const handleLlmOptionsStrChange = useDebounceFn(
+  (key: keyof typeof llmConfig.value, value: string) => {
+    updateLlmOptions({
+      id: props.bot?.id || '',
+      llmOptions: {
+        [key]: value,
       },
     });
   },
@@ -277,7 +291,7 @@ const deleteWorkflow = (item: any) => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-3">
+  <div class="config-container flex flex-col gap-3">
     <!-- 大模型 -->
     <div class="flex flex-col gap-3 rounded-lg bg-white p-3">
       <h1 class="text-base font-medium text-[#1A1A1A]">大模型</h1>
@@ -447,11 +461,16 @@ const deleteWorkflow = (item: any) => {
             <template #title>
               <div class="flex items-center justify-between pr-2">
                 <span>工作流</span>
-                <span @click="handleAddWorkflow()">
-                  <ElIcon>
-                    <Plus />
-                  </ElIcon>
-                </span>
+                <div class="collapse-right-container">
+                  <span class="badge-circle">
+                    {{ workflowData.length }}
+                  </span>
+                  <span @click="handleAddWorkflow()">
+                    <ElIcon>
+                      <Plus />
+                    </ElIcon>
+                  </span>
+                </div>
               </div>
             </template>
             <CollapseViewItem :data="workflowData" @delete="deleteWorkflow" />
@@ -460,11 +479,16 @@ const deleteWorkflow = (item: any) => {
             <template #title>
               <div class="flex items-center justify-between pr-2">
                 <span>知识库</span>
-                <span @click="handleAddKnowledge()">
-                  <ElIcon>
-                    <Plus />
-                  </ElIcon>
-                </span>
+                <div class="collapse-right-container">
+                  <span class="badge-circle">
+                    {{ knowledgeData.length }}
+                  </span>
+                  <span @click="handleAddKnowledge()">
+                    <ElIcon>
+                      <Plus />
+                    </ElIcon>
+                  </span>
+                </div>
               </div>
             </template>
             <CollapseViewItem :data="knowledgeData" @delete="deleteKnowledge" />
@@ -473,11 +497,16 @@ const deleteWorkflow = (item: any) => {
             <template #title>
               <div class="flex items-center justify-between pr-2">
                 <span>插件</span>
-                <span @click="handleAddPlugin()">
-                  <ElIcon>
-                    <Plus />
-                  </ElIcon>
-                </span>
+                <div class="collapse-right-container">
+                  <span class="badge-circle">
+                    {{ pluginToolData.length }}
+                  </span>
+                  <span @click="handleAddPlugin()">
+                    <ElIcon>
+                      <Plus />
+                    </ElIcon>
+                  </span>
+                </div>
               </div>
             </template>
             <CollapseViewItem
@@ -507,7 +536,18 @@ const deleteWorkflow = (item: any) => {
               </div>
             </template>
           </ElCollapseItem>
-          <ElCollapseItem title="欢迎语" />
+          <ElCollapseItem title="欢迎语">
+            <div>
+              <ElInput
+                v-model="llmConfig.welcomeMessage"
+                placeholder="请输入欢迎语"
+                type="textarea"
+                @change="
+                  (value) => handleLlmOptionsStrChange('welcomeMessage', value)
+                "
+              />
+            </div>
+          </ElCollapseItem>
         </ElCollapse>
       </div>
     </div>
@@ -551,3 +591,31 @@ const deleteWorkflow = (item: any) => {
     />
   </div>
 </template>
+
+<style scoped>
+.config-container {
+  height: 100%;
+  overflow-y: auto;
+  width: 100%;
+}
+.collapse-right-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+.badge-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: var(--el-color-primary);
+  color: var(--el-bg-color);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  vertical-align: middle;
+}
+</style>

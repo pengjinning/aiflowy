@@ -4,9 +4,9 @@ import type { TypewriterInstance } from 'vue-element-plus-x/types/Typewriter';
 
 import type { BotInfo, ChatMessage } from '@aiflowy/types';
 
-import { ref, watchEffect } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import { BubbleList, Sender } from 'vue-element-plus-x';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 import { useUserStore } from '@aiflowy/stores';
 import { cn, tryit, uuid } from '@aiflowy/utils';
@@ -21,16 +21,27 @@ import {
 import { ElAvatar, ElButton, ElIcon, ElSpace } from 'element-plus';
 
 import { getMessageList } from '#/api';
-import { sse } from '#/api/request';
+import { api, sse } from '#/api/request';
+import MarkdownRenderer from '#/components/chat/MarkdownRenderer.vue';
 
 import BotAvatar from '../botAvatar/botAvatar.vue';
 // import RecordingIcon from '../icons/RecordingIcon.vue';
 import SendingIcon from '../icons/SendingIcon.vue';
 
+interface queryMessageType {
+  botId: string;
+  isExternalMsg: number;
+  sessionId?: string;
+}
 const props = defineProps<{
   bot?: BotInfo;
+  // 是否是外部消息 1 外部消息 0 内部消息
+  isExternalMsg: number;
   sessionId?: string;
 }>();
+const route = useRoute();
+const botId = ref<string>((route.params.id as string) || '');
+
 const { postSse } = sse();
 const router = useRouter();
 const userStore = useUserStore();
@@ -41,7 +52,42 @@ const sending = ref(false);
 const sessionId = ref(
   props.sessionId && props.sessionId.length > 0 ? props.sessionId : uuid(),
 );
+const historyMessage = ref<ChatMessage[]>([]);
+const getMessagesHistory = () => {
+  const tempParams: queryMessageType = {
+    botId: botId.value,
+    isExternalMsg: props.isExternalMsg,
+  };
 
+  // 如果是外部地址获取记录
+  if (props.isExternalMsg === 1) {
+    tempParams.sessionId = props.sessionId;
+  }
+  api
+    .get('/api/v1/aiBotMessage/list', {
+      params: {
+        ...tempParams,
+      },
+    })
+    .then((res) => {
+      bubbleItems.value = res.data.map((item: ChatMessage) => {
+        return item.role === 'assistant'
+          ? {
+              ...item,
+              placement: 'start',
+              isAssistant: true,
+            }
+          : {
+              ...item,
+              placement: 'end',
+              isAssistant: false,
+            };
+      });
+    });
+};
+onMounted(() => {
+  getMessagesHistory();
+});
 watchEffect(async () => {
   if (props.bot && props.sessionId) {
     const [, res] = await tryit(
@@ -61,7 +107,6 @@ watchEffect(async () => {
             ? item.content.replace(/^Final Answer:\s*/i, '')
             : item.content,
         placement: item.role === 'assistant' ? 'start' : 'end',
-        noStyle: true,
       }));
     }
   } else {
@@ -72,11 +117,11 @@ watchEffect(async () => {
 const handleSubmit = async () => {
   sending.value = true;
   const data = {
-    botId: props.bot?.id,
-    fileList: [],
-    isExternalMsg: 1,
+    botId: botId.value,
+    // fileList: [],
+    // isExternalMsg: 1,
     prompt: senderValue.value,
-    tempUserId: uuid() + props.bot?.id,
+    // tempUserId: uuid() + props.bot?.id,
     sessionId: sessionId.value,
   };
 
@@ -126,7 +171,6 @@ const generateMockMessages = () => {
     created: Date.now(),
     updateAt: Date.now(),
     placement: 'end',
-    noStyle: true,
   };
 
   const assistantMessage: ChatMessage = {
@@ -137,7 +181,6 @@ const generateMockMessages = () => {
     created: Date.now(),
     updateAt: Date.now(),
     placement: 'start',
-    noStyle: true,
   };
 
   return [userMessage, assistantMessage];
@@ -185,7 +228,11 @@ const generateMockMessages = () => {
               }}
             </div>
           </template>
-
+          <!-- 核心：使用 MarkdownRenderer 渲染助手消息 -->
+          <template #content="{ item }">
+            <!-- 助手消息：渲染 Markdown -->
+            <MarkdownRenderer :content="item.content" />
+          </template>
           <!-- 自定义底部 -->
           <template #footer="{ item }">
             <ElSpace :size="10">

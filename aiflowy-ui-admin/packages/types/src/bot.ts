@@ -15,6 +15,7 @@ interface BotInfo {
     temperature: number;
     topK: number;
     topP: number;
+    welcomeMessage: string;
   };
   modified: string;
   modifiedBy: number;
@@ -51,7 +52,6 @@ interface ChatMessage {
     user_input: string;
   };
   placement: 'end' | 'start';
-  noStyle: true;
   loading?: boolean;
   typing?: boolean;
   fileList?: File[];

@@ -146,13 +146,14 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
      */
     @PostMapping("chat")
     @SaIgnore
-    public SseEmitter chat(@JsonBody(value = "prompt", required = true)
-                           String prompt, @JsonBody(value = "botId", required = true)
-                           BigInteger botId, @JsonBody(value = "sessionId", required = true)
-                           String sessionId, @JsonBody(value = "isExternalMsg")
+    public SseEmitter chat(
+            @JsonBody(value = "prompt", required = true) String prompt,
+            @JsonBody(value = "botId", required = true) BigInteger botId,
+            @JsonBody(value = "sessionId", required = true) String sessionId,
+            @JsonBody(value = "isExternalMsg") int isExternalMsg,
                            HttpServletResponse response) {
 
-        response.setContentType("text/event-stream");
+//        response.setContentType("text/event-stream");
         if (!StringUtils.hasLength(prompt)) {
             throw new BusinessException("提示词不能为空！");
         }
@@ -194,7 +195,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
 
         if (StpUtil.isLogin()) {
             AiBotMessageMemory memory = new AiBotMessageMemory(botId, SaTokenUtil.getLoginAccount().getId(), sessionId,
-                    0, aiBotMessageService);
+                    isExternalMsg, aiBotMessageService);
             memoryPrompt.setMemory(memory);
         }
         UserMessage userMessage = new UserMessage(prompt);

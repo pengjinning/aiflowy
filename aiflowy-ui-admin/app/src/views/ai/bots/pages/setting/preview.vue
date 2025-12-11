@@ -14,7 +14,7 @@ import Chat from '#/components/chat/chat.vue';
       </ElButton>
     </div>
     <div class="relative flex-1">
-      <Chat class="absolute inset-0" />
+      <Chat class="absolute inset-0" :is-external-msg="0" />
     </div>
   </div>
 </template>

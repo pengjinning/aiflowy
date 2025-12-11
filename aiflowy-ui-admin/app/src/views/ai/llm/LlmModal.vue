@@ -201,7 +201,6 @@ watch(
       llmForm.options.chatPath = '';
       llmForm.options.llmEndpoint = '';
       await nextTick();
-
       // 筛选当前品牌下的模型
       brandListData.value.forEach((item) => {
         if (item.key === newValue) {

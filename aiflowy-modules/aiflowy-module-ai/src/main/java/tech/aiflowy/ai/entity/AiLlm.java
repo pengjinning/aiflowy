@@ -136,10 +136,15 @@ public class AiLlm extends AiLlmBase {
     public EmbeddingModel toEmbeddingModel() {
         Map<String, Object> options = getOptions();
         String embedPath = "";
+        String endpoint = getLlmEndpoint();
         if (options != null) {
             String embedPathFromOptions = (String) options.get("embedPath");
             if (StringUtils.hasLength(embedPathFromOptions)) {
                 embedPath = embedPathFromOptions;
+            }
+            String endpointFromOptions = (String) options.get("llmEndpoint");
+            if (endpoint == null && StringUtils.hasLength(endpointFromOptions)) {
+                endpoint = endpointFromOptions;
             }
         }
         String brand = getBrand();
@@ -149,7 +154,7 @@ public class AiLlm extends AiLlmBase {
         switch (brand.toLowerCase()) {
             case "ollama":
                 OllamaEmbeddingConfig ollamaEmbeddingConfig = new OllamaEmbeddingConfig();
-                ollamaEmbeddingConfig.setEndpoint(getLlmEndpoint());
+                ollamaEmbeddingConfig.setEndpoint(endpoint);
                 ollamaEmbeddingConfig.setApiKey(getLlmApiKey());
                 ollamaEmbeddingConfig.setModel(getLlmModel());
                 if (StringUtils.hasLength(embedPath)) {
@@ -158,7 +163,7 @@ public class AiLlm extends AiLlmBase {
                 return new OllamaEmbeddingModel(ollamaEmbeddingConfig);
             default:
                 OpenAIEmbeddingConfig openAIEmbeddingConfig = new OpenAIEmbeddingConfig();
-                openAIEmbeddingConfig.setEndpoint(getLlmEndpoint());
+                openAIEmbeddingConfig.setEndpoint(endpoint);
                 openAIEmbeddingConfig.setApiKey(getLlmApiKey());
                 openAIEmbeddingConfig.setModel(getLlmModel());
                 if (StringUtils.hasLength(embedPath)) {

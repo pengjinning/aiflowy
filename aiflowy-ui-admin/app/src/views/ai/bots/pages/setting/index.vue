@@ -37,15 +37,32 @@ const fetchBotDetail = async (id: string) => {
 </script>
 
 <template>
-  <ElRow class="h-full p-4" :gutter="16">
-    <ElCol :span="8">
-      <Prompt :bot="bot" :has-save-permission="hasSavePermission" />
-    </ElCol>
-    <ElCol :span="8">
-      <Config :bot="bot" :has-save-permission="hasSavePermission" />
-    </ElCol>
-    <ElCol :span="8">
-      <Preview />
-    </ElCol>
-  </ElRow>
+  <div class="settings-container">
+    <div class="row-container">
+      <div :span="8" class="row-item">
+        <Prompt :bot="bot" :has-save-permission="hasSavePermission" />
+      </div>
+      <div :span="8" class="row-item">
+        <Config :bot="bot" :has-save-permission="hasSavePermission" />
+      </div>
+      <div :span="8" class="row-item">
+        <Preview />
+      </div>
+    </div>
+  </div>
 </template>
+<style scoped>
+.settings-container {
+  height: calc(100vh - 160px);
+  padding: 20px;
+}
+.row-container {
+  height: 100%;
+  display: flex;
+  gap: 20px;
+}
+.row-item {
+  height: 100%;
+  flex: 1;
+}
+</style>

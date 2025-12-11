@@ -89,7 +89,7 @@ public class AiBotMessageMemory implements ChatMemory {
         return botId;
     }
 
-    private Message parseByRole(AiBotMessage aiBotMessage) {
+    public static Message parseByRole(AiBotMessage aiBotMessage) {
         try {
             String role = aiBotMessage.getRole();
             if ("assistant".equals(role)) {

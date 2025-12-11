@@ -37,7 +37,7 @@ const handleDelete = (item: any) => {
       class="el-list-item-max-container"
     >
       <div class="el-list-item-container">
-        <div>
+        <div class="flex-center">
           <ElAvatar :src="item.icon" v-if="item.icon" />
           <ElAvatar v-else src="/favicon.png" shape="circle" />
         </div>
@@ -70,6 +70,7 @@ const handleDelete = (item: any) => {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+  align-items: center;
   gap: 10px;
 }
 .el-list-item-content {

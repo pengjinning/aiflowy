@@ -196,9 +196,9 @@
           "description":"通义实验室基于Qwen3训练的多语言文本统一向量模型，相较V3版本在文本检索、聚类、分类性能大幅提升；在MTEB多语言、中英、Code检索等评测任务上效果提升15%~40%；支持64~2048维用户自定义向量维度。"
         },
         {
-          "llmModel":"通用文本向量-v3",
+          "llmModel":"text-embedding-v3",
           "supportEmbed":true,
-          "title":"text-embedding-v4",
+          "title":"通用文本向量-v3",
           "description":"通用文本向量，是通义实验室基于LLM底座的多语言文本统一向量模型，面向全球多个主流语种，提供高水准的向量服务，帮助开发者将文本数据快速转换为高质量的向量数据。"
         }
       ]

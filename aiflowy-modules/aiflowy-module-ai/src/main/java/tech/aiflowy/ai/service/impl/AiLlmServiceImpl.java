@@ -2,6 +2,7 @@
 package tech.aiflowy.ai.service.impl;
 
 import com.agentsflex.core.model.chat.response.AiMessageResponse;
+import com.agentsflex.core.model.embedding.EmbeddingModel;
 import com.agentsflex.core.store.VectorData;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
@@ -239,17 +240,17 @@ public class AiLlmServiceImpl extends ServiceImpl<AiLlmMapper, AiLlm> implements
     }
 
     private void verifyEmbedLlm(AiLlm llm) {
-//        try {
-//            Llm transLlm = llm.toLlm();
-//            VectorData vectorData = transLlm.embed("这是一条校验模型配置的文本");
-//            if (vectorData.getVector() == null) {
-//                throw new BusinessException("校验未通过，请前往后端日志查看详情！");
-//            }
-//            log.info("取到向量数据，校验结果通过");
-//        } catch (Exception e) {
-//            log.error("模型配置校验失败:{}", e.getMessage());
-//            throw new BusinessException("校验未通过，请前往后端日志查看详情！");
-//        }
+        try {
+            EmbeddingModel transLlm = llm.toEmbeddingModel();
+            VectorData vectorData = transLlm.embed("这是一条校验模型配置的文本");
+            if (vectorData.getVector() == null) {
+                throw new BusinessException("校验未通过，请前往后端日志查看详情！");
+            }
+            log.info("取到向量数据，校验结果通过");
+        } catch (Exception e) {
+            log.error("模型配置校验失败:{}", e.getMessage());
+            throw new BusinessException("校验未通过，请前往后端日志查看详情！");
+        }
     }
 
     private void verifyChatLlm(AiLlm llm) {
