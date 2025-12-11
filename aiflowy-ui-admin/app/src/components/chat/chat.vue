@@ -25,20 +25,18 @@ import { api, sse } from '#/api/request';
 import MarkdownRenderer from '#/components/chat/MarkdownRenderer.vue';
 
 import BotAvatar from '../botAvatar/botAvatar.vue';
-// import RecordingIcon from '../icons/RecordingIcon.vue';
 import SendingIcon from '../icons/SendingIcon.vue';
 
-interface queryMessageType {
-  botId: string;
-  isExternalMsg: number;
-  sessionId?: string;
-}
 const props = defineProps<{
   bot?: BotInfo;
   // 是否是外部消息 1 外部消息 0 内部消息
   isExternalMsg: number;
   sessionId?: string;
 }>();
+interface historyMessageType {
+  role: string;
+  content: string;
+}
 const route = useRoute();
 const botId = ref<string>((route.params.id as string) || '');
 
@@ -52,21 +50,16 @@ const sending = ref(false);
 const sessionId = ref(
   props.sessionId && props.sessionId.length > 0 ? props.sessionId : uuid(),
 );
-const historyMessage = ref<ChatMessage[]>([]);
 const getMessagesHistory = () => {
-  const tempParams: queryMessageType = {
-    botId: botId.value,
-    isExternalMsg: props.isExternalMsg,
-  };
-
   // 如果是外部地址获取记录
-  if (props.isExternalMsg === 1) {
-    tempParams.sessionId = props.sessionId;
+  if (props.isExternalMsg === 0) {
+    return;
   }
   api
     .get('/api/v1/aiBotMessage/list', {
       params: {
-        ...tempParams,
+        botId: botId.value,
+        sessionId: sessionId.value,
       },
     })
     .then((res) => {
@@ -113,16 +106,24 @@ watchEffect(async () => {
     bubbleItems.value = [];
   }
 });
-
+const messages = ref<historyMessageType[]>([]);
 const handleSubmit = async () => {
   sending.value = true;
+  if (props.isExternalMsg === 0){
+    messages.value.push({
+      role: 'user',
+      content: senderValue.value,
+    });
+  }
+  if (messages.value.length > 1) {
+    messages.value.shift();
+  }
   const data = {
     botId: botId.value,
-    // fileList: [],
-    // isExternalMsg: 1,
     prompt: senderValue.value,
-    // tempUserId: uuid() + props.bot?.id,
     sessionId: sessionId.value,
+    isSettingsChat: true,
+    messages: messages.value,
   };
 
   const mockMessages = generateMockMessages();
@@ -131,7 +132,23 @@ const handleSubmit = async () => {
 
   postSse('/api/v1/aiBot/chat', data, {
     onMessage(message) {
+      const event = message.event;
+      //  finish
+      if (event === 'finish') {
+        sending.value = false;
+        return;
+      }
       const content = message.data!.replace(/^Final Answer:\s*/i, '');
+      if (event === 'needSaveMessage') {
+        const dataObj = JSON.parse(message.data);
+        const role = dataObj.role;
+        const contentObj = JSON.parse(dataObj.content);
+        messages.value.push({
+          role,
+          content: contentObj,
+        });
+        return;
+      }
       const lastBubbleItem = bubbleItems.value[bubbleItems.value.length - 1];
 
       if (lastBubbleItem) {

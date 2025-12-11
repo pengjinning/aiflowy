@@ -9,6 +9,8 @@ import com.mybatisflex.core.service.IService;
 import tech.aiflowy.common.domain.Result;
 
 import java.math.BigInteger;
+import java.util.List;
+import java.util.Map;
 
 /**
  *  服务层。
@@ -24,5 +26,5 @@ public interface AiBotService extends IService<AiBot> {
 
     AiBot getByAlias(String alias);
 
-    SseEmitter startChat(BigInteger botId, ChatModel chatModel, String prompt, MemoryPrompt memoryPrompt, ChatOptions chatOptions, String sessionId);
+    SseEmitter startChat(BigInteger botId, ChatModel chatModel, String prompt, MemoryPrompt memoryPrompt, ChatOptions chatOptions, String sessionId, List<Map<String, String>> messages);
 }

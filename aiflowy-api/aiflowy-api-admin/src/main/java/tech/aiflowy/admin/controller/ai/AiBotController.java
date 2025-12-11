@@ -4,6 +4,7 @@ package tech.aiflowy.admin.controller.ai;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
+import com.agentsflex.core.message.Message;
 import com.agentsflex.core.message.SystemMessage;
 import com.agentsflex.core.message.UserMessage;
 import com.agentsflex.core.model.chat.ChatModel;
@@ -141,23 +142,20 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
      * @param prompt
      * @param botId
      * @param sessionId
-     * @param response
      * @return
      */
-    @PostMapping("chat")
+    @PostMapping({"chat", "settings/chat"})
     @SaIgnore
     public SseEmitter chat(
             @JsonBody(value = "prompt", required = true) String prompt,
             @JsonBody(value = "botId", required = true) BigInteger botId,
             @JsonBody(value = "sessionId", required = true) String sessionId,
-            @JsonBody(value = "isExternalMsg") int isExternalMsg,
-                           HttpServletResponse response) {
-
-//        response.setContentType("text/event-stream");
+            @JsonBody(value = "isSettingsChat") boolean isSettingsChat,
+            @JsonBody(value = "messages") List<Map<String, String>> messages
+    ) {
         if (!StringUtils.hasLength(prompt)) {
             throw new BusinessException("提示词不能为空！");
         }
-
         AiBot aiBot = service.getById(botId);
         if (aiBot == null) {
             return ChatManager.getInstance().sseEmitterForContent(JSON.toJSONString(Maps.of("content", "机器人不存在")));
@@ -193,16 +191,11 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
             memoryPrompt.setSystemMessage(SystemMessage.of(systemPrompt));
         }
 
-        if (StpUtil.isLogin()) {
-            AiBotMessageMemory memory = new AiBotMessageMemory(botId, SaTokenUtil.getLoginAccount().getId(), sessionId,
-                    isExternalMsg, aiBotMessageService);
-            memoryPrompt.setMemory(memory);
-        }
         UserMessage userMessage = new UserMessage(prompt);
         userMessage.addTools(buildFunctionList(Maps.of("botId", botId).set("needEnglishName", false)));
         memoryPrompt.addMessage(userMessage);
         ChatOptions chatOptions = getChatOptions(llmOptions);
-        return aiBotService.startChat(botId, chatModel, prompt, memoryPrompt, chatOptions, sessionId);
+        return aiBotService.startChat(botId, chatModel, prompt, memoryPrompt, chatOptions, sessionId, messages);
 
     }
 
@@ -405,4 +398,5 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
 
         return functionList;
     }
+
 }

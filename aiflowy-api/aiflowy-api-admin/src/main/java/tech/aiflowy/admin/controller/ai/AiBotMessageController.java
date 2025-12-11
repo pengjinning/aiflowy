@@ -65,6 +65,9 @@ public class AiBotMessageController extends BaseCurdController<AiBotMessageServi
             if (message instanceof ToolMessage) {
                continue;
             }
+            if ("function".equals(aiBotMessage.getRole()) || !StringUtil.hasText(message.getTextContent())){
+                continue;
+            }
             maps.add(Maps.of("id", aiBotMessage.getId())
                     .set("content", message.getTextContent())
                     .set("role", aiBotMessage.getRole())

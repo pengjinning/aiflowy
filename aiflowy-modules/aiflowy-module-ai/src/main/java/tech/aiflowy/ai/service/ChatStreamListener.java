@@ -7,9 +7,11 @@ import com.agentsflex.core.model.chat.StreamResponseListener;
 import com.agentsflex.core.model.chat.response.AiMessageResponse;
 import com.agentsflex.core.model.client.StreamContext;
 import com.agentsflex.core.prompt.MemoryPrompt;
+import com.alibaba.fastjson.JSON;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tech.aiflowy.common.util.StringUtil;
 
+import java.io.IOException;
 import java.util.List;
 
 public class ChatStreamListener implements StreamResponseListener {
@@ -51,7 +53,6 @@ public class ChatStreamListener implements StreamResponseListener {
 
                 chatModel.chatStream(memoryPrompt,this);
 
-
             } else {
 
                     String delta = aiMessageResponse.getMessage().getContent();
@@ -69,6 +70,11 @@ public class ChatStreamListener implements StreamResponseListener {
     @Override
     public void onStop(StreamContext context) {
         System.out.println("onStop");
+        try {
+            sseEmitter.send(SseEmitter.event().name("finish").data("finish"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         StreamResponseListener.super.onStop(context);
     }
 

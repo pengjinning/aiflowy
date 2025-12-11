@@ -43,23 +43,11 @@ public class AiBotMessageBase extends DateEntity implements Serializable {
 
     private String image;
 
-    private Integer promptTokens;
-
-    private Integer completionTokens;
-
-    private Integer totalTokens;
-
     /**
      * 1是external 消息，0: bot页面消息
      *
      */
     private int isExternalMsg;
-
-    /**
-     * 方法定义
-     */
-    @Column(comment = "方法定义")
-    private String functions;
 
     @Column(typeHandler = FastjsonTypeHandler.class)
     private Map<String, Object> options;
@@ -122,38 +110,6 @@ public class AiBotMessageBase extends DateEntity implements Serializable {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public Integer getPromptTokens() {
-        return promptTokens;
-    }
-
-    public void setPromptTokens(Integer promptTokens) {
-        this.promptTokens = promptTokens;
-    }
-
-    public Integer getCompletionTokens() {
-        return completionTokens;
-    }
-
-    public void setCompletionTokens(Integer completionTokens) {
-        this.completionTokens = completionTokens;
-    }
-
-    public Integer getTotalTokens() {
-        return totalTokens;
-    }
-
-    public void setTotalTokens(Integer totalTokens) {
-        this.totalTokens = totalTokens;
-    }
-
-    public String getFunctions() {
-        return functions;
-    }
-
-    public void setFunctions(String functions) {
-        this.functions = functions;
     }
 
     public Map<String, Object> getOptions() {

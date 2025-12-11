@@ -1,8 +1,11 @@
 package tech.aiflowy.ai.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.agentsflex.core.memory.ChatMemory;
+import com.agentsflex.core.memory.DefaultChatMemory;
 import com.agentsflex.core.message.AiMessage;
 import com.agentsflex.core.message.ToolMessage;
+import com.agentsflex.core.message.UserMessage;
 import com.agentsflex.core.model.chat.ChatModel;
 import com.agentsflex.core.model.chat.ChatOptions;
 import com.agentsflex.core.model.chat.StreamResponseListener;
@@ -21,7 +24,11 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tech.aiflowy.ai.entity.AiBot;
+import tech.aiflowy.ai.entity.AiBotMessage;
+import tech.aiflowy.ai.entity.AiBotMessageDefaultMemory;
+import tech.aiflowy.ai.entity.AiBotMessageMemory;
 import tech.aiflowy.ai.mapper.AiBotMapper;
+import tech.aiflowy.ai.service.AiBotMessageService;
 import tech.aiflowy.ai.service.AiBotService;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -29,6 +36,7 @@ import tech.aiflowy.ai.service.ChatStreamListener;
 import tech.aiflowy.ai.utils.CustomBeanUtils;
 import tech.aiflowy.common.ai.ChatSseEmitter;
 import tech.aiflowy.common.ai.inteceptor.ToolLoggingInterceptor;
+import tech.aiflowy.common.satoken.util.SaTokenUtil;
 import tech.aiflowy.common.util.StringUtil;
 import tech.aiflowy.common.web.exceptions.BusinessException;
 import tech.aiflowy.ai.utils.RegexUtils;
@@ -37,6 +45,7 @@ import com.mybatisflex.core.query.QueryWrapper;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +63,9 @@ public class AiBotServiceImpl extends ServiceImpl<AiBotMapper, AiBot> implements
     private static final Logger log = LoggerFactory.getLogger(AiBotServiceImpl.class);
 
     private static final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
+
+    @Resource
+    private AiBotMessageService aiBotMessageService;
 
     @Resource(name = "sseThreadPool")
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
@@ -88,10 +100,19 @@ public class AiBotServiceImpl extends ServiceImpl<AiBotMapper, AiBot> implements
     }
 
     @Override
-    public SseEmitter startChat(BigInteger botId, ChatModel chatModel, String prompt, MemoryPrompt memoryPrompt, ChatOptions chatOptions, String sessionId) {
+    public SseEmitter startChat(BigInteger botId, ChatModel chatModel, String prompt, MemoryPrompt memoryPrompt, ChatOptions chatOptions, String sessionId, List<Map<String, String>> messages) {
 
-        String emitterKey = StpUtil.getLoginIdAsString() + "_" + sessionId;
         SseEmitter emitter = ChatSseEmitter.create();
+        if (messages != null && !messages.isEmpty()){
+            ChatMemory defaultChatMemory = new AiBotMessageDefaultMemory(sessionId, emitter, messages);
+            defaultChatMemory.addMessage(new UserMessage(prompt));
+            memoryPrompt.setMemory(defaultChatMemory);
+        } else{
+            AiBotMessageMemory memory = new AiBotMessageMemory(botId, SaTokenUtil.getLoginAccount().getId(), sessionId, aiBotMessageService);
+            memoryPrompt.setMemory(memory);
+        }
+        String emitterKey = StpUtil.getLoginIdAsString() + "_" + sessionId;
+
         emitter.onCompletion(() -> {
             emitters.remove(emitterKey);
             log.debug("SSE连接完成，移除用户[{}]的Emitter", emitterKey);
@@ -141,5 +162,20 @@ public class AiBotServiceImpl extends ServiceImpl<AiBotMapper, AiBot> implements
 
 
         return super.updateById(aiBot,false);
+    }
+
+
+    public static List<AiBotMessage> parseFrontMessage(List<Map<String, String>> messages) {
+        List<AiBotMessage> newMessages = new ArrayList<>();
+        if (messages == null || messages.isEmpty()) {
+            return newMessages;
+        }
+        messages.forEach(item -> {
+            AiBotMessage aiBotMessage = new AiBotMessage();
+            aiBotMessage.setRole(item.get("role"));
+            aiBotMessage.setContent(item.get("content"));
+            newMessages.add(aiBotMessage);
+        });
+        return newMessages;
     }
 }
