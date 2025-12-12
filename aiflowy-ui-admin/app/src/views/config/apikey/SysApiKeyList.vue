@@ -3,10 +3,13 @@ import type { FormInstance } from 'element-plus';
 
 import { ref } from 'vue';
 
-import { Delete, Edit, Plus } from '@element-plus/icons-vue';
+import { Delete, Edit, More, Plus } from '@element-plus/icons-vue';
 import {
   ElButton,
   ElDialog,
+  ElDropdown,
+  ElDropdownItem,
+  ElDropdownMenu,
   ElForm,
   ElFormItem,
   ElIcon,
@@ -101,9 +104,9 @@ function addNewApiKey() {
 </script>
 
 <template>
-  <div class="page-container">
+  <div class="flex h-full flex-col gap-1.5 p-6">
     <SysApiKeyModal ref="saveDialog" @reload="reset" />
-    <div class="header-container">
+    <div class="flex items-center justify-between">
       <ElForm ref="formRef" :inline="true" :model="formInline">
         <ElFormItem :label="$t('sysApiKey.apiKey')" prop="apiKey">
           <ElInput
@@ -120,86 +123,98 @@ function addNewApiKey() {
           </ElButton>
         </ElFormItem>
       </ElForm>
-      <ElButton @click="addNewApiKey" type="primary">
-        <ElIcon class="mr-1">
-          <Plus />
-        </ElIcon>
-        {{ $t('sysApiKey.addApiKey') }}
-      </ElButton>
-      <ElButton @click="showAddPermissionDialog({})" type="primary">
-        <ElIcon class="mr-1">
-          <Plus />
-        </ElIcon>
-        {{ $t('sysApiKeyResourcePermission.addPermission') }}
-      </ElButton>
+      <div class="handle-div">
+        <ElButton @click="addNewApiKey" type="primary">
+          <ElIcon class="mr-1">
+            <Plus />
+          </ElIcon>
+          {{ $t('sysApiKey.addApiKey') }}
+        </ElButton>
+        <ElButton @click="showAddPermissionDialog({})" type="primary">
+          <ElIcon class="mr-1">
+            <Plus />
+          </ElIcon>
+          {{ $t('sysApiKeyResourcePermission.addPermission') }}
+        </ElButton>
+      </div>
     </div>
 
-    <PageData
-      ref="pageDataRef"
-      page-url="/api/v1/sysApiKey/page"
-      :page-size="10"
-    >
-      <template #default="{ pageList }">
-        <ElTable :data="pageList" border>
-          <ElTableColumn
-            prop="apiKey"
-            :label="$t('sysApiKey.apiKey')"
-            width="280"
-          >
-            <template #default="{ row }">
-              {{ row.apiKey }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="created" :label="$t('sysApiKey.created')">
-            <template #default="{ row }">
-              {{ row.created }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="status" :label="$t('sysApiKey.status')">
-            <template #default="{ row }">
-              <ElTag type="primary" v-if="row.status === 1">
-                {{ $t('sysApiKey.actions.enable') }}
-              </ElTag>
-              <ElTag type="danger" v-else-if="row.status === 0">
-                {{ $t('sysApiKey.actions.disable') }}
-              </ElTag>
-              <ElTag type="warning" v-else>
-                {{ $t('sysApiKey.actions.failure') }}
-              </ElTag>
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="expiredAt" :label="$t('sysApiKey.expiredAt')">
-            <template #default="{ row }">
-              {{ row.expiredAt }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn :label="$t('common.handle')" width="150">
-            <template #default="{ row }">
-              <ElButton @click="showDialog(row)" link type="primary">
-                <ElIcon class="mr-1">
-                  <Edit />
-                </ElIcon>
-                {{ $t('button.edit') }}
-              </ElButton>
-              <ElButton @click="remove(row)" link type="danger">
-                <ElIcon class="mr-1">
-                  <Delete />
-                </ElIcon>
-                {{ $t('button.delete') }}
-              </ElButton>
-            </template>
-          </ElTableColumn>
-        </ElTable>
-      </template>
-    </PageData>
+    <div class="bg-background flex-1 rounded-lg p-5">
+      <PageData
+        ref="pageDataRef"
+        page-url="/api/v1/sysApiKey/page"
+        :page-size="10"
+      >
+        <template #default="{ pageList }">
+          <ElTable :data="pageList" border>
+            <ElTableColumn
+              prop="apiKey"
+              :label="$t('sysApiKey.apiKey')"
+              width="280"
+            >
+              <template #default="{ row }">
+                {{ row.apiKey }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn prop="created" :label="$t('sysApiKey.created')">
+              <template #default="{ row }">
+                {{ row.created }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn prop="status" :label="$t('sysApiKey.status')">
+              <template #default="{ row }">
+                <ElTag type="primary" v-if="row.status === 1">
+                  {{ $t('sysApiKey.actions.enable') }}
+                </ElTag>
+                <ElTag type="danger" v-else-if="row.status === 0">
+                  {{ $t('sysApiKey.actions.disable') }}
+                </ElTag>
+                <ElTag type="warning" v-else>
+                  {{ $t('sysApiKey.actions.failure') }}
+                </ElTag>
+              </template>
+            </ElTableColumn>
+            <ElTableColumn prop="expiredAt" :label="$t('sysApiKey.expiredAt')">
+              <template #default="{ row }">
+                {{ row.expiredAt }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              :label="$t('common.handle')"
+              width="80"
+              align="center"
+            >
+              <template #default="{ row }">
+                <ElDropdown>
+                  <ElButton link>
+                    <ElIcon>
+                      <More />
+                    </ElIcon>
+                  </ElButton>
+
+                  <template #dropdown>
+                    <ElDropdownMenu>
+                      <ElDropdownItem @click="showDialog(row)">
+                        <ElButton :icon="Edit" link>
+                          {{ $t('button.edit') }}
+                        </ElButton>
+                      </ElDropdownItem>
+                      <ElDropdownItem @click="remove(row)">
+                        <ElButton type="danger" :icon="Delete" link>
+                          {{ $t('button.delete') }}
+                        </ElButton>
+                      </ElDropdownItem>
+                    </ElDropdownMenu>
+                  </template>
+                </ElDropdown>
+              </template>
+            </ElTableColumn>
+          </ElTable>
+        </template>
+      </PageData>
+    </div>
     <ElDialog v-model="dialogVisible" draggable :close-on-click-modal="false">
       <SysApiKeyResourcePermissionList />
     </ElDialog>
   </div>
 </template>
-
-<style scoped>
-.header-container {
-  display: flex;
-}
-</style>

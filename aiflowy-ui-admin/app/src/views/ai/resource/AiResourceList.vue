@@ -112,7 +112,7 @@ function download(row: any) {
 </script>
 
 <template>
-  <div class="flex flex-col gap-1.5 p-6">
+  <div class="flex h-full flex-col gap-1.5 p-6">
     <PreviewModal ref="previewDialog" />
     <AiResourceModal ref="saveDialog" @reload="reset" />
     <div class="flex items-center justify-between">
@@ -153,7 +153,7 @@ function download(row: any) {
       </div>
     </div>
 
-    <div class="bg-background rounded-lg p-5">
+    <div class="bg-background flex-1 rounded-lg p-5">
       <PageData
         ref="pageDataRef"
         page-url="/api/v1/aiResource/page"
@@ -180,6 +180,7 @@ function download(row: any) {
               </template>
             </ElTableColumn>
             <ElTableColumn
+              align="center"
               prop="suffix"
               :label="$t('aiResource.suffix')"
               width="60"
@@ -188,12 +189,20 @@ function download(row: any) {
                 {{ row.suffix }}
               </template>
             </ElTableColumn>
-            <ElTableColumn prop="fileSize" :label="$t('aiResource.fileSize')">
+            <ElTableColumn
+              align="center"
+              prop="fileSize"
+              :label="$t('aiResource.fileSize')"
+            >
               <template #default="{ row }">
                 {{ formatBytes(row.fileSize) }}
               </template>
             </ElTableColumn>
-            <ElTableColumn prop="origin" :label="$t('aiResource.origin')">
+            <ElTableColumn
+              align="center"
+              prop="origin"
+              :label="$t('aiResource.origin')"
+            >
               <template #default="{ row }">
                 <Tag
                   size="small"
@@ -206,6 +215,7 @@ function download(row: any) {
               </template>
             </ElTableColumn>
             <ElTableColumn
+              align="center"
               prop="resourceType"
               :label="$t('aiResource.resourceType')"
             >
@@ -241,35 +251,29 @@ function download(row: any) {
                   <template #dropdown>
                     <ElDropdownMenu>
                       <ElDropdownItem @click="preview(row)">
-                        <ElIcon class="mr-1">
-                          <View />
-                        </ElIcon>
-                        {{ $t('button.preview') }}
+                        <ElButton :icon="View" link>
+                          {{ $t('button.view') }}
+                        </ElButton>
                       </ElDropdownItem>
                       <ElDropdownItem @click="download(row)">
-                        <ElIcon class="mr-1">
-                          <Download />
-                        </ElIcon>
-                        {{ $t('button.download') }}
+                        <ElButton :icon="Download" link>
+                          {{ $t('button.download') }}
+                        </ElButton>
                       </ElDropdownItem>
-                      <ElDropdownItem
-                        v-access:code="'/api/v1/aiResource/save'"
-                        @click="showDialog(row)"
-                      >
-                        <ElIcon class="mr-1">
-                          <Edit />
-                        </ElIcon>
-                        {{ $t('button.edit') }}
-                      </ElDropdownItem>
-                      <ElDropdownItem
-                        v-access:code="'/api/v1/aiResource/remove'"
-                        @click="remove(row)"
-                      >
-                        <ElIcon class="mr-1">
-                          <Delete />
-                        </ElIcon>
-                        {{ $t('button.delete') }}
-                      </ElDropdownItem>
+                      <div v-access:code="'/api/v1/aiResource/save'">
+                        <ElDropdownItem @click="showDialog(row)">
+                          <ElButton :icon="Edit" link>
+                            {{ $t('button.edit') }}
+                          </ElButton>
+                        </ElDropdownItem>
+                      </div>
+                      <div v-access:code="'/api/v1/aiResource/remove'">
+                        <ElDropdownItem @click="remove(row)">
+                          <ElButton type="danger" :icon="Delete" link>
+                            {{ $t('button.delete') }}
+                          </ElButton>
+                        </ElDropdownItem>
+                      </div>
                     </ElDropdownMenu>
                   </template>
                 </ElDropdown>
@@ -281,5 +285,3 @@ function download(row: any) {
     </div>
   </div>
 </template>
-
-<style scoped></style>

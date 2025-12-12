@@ -42,3 +42,28 @@
 html .el-loading-mask {
   z-index: 1000;
 }
+
+.el-table thead {
+  --el-table-header-text-color: #323233;
+}
+
+.el-table th.el-table__cell {
+  --el-table-header-bg-color: #f7f9fd;
+}
+
+.el-table td.el-table__cell,
+.el-table th.el-table__cell.is-leaf {
+  --el-table-border: none;
+}
+
+.el-table--border .el-table__inner-wrapper:after,
+.el-table--border:after,
+.el-table--border:before,
+.el-table__inner-wrapper:before {
+  --el-table-border-color: transparent;
+}
+
+.el-table__border-bottom-patch,
+.el-table__border-left-patch {
+  --el-table-border-color: transparent;
+}
