@@ -11,7 +11,7 @@ import { tryit } from '@aiflowy/utils';
 
 import {
   CopyDocument,
-  DeleteFilled,
+  Delete,
   Download,
   Edit,
   Plus,
@@ -110,7 +110,7 @@ const actions: ActionButton[] = [
     },
   },
   {
-    icon: DeleteFilled,
+    icon: Delete,
     text: $t('button.delete'),
     className: 'item-danger',
     permission: '',
@@ -238,7 +238,7 @@ const controlBtns = [
   },
   {
     type: 'danger',
-    icon: DeleteFilled,
+    icon: Delete,
     label: $t('button.delete'),
     onClick(row: any) {
       removeCategory(row);
@@ -351,7 +351,7 @@ const getSideList = async () => {
       @search="handleSearch"
       @button-click="showDialog({})"
     />
-    <div class="flex flex-1 gap-2.5">
+    <div class="flex flex-1 gap-6">
       <PageSide
         label-key="categoryName"
         value-key="id"

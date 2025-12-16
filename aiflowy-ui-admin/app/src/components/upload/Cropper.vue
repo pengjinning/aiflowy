@@ -7,7 +7,7 @@ import 'vue-cropper/dist/index.css';
 
 import { useAccessStore } from '@aiflowy/stores';
 
-import { DeleteFilled, Plus, Refresh } from '@element-plus/icons-vue';
+import { Delete, Plus, Refresh } from '@element-plus/icons-vue';
 import {
   ElButton,
   ElDialog,
@@ -310,7 +310,7 @@ watch(showCropDialog, (newVal) => {
             <ElIcon><Refresh /></ElIcon>
           </ElButton>
           <ElButton @click="handleRemove">
-            <ElIcon><DeleteFilled /></ElIcon>
+            <ElIcon><Delete /></ElIcon>
           </ElButton>
         </div>
       </div>

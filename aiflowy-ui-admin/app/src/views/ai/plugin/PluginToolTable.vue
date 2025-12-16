@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 
 import { $t } from '@aiflowy/locales';
 
-import { DeleteFilled, Edit, More } from '@element-plus/icons-vue';
+import { Delete, Edit, More } from '@element-plus/icons-vue';
 import {
   ElButton,
   ElDropdown,
@@ -109,7 +109,7 @@ const pluginToolReload = () => {
                     </ElButton>
                   </ElDropdownItem>
                   <ElDropdownItem @click="handleDelete(scope.row)">
-                    <ElButton type="danger" :icon="DeleteFilled" link>
+                    <ElButton type="danger" :icon="Delete" link>
                       {{ $t('button.delete') }}
                     </ElButton>
                   </ElDropdownItem>

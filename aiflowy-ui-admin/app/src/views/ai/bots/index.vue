@@ -10,7 +10,7 @@ import { $t } from '@aiflowy/locales';
 import { tryit } from '@aiflowy/utils';
 
 import {
-  DeleteFilled,
+  Delete,
   Edit,
   Plus,
   Setting,
@@ -72,9 +72,9 @@ const actions: ActionButton[] = [
     },
   },
   {
-    icon: DeleteFilled,
+    icon: Delete,
     text: $t('button.delete'),
-    className: '',
+    className: 'item-danger',
     permission: '/api/v1/aiBot/remove',
     onClick(row: BotInfo) {
       removeBot(row);

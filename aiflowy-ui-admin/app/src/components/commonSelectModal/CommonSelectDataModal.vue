@@ -77,12 +77,14 @@ const handleSearch = (query: string) => {
     :close-on-click-modal="false"
     :width="props.width"
     align-center
-    :title="props.title"
   >
-    <div class="select-modal-header-container">
-      <HeaderSearch @search="handleSearch" />
-    </div>
-    <div class="select-modal-container">
+    <template #header>
+      <div class="select-modal-header-container">
+        <p class="el-dialog__title mb-2">{{ props.title }}</p>
+        <HeaderSearch @search="handleSearch" />
+      </div>
+    </template>
+    <div class="select-modal-container p-5">
       <PageData
         ref="pageDataRef"
         :page-url="pageUrl"
@@ -173,8 +175,8 @@ const handleSearch = (query: string) => {
 
 <style scoped>
 .select-modal-container {
-  height: calc(100vh - 161px);
-  overflow: auto;
+  /* height: 100%;
+  overflow: auto; */
   background-color: var(--bot-select-data-item-back);
   border-radius: 8px;
 }
@@ -286,7 +288,7 @@ const handleSearch = (query: string) => {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 20px 20px;
+  /* padding: 20px 20px; */
 }
 
 .select-modal-container :deep(.el-collapse-item__header) {

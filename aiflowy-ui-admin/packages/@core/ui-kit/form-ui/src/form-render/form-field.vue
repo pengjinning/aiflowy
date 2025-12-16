@@ -7,13 +7,13 @@ import { computed, nextTick, onUnmounted, useTemplateRef, watch } from 'vue';
 
 import { CircleAlert } from '@aiflowy-core/icons';
 import {
+  AIFlowyRenderContent,
+  AIFlowyTooltip,
   FormControl,
   FormDescription,
   FormField,
   FormItem,
   FormMessage,
-  AIFlowyRenderContent,
-  AIFlowyTooltip,
 } from '@aiflowy-core/shadcn-ui';
 import { cn, isFunction, isObject, isString } from '@aiflowy-core/shared/utils';
 
@@ -306,7 +306,7 @@ onUnmounted(() => {
         v-if="!hideLabel"
         :class="
           cn(
-            'flex leading-6',
+            'flex font-normal leading-6',
             {
               'mr-2 flex-shrink-0 justify-end': !isVertical,
               'mb-1 flex-row': isVertical,

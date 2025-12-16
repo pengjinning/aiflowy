@@ -3,7 +3,7 @@ import type { FormInstance } from 'element-plus';
 
 import { markRaw, onMounted, ref } from 'vue';
 
-import { DeleteFilled, Edit, More, Plus } from '@element-plus/icons-vue';
+import { Delete, Edit, More, Plus } from '@element-plus/icons-vue';
 import {
   ElAvatar,
   ElButton,
@@ -200,7 +200,7 @@ function isAdmin(data: any) {
                       </div>
                       <div v-access:code="'/api/v1/sysAccount/remove'">
                         <ElDropdownItem @click="remove(row)">
-                          <ElButton type="danger" :icon="DeleteFilled" link>
+                          <ElButton type="danger" :icon="Delete" link>
                             {{ $t('button.delete') }}
                           </ElButton>
                         </ElDropdownItem>

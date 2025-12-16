@@ -6,7 +6,7 @@ import { $t } from '@aiflowy/locales';
 
 import {
   ArrowLeft,
-  DeleteFilled,
+  Delete,
   Edit,
   Plus,
   Refresh,
@@ -230,7 +230,7 @@ function openImportModal() {
                   </ElButton>
                   <ElButton @click="remove(row)" link type="danger">
                     <ElIcon class="mr-1">
-                      <DeleteFilled />
+                      <Delete />
                     </ElIcon>
                     {{ $t('button.delete') }}
                   </ElButton>

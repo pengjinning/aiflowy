@@ -23,5 +23,6 @@
   "downloadSuccess": "Download success",
   "downloadFail": "Download fail",
   "copySuccess": "Copy success",
-  "copyFail": "Copy fail"
+  "copyFail": "Copy fail",
+  "clickOrDrop": "Click or drag and drop files here to upload"
 }

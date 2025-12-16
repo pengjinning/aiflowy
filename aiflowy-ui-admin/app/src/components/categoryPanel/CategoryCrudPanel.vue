@@ -3,7 +3,7 @@ import { computed, onMounted, ref, toRefs } from 'vue';
 
 import { $t } from '@aiflowy/locales';
 
-import { DeleteFilled, Edit, MoreFilled, Plus } from '@element-plus/icons-vue';
+import { Delete, Edit, MoreFilled, Plus } from '@element-plus/icons-vue';
 import {
   ElButton,
   ElDialog,
@@ -224,7 +224,7 @@ const handleDeleteClick = (event: any, item: any) => {
                       </ElButton>
                     </ElDropdownItem>
                     <ElDropdownItem @click="handleDeleteClick($event, item)">
-                      <ElButton type="danger" :icon="DeleteFilled" link>
+                      <ElButton type="danger" :icon="Delete" link>
                         {{ $t('button.delete') }}
                       </ElButton>
                     </ElDropdownItem>

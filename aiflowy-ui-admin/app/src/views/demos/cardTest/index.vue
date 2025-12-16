@@ -2,13 +2,7 @@
 <script setup>
 import { markRaw, onMounted, ref } from 'vue';
 
-import {
-  DeleteFilled,
-  Download,
-  Edit,
-  Share,
-  View,
-} from '@element-plus/icons-vue';
+import { Delete, Download, Edit, Share, View } from '@element-plus/icons-vue';
 
 import CardPage from '#/components/cardPage/CardPage.vue';
 import PageData from '#/components/page/PageData.vue';
@@ -38,7 +32,7 @@ const actions = ref([
     name: 'delete',
     label: '删除',
     type: 'danger',
-    icon: markRaw(DeleteFilled),
+    icon: markRaw(Delete),
   },
   {
     name: 'share',

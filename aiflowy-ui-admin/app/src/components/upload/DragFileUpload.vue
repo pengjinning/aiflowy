@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { UploadProps } from 'element-plus';
 
-import { defineEmits, defineExpose, ref } from 'vue';
+import { ref } from 'vue';
 
 import { useAppConfig } from '@aiflowy/hooks';
 import { useAccessStore } from '@aiflowy/stores';
@@ -72,7 +72,8 @@ defineExpose({
   >
     <ElIcon class="el-icon--upload"><UploadFilled /></ElIcon>
     <div class="el-upload__text">
-      Drop file here or <em>click to upload</em>
+      <!-- Drop file here or <em>click to upload</em> -->
+      {{ $t('message.clickOrDrop') }}
     </div>
   </ElUpload>
 </template>

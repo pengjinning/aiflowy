@@ -32,7 +32,7 @@ const [Form, formApi] = useAIFlowyForm(
         class: 'w-full',
       },
     },
-    layout: 'horizontal',
+    layout: 'vertical',
     schema: computed(() => props.formSchema),
     showDefaultActions: false,
   }),
@@ -51,12 +51,15 @@ defineExpose({
 });
 </script>
 <template>
-  <div @keydown.enter.prevent="handleSubmit">
+  <div
+    class="mx-auto max-w-[360px] pt-12"
+    @keydown.enter.prevent="handleSubmit"
+  >
     <Form />
     <AIFlowyButton
       :loading="buttonLoading"
       type="submit"
-      class="mt-4"
+      class="mx-auto mt-4 block h-8 w-[106px] p-0"
       @click="handleSubmit"
     >
       {{ buttonText }}

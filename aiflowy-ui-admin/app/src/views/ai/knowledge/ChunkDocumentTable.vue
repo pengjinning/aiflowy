@@ -3,7 +3,7 @@ import { ref } from 'vue';
 
 import { $t } from '@aiflowy/locales';
 
-import { DeleteFilled, Edit, More } from '@element-plus/icons-vue';
+import { Delete, Edit, More } from '@element-plus/icons-vue';
 import {
   ElButton,
   ElDialog,
@@ -134,7 +134,7 @@ const form = ref({
                       <ElDropdownItem>
                         <ElButton link type="danger">
                           <ElIcon class="mr-1">
-                            <DeleteFilled />
+                            <Delete />
                           </ElIcon>
                           {{ $t('button.delete') }}
                         </ElButton>

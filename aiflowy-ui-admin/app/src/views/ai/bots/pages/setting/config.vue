@@ -8,7 +8,7 @@ import { $t } from '@aiflowy/locales';
 import { useBotStore } from '@aiflowy/stores';
 import { tryit } from '@aiflowy/utils';
 
-import { DeleteFilled, Plus, Setting } from '@element-plus/icons-vue';
+import { Delete, Plus, Setting } from '@element-plus/icons-vue';
 import { useDebounceFn } from '@vueuse/core';
 import {
   ElButton,
@@ -648,7 +648,7 @@ const handleUpdatePublishWx = () => {
                     @click="handleDeletePresetQuestion(item.key)"
                     class="el-list-item-delete-container"
                   >
-                    <DeleteFilled />
+                    <Delete />
                   </ElIcon>
                 </div>
               </div>
@@ -699,7 +699,7 @@ const handleUpdatePublishWx = () => {
                   >
                     <ElButton link type="danger">
                       <ElIcon class="mr-1">
-                        <DeleteFilled />
+                        <Delete />
                       </ElIcon>
                       {{ $t('button.delete') }}
                     </ElButton>
@@ -714,6 +714,7 @@ const handleUpdatePublishWx = () => {
 
     <!-- 选择插件-->
     <CommonSelectDataModal
+      :title="$t('menus.ai.plugin')"
       width="730"
       ref="pluginToolDataRef"
       page-url="/api/v1/aiPlugin/pageByCategory"
@@ -726,6 +727,7 @@ const handleUpdatePublishWx = () => {
 
     <!-- 选择知识库-->
     <CommonSelectDataModal
+      :title="$t('menus.ai.knowledge')"
       width="730"
       ref="knowledgeDataRef"
       page-url="/api/v1/aiKnowledge/page"
@@ -734,6 +736,7 @@ const handleUpdatePublishWx = () => {
 
     <!-- 选择工作流-->
     <CommonSelectDataModal
+      :title="$t('menus.ai.workflow')"
       width="730"
       ref="workflowDataRef"
       page-url="/api/v1/aiWorkflow/page"

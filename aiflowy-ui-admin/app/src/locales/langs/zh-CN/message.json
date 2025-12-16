@@ -23,5 +23,6 @@
   "downloadSuccess": "下载成功",
   "downloadFail": "下载失败",
   "copySuccess": "复制成功",
-  "copyFail": "复制失败"
+  "copyFail": "复制失败",
+  "clickOrDrop": "点击或将文件拖拽到这里上传"
 }

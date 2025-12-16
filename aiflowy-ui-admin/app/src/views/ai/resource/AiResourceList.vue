@@ -6,7 +6,7 @@ import { onMounted, ref } from 'vue';
 import { formatBytes } from '@aiflowy/utils';
 
 import {
-  DeleteFilled,
+  Delete,
   Download,
   Edit,
   More,
@@ -269,7 +269,7 @@ function download(row: any) {
                       </div>
                       <div v-access:code="'/api/v1/aiResource/remove'">
                         <ElDropdownItem @click="remove(row)">
-                          <ElButton type="danger" :icon="DeleteFilled" link>
+                          <ElButton type="danger" :icon="Delete" link>
                             {{ $t('button.delete') }}
                           </ElButton>
                         </ElDropdownItem>

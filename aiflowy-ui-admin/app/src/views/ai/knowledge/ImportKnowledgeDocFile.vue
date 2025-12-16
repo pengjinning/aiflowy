@@ -23,7 +23,7 @@ const back = () => {
 };
 const files = ref([]);
 const splitterParams = ref({});
-const activeStep = ref(1);
+const activeStep = ref(0);
 const fileUploadRef = ref();
 const confirmImportRef = ref();
 const segmenterDocRef = ref();
@@ -77,24 +77,78 @@ const finishImport = () => {
       </ElButton>
     </div>
     <div class="imp-doc-kno-content">
-      <ElSteps :active="activeStep" finish-status="success">
-        <ElStep :title="$t('aiKnowledge.importDoc.fileUpload')" />
-        <ElStep :title="$t('aiKnowledge.importDoc.parameterSettings')" />
-        <ElStep :title="$t('aiKnowledge.importDoc.segmentedPreview')" />
-        <ElStep :title="$t('aiKnowledge.importDoc.confirmImport')" />
-      </ElSteps>
+      <div class="rounded-lg bg-[var(--table-header-bg-color)] py-5">
+        <ElSteps :active="activeStep" align-center>
+          <ElStep>
+            <template #icon>
+              <div class="flex items-center gap-2">
+                <div
+                  class="h-8 w-8 rounded-full bg-[var(--el-text-color-placeholder)]"
+                >
+                  <span class="text-accent-foreground text-sm/8">1</span>
+                </div>
+                <span class="text-base">{{
+                  $t('aiKnowledge.importDoc.fileUpload')
+                }}</span>
+              </div>
+            </template>
+          </ElStep>
+          <ElStep>
+            <template #icon>
+              <div class="flex items-center gap-2">
+                <div
+                  class="h-8 w-8 rounded-full bg-[var(--el-text-color-placeholder)]"
+                >
+                  <span class="text-accent-foreground text-sm/8">2</span>
+                </div>
+                <span class="text-base">{{
+                  $t('aiKnowledge.importDoc.parameterSettings')
+                }}</span>
+              </div>
+            </template>
+          </ElStep>
+          <ElStep>
+            <template #icon>
+              <div class="flex items-center gap-2">
+                <div
+                  class="h-8 w-8 rounded-full bg-[var(--el-text-color-placeholder)]"
+                >
+                  <span class="text-accent-foreground text-sm/8">3</span>
+                </div>
+                <span class="text-base">{{
+                  $t('aiKnowledge.importDoc.segmentedPreview')
+                }}</span>
+              </div>
+            </template>
+          </ElStep>
+          <ElStep>
+            <template #icon>
+              <div class="flex items-center gap-2">
+                <div
+                  class="h-8 w-8 rounded-full bg-[var(--el-text-color-placeholder)]"
+                >
+                  <span class="text-accent-foreground text-sm/8">4</span>
+                </div>
+                <span class="text-base">{{
+                  $t('aiKnowledge.importDoc.confirmImport')
+                }}</span>
+              </div>
+            </template>
+          </ElStep>
+        </ElSteps>
+      </div>
 
       <div style="margin-top: 20px">
         <!--      文件上传导入-->
-        <div class="knw-file-upload" v-if="activeStep === 1">
+        <div class="knw-file-upload" v-if="activeStep === 0">
           <ImportKnowledgeFileContainer ref="fileUploadRef" />
         </div>
         <!--      分割参数设置-->
-        <div class="knw-file-splitter" v-if="activeStep === 2">
+        <div class="knw-file-splitter" v-if="activeStep === 1">
           <SegmenterDoc ref="segmenterDocRef" />
         </div>
         <!--        分割预览-->
-        <div class="knw-file-preview" v-if="activeStep === 3">
+        <div class="knw-file-preview" v-if="activeStep === 2">
           <SplitterDocPreview
             :flies-list="files"
             :splitter-params="splitterParams"
@@ -104,7 +158,7 @@ const finishImport = () => {
           />
         </div>
         <!--        确认导入-->
-        <div class="knw-file-confirm" v-if="activeStep === 4">
+        <div class="knw-file-confirm" v-if="activeStep === 3">
           <ComfirmImportDocument
             :splitter-params="splitterParams"
             :files-list="files"
@@ -180,10 +234,12 @@ const finishImport = () => {
 .knw-file-confirm {
   width: 100%;
 }
-:deep(.el-step__head.is-success) {
-  color: var(--el-color-primary) !important;
+:deep(.el-step__icon.is-icon) {
+  width: 120px;
+  background-color: var(--table-header-bg-color);
 }
-:deep(.el-step__title.is-success) {
-  color: var(--el-color-primary) !important;
+:deep(.el-step__head.is-finish) {
+  --el-text-color-placeholder: hsl(var(--primary));
+  --accent-foreground: var(--primary-foreground);
 }
 </style>

@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue';
 import { $t } from '@aiflowy/locales';
 
 import {
+  ElAlert,
   ElButton,
   ElForm,
   ElFormItem,
@@ -81,10 +82,15 @@ function handleSave() {
 <template>
   <div class="settings-container">
     <div class="settings-config-container">
-      <div class="settings-notice">
+      <!-- <div class="settings-notice">
         注意：有很多大模型（比如：暗月之面等）都是兼容 ChatGPT
         的，因此若需要配置系统未内置的平台的大模型，供应商可以选择OpenAi。
-      </div>
+      </div> -->
+      <ElAlert
+        class="!mb-5"
+        title="注意：有很多大模型（比如：暗月之面等）都是兼容 ChatGPT 的，因此若需要配置系统未内置的平台的大模型，供应商可以选择OpenAi。"
+        type="warning"
+      />
       <ElForm :model="entity" class="demo-form-inline" label-width="150px">
         <ElFormItem :label="$t('settingsConfig.modelOfChat')">
           <ElSelect

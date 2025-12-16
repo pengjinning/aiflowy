@@ -4,7 +4,7 @@ import { ref } from 'vue';
 import { $t } from '@aiflowy/locales';
 import { downloadFileFromBlob } from '@aiflowy/utils';
 
-import { DeleteFilled, Download, More, View } from '@element-plus/icons-vue';
+import { Delete, Download, More, View } from '@element-plus/icons-vue';
 import {
   ElButton,
   ElDropdown,
@@ -131,7 +131,7 @@ const handleDelete = (row: any) => {
                     <ElDropdownItem>
                       <ElButton link type="danger">
                         <ElIcon class="mr-1">
-                          <DeleteFilled />
+                          <Delete />
                         </ElIcon>
                         {{ $t('button.delete') }}
                       </ElButton>

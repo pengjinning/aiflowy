@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { $t } from '@aiflowy/locales';
 
-import { DeleteFilled } from '@element-plus/icons-vue';
+import { Delete } from '@element-plus/icons-vue';
 import { ElAvatar, ElIcon, ElMessageBox } from 'element-plus';
 
 const props = defineProps({
@@ -53,7 +53,7 @@ const handleDelete = (item: any) => {
         @click="handleDelete(item)"
         class="el-list-item-delete-container"
       >
-        <DeleteFilled />
+        <Delete />
       </ElIcon>
     </div>
   </div>
