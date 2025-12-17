@@ -70,10 +70,14 @@ defineExpose({
     multiple
     :style="{ display: props.visible ? 'block' : 'none' }"
   >
-    <ElIcon class="el-icon--upload"><UploadFilled /></ElIcon>
-    <div class="el-upload__text">
-      <!-- Drop file here or <em>click to upload</em> -->
-      {{ $t('message.clickOrDrop') }}
+    <ElIcon size="48" color="hsl(var(--primary))">
+      <UploadFilled />
+    </ElIcon>
+    <div class="flex flex-col gap-1">
+      <span class="text-base">{{ $t('message.upload.title') }}</span>
+      <span class="text-sm text-[#75808d]">{{
+        $t('message.upload.description')
+      }}</span>
     </div>
   </ElUpload>
 </template>

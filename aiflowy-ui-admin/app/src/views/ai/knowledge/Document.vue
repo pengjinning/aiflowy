@@ -9,8 +9,8 @@ import { ElIcon, ElImage } from 'element-plus';
 
 import { api } from '#/api/request';
 import bookIcon from '#/assets/ai/knowledge/book.svg';
-import CategoryPanel from '#/components/categoryPanel/CategoryPanel.vue';
 import HeaderSearch from '#/components/headerSearch/HeaderSearch.vue';
+import PageSide from '#/components/page/PageSide.vue';
 import ChunkDocumentTable from '#/views/ai/knowledge/ChunkDocumentTable.vue';
 import DocumentTable from '#/views/ai/knowledge/DocumentTable.vue';
 import ImportKnowledgeDocFile from '#/views/ai/knowledge/ImportKnowledgeDocFile.vue';
@@ -66,7 +66,7 @@ const handleButtonClick = (event: any) => {
   }
 };
 const handleCategoryClick = (category: any) => {
-  selectedCategory.value = category.item.key;
+  selectedCategory.value = category.key;
   viewDocVisible.value = false;
 };
 const viewDocVisible = ref(false);
@@ -100,15 +100,12 @@ const backDoc = () => {
       </div>
       <div class="doc-content">
         <div>
-          <CategoryPanel
-            default-selected-category="documentList"
-            :categories="categoryData"
-            title-key="name"
+          <PageSide
+            label-key="name"
             value-key="key"
-            :use-img-for-svg="true"
-            :need-hide-collapse="true"
-            :expand-width="200"
-            @click="handleCategoryClick"
+            :menus="categoryData"
+            default-selected="documentList"
+            @change="handleCategoryClick"
           />
         </div>
         <div class="doc-table-content border border-[var(--el-border-color)]">

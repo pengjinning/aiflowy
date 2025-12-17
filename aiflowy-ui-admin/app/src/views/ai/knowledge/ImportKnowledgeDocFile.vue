@@ -204,7 +204,7 @@ const finishImport = () => {
 .imp-doc-kno-content {
   flex: 1;
   padding-top: 20px;
-  overflow: scroll;
+  overflow: auto;
 }
 .imp-doc-footer {
   position: absolute;
@@ -218,7 +218,7 @@ const finishImport = () => {
 }
 .knw-file-preview {
   flex: 1;
-  overflow: scroll;
+  overflow: auto;
 }
 .imp-doc-page-container {
   margin-right: 12px;

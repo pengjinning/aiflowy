@@ -24,5 +24,8 @@
   "downloadFail": "Download fail",
   "copySuccess": "Copy success",
   "copyFail": "Copy fail",
-  "clickOrDrop": "Click or drag and drop files here to upload"
+  "upload": {
+    "title": "Click or drag and drop files here to upload",
+    "description": "TXT, PDF, DOCX, MD, PPT, PPTX, and XLSX files are supported. Each upload allows one file only, with a maximum size of 20M per file."
+  }
 }

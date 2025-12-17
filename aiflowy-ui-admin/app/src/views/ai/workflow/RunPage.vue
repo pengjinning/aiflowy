@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
+import { preferences } from '@aiflowy/preferences';
 import { sortNodes } from '@aiflowy/utils';
 
 import { ElAvatar, ElCard, ElCol, ElRow } from 'element-plus';
@@ -58,13 +59,19 @@ function onAsyncExecute(info: any) {
     v-loading="pageLoading"
     class="bg-background-deep flex h-full w-full flex-col gap-6 overflow-hidden p-6"
   >
+    <img
+      :src="`/logo${preferences.theme.mode === 'dark' ? 'Dark' : ''}.svg`"
+      class="w-[100px]"
+    />
     <div
       class="flex h-[150px] shrink-0 items-center gap-6 rounded-lg border border-[var(--el-border-color)] bg-[var(--el-bg-color)] pl-11"
     >
       <ElAvatar :src="workflowInfo.icon ?? workflowIcon" :size="72" />
       <div class="flex flex-col gap-5">
-        <span class="text-3xl font-medium">{{ workflowInfo.title }}</span>
-        <span class="text-base">{{ workflowInfo.description }}</span>
+        <span class="text-2xl font-medium">{{ workflowInfo.title }}</span>
+        <span class="text-base text-[#75808d]">{{
+          workflowInfo.description
+        }}</span>
       </div>
     </div>
     <ElRow class="flex-1" :gutter="10">

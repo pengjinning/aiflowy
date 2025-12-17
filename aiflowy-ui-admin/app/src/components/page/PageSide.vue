@@ -92,7 +92,7 @@ const isComponent = (icon: any) => {
         {{ title }}
       </h3>
 
-      <div class="flex-1 overflow-scroll">
+      <div class="flex-1 overflow-auto">
         <div
           v-for="item in menus"
           :key="item[valueKey]"
@@ -125,7 +125,7 @@ const isComponent = (icon: any) => {
             </div>
           </div>
           <ElDropdown
-            v-if="controlBtns && !['', '0'].includes(item[valueKey])"
+            v-if="controlBtns.length > 0 && !['', '0'].includes(item[valueKey])"
             @click.stop
           >
             <div
