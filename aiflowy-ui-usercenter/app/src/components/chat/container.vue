@@ -4,16 +4,23 @@ import { ref, watch } from 'vue';
 import { createIconifyIcon } from '@aiflowy/icons';
 import { cn } from '@aiflowy/utils';
 
-import { ElAside, ElButton, ElContainer, ElHeader, ElMain } from 'element-plus';
+import {
+  ElAside,
+  ElButton,
+  ElContainer,
+  ElHeader,
+  ElIcon,
+  ElMain,
+} from 'element-plus';
 
 import { api } from '#/api/request';
 import {
   Card,
-  CardAvatar,
   CardContent,
   CardDescription,
   CardTitle,
 } from '#/components/card';
+import AssistantIcon from '#/components/icons/AssistantIcon.vue';
 
 interface Props {
   bot: any;
@@ -74,7 +81,10 @@ function getMessageList() {
   <ElContainer class="border-border h-full rounded-lg border-2">
     <ElAside width="287px" class="border-border border-r p-6">
       <Card class="max-w-max p-0">
-        <CardAvatar />
+        <!-- <CardAvatar /> -->
+        <ElIcon class="!text-primary" :size="36">
+          <AssistantIcon />
+        </ElIcon>
         <CardContent>
           <CardTitle>{{ bot.title }}</CardTitle>
           <CardDescription>{{ bot.description }}</CardDescription>
@@ -133,8 +143,8 @@ function getMessageList() {
   </ElContainer>
 </template>
 
-<style lang="css" scoped>
+<!-- <style lang="css" scoped>
 .el-button :deep(.el-icon) {
   font-size: 20px;
 }
-</style>
+</style> -->

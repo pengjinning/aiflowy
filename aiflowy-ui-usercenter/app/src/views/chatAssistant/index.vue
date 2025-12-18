@@ -3,17 +3,17 @@ import { onMounted, ref } from 'vue';
 
 import { cn } from '@aiflowy/utils';
 
-import { ElAside, ElContainer, ElMain, ElSpace } from 'element-plus';
+import { ElAside, ElContainer, ElIcon, ElMain, ElSpace } from 'element-plus';
 
 import { api } from '#/api/request';
 import {
   Card,
-  CardAvatar,
   CardContent,
   CardDescription,
   CardTitle,
 } from '#/components/card';
 import { ChatBubbleList, ChatContainer, ChatSender } from '#/components/chat';
+import AssistantIcon from '#/components/icons/AssistantIcon.vue';
 
 onMounted(() => {
   getAssistantList();
@@ -70,7 +70,10 @@ function setMessageList(messages: any) {
             "
             @click="handleSelectAssistant(assistant)"
           >
-            <CardAvatar />
+            <!-- <CardAvatar /> -->
+            <ElIcon class="!text-primary" :size="36">
+              <AssistantIcon />
+            </ElIcon>
             <CardContent>
               <CardTitle :class="cn(assistant.checked && 'text-primary')">
                 {{ assistant.title }}
