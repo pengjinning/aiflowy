@@ -80,6 +80,11 @@ const handleMouseEvent = (id?: string) => {
 const isComponent = (icon: any) => {
   return typeof icon !== 'string';
 };
+const isSvgString = (icon: any) => {
+  if (typeof icon !== 'string') return false;
+  // 简单判断：是否包含 SVG 根标签
+  return icon.trim().startsWith('<svg') && icon.trim().endsWith('</svg>');
+};
 </script>
 
 <template>
@@ -107,8 +112,23 @@ const isComponent = (icon: any) => {
               v-if="item.icon"
               class="ml-[-3px] flex items-center justify-center"
             >
+              <div
+                v-if="isSvgString(item.icon)"
+                v-html="item.icon"
+                :style="{
+                  width: `${iconSize}px`,
+                  height: `${iconSize}px`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden',
+                }"
+                class="svg-container"
+              ></div>
               <img
-                v-if="!isComponent(item.icon)"
+                v-else-if="
+                  typeof item.icon === 'string' && !isComponent(item.icon)
+                "
                 :src="item.icon"
                 :style="{
                   width: `${iconSize}px`,
@@ -191,15 +211,25 @@ const isComponent = (icon: any) => {
   transition: all 0.2s;
   font-size: 14px;
 }
+
 .list-item:hover {
   background-color: hsl(var(--accent));
 }
+
 .list-item.selected {
   background-color: hsl(var(--primary) / 15%);
   color: hsl(var(--primary));
 }
+
 .list-item.selected:where(.dark, .dark *) {
   background-color: hsl(var(--accent));
   color: hsl(var(--accent-foreground));
+}
+.svg-container :deep(svg) {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 </style>
