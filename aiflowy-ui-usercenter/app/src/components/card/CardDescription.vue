@@ -12,7 +12,10 @@ const props = defineProps<CardDescriptionProps>();
 <template>
   <span
     :class="
-      cn('overflow-hidden text-ellipsis text-xs text-[#ABB0B9]', props.class)
+      cn(
+        'text-foreground/50 overflow-hidden text-ellipsis text-xs',
+        props.class,
+      )
     "
   >
     <slot></slot>

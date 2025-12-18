@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { ref } from 'vue';
+
 import { createIconifyIcon } from '@aiflowy/icons';
+import { cn } from '@aiflowy/utils';
 
 import { ElAside, ElButton, ElContainer, ElHeader, ElMain } from 'element-plus';
 
@@ -10,11 +13,17 @@ import {
   CardDescription,
   CardTitle,
 } from '#/components/card';
+
+const sessionList = [
+  { id: '0', title: '新对话' },
+  { id: '1', title: '新对话' },
+];
+const currentSessionId = ref('0');
 </script>
 
 <template>
-  <ElContainer class="h-full rounded-lg border-2 border-[#E6E9EE]">
-    <ElAside width="287px" class="border-r border-[#E6E9EE] p-6">
+  <ElContainer class="border-border h-full rounded-lg border-2">
+    <ElAside width="287px" class="border-border border-r p-6">
       <Card class="max-w-max p-0">
         <CardAvatar />
         <CardContent>
@@ -32,10 +41,29 @@ import {
       </ElButton>
       <div class="mt-8">
         <div
-          class="flex cursor-pointer items-center justify-between rounded-lg bg-[#F0F4FF] px-5 py-2.5 text-sm"
+          v-for="session in sessionList"
+          :key="session.id"
+          :class="
+            cn(
+              'flex cursor-pointer items-center justify-between rounded-lg px-5 py-2.5 text-sm',
+              currentSessionId === session.id
+                ? 'bg-[hsl(var(--primary)/15%)] dark:bg-[hsl(var(--accent))]'
+                : 'hover:bg-[hsl(var(--accent))]',
+            )
+          "
+          @click="currentSessionId = session.id"
         >
-          <span class="text-[#0066FF]">新对话</span>
-          <span class="text-[#797B7F]">12:00</span>
+          <span
+            :class="
+              cn(
+                'text-foreground',
+                currentSessionId === session.id && 'text-primary',
+              )
+            "
+          >
+            新对话
+          </span>
+          <span class="text-foreground">12:00</span>
         </div>
       </div>
     </ElAside>

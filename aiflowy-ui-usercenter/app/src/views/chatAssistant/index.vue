@@ -43,7 +43,7 @@ const handleSelectAssistant = (id: number) => {
 </script>
 
 <template>
-  <ElContainer class="h-full bg-white">
+  <ElContainer class="bg-background h-full">
     <ElAside width="283px">
       <ElSpace
         class="p-5"
@@ -51,17 +51,23 @@ const handleSelectAssistant = (id: number) => {
         alignment="flex-start"
         :size="20"
       >
-        <span class="pl-5 text-sm text-[#969799]">最近使用</span>
+        <span class="text-foreground pl-5 text-sm">最近使用</span>
         <div class="flex h-full flex-col gap-5 overflow-auto">
           <Card
             v-for="assistant in recentUsedAssistant"
             :key="assistant.id"
-            :class="cn(assistant.checked && 'bg-[#F0F4FF]')"
+            :class="
+              cn(
+                assistant.checked
+                  ? 'bg-[hsl(var(--primary)/15%)] dark:bg-[hsl(var(--accent))]'
+                  : 'hover:bg-[hsl(var(--accent))]',
+              )
+            "
             @click="handleSelectAssistant(assistant.id)"
           >
             <CardAvatar />
             <CardContent>
-              <CardTitle :class="cn(assistant.checked && 'text-[#0066FF]')">
+              <CardTitle :class="cn(assistant.checked && 'text-primary')">
                 {{ assistant.title }}
               </CardTitle>
               <CardDescription>
