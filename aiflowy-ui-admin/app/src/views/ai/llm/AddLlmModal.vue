@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { reactive, ref, watch } from 'vue';
 
 import {
   ElButton,
@@ -8,16 +8,26 @@ import {
   ElFormItem,
   ElInput,
   ElMessage,
-  ElOption,
-  ElSelect,
-  ElTag,
 } from 'element-plus';
 
 import { api } from '#/api/request';
 import { $t } from '#/locales';
-import { modelTypes } from '#/views/ai/llm/modelTypes';
 
-import providerList from './providerList.json';
+type BooleanField =
+  | 'supportEmbedding'
+  | 'supportFree'
+  | 'supportReasoning'
+  | 'supportRerank'
+  | 'supportTool';
+
+interface ModelAbilityItem {
+  activeType: 'danger' | 'info' | 'primary' | 'success' | 'warning';
+  defaultType: 'info';
+  field: BooleanField;
+  label: string;
+  selected: boolean;
+  value: string;
+}
 
 const props = defineProps({
   providerId: {
@@ -27,22 +37,40 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['reload']);
+const selectedProviderId = ref<string>(props.providerId ?? '');
+
+// 监听 providerId 的变化
+watch(
+  () => props.providerId,
+  (newVal) => {
+    if (newVal) {
+      selectedProviderId.value = newVal;
+    }
+  },
+  { immediate: true },
+);
 
 const formDataRef = ref();
 defineExpose({
-  openAddDialog() {
+  openAddDialog(modelType: string) {
+    isAdd.value = true;
     if (formDataRef.value) {
       formDataRef.value.resetFields();
     }
     Object.assign(formData, {
-      modelType: '',
+      id: '',
+      modelType,
       title: '',
       llmModel: '',
       groupName: '',
       provider: '',
       endPoint: '',
       providerId: '',
-      supportFeatures: [] as string[],
+      supportReasoning: false,
+      supportEmbedding: false,
+      supportRerank: false,
+      supportTool: false,
+      supportFree: false,
       options: {
         llmEndpoint: '',
         chatPath: '',
@@ -50,7 +78,7 @@ defineExpose({
         rerankPath: '',
       },
     });
-    modelAbility.value.forEach((tag) => (tag.selected = false));
+    syncTagSelectedStatus();
     dialogVisible.value = true;
   },
   openEditDialog(item: any) {
@@ -65,9 +93,11 @@ defineExpose({
       groupName: item.groupName || '',
       provider: item.provider || '',
       endPoint: item.endPoint || '',
-      supportFeatures: Array.isArray(item.supportFeatures)
-        ? [...item.supportFeatures]
-        : [],
+      supportReasoning: item.supportReasoning || false,
+      supportEmbedding: item.supportEmbedding || false,
+      supportRerank: item.supportRerank || false,
+      supportTool: item.supportTool || false,
+      supportFree: item.supportFree || false,
       options: {
         llmEndpoint: item.options?.llmEndpoint || '',
         chatPath: item.options?.chatPath || '',
@@ -76,25 +106,25 @@ defineExpose({
       },
     });
 
-    modelAbility.value.forEach((tag) => {
-      tag.selected = formData.supportFeatures.includes(tag.value);
-    });
+    syncTagSelectedStatus();
   },
 });
-
-const providerOptions =
-  ref<Array<{ label: string; options: any; value: string }>>(providerList);
 const isAdd = ref(true);
 const dialogVisible = ref(false);
+
 const formData = reactive({
   modelType: '',
   title: '',
   llmModel: '',
   groupName: '',
+  providerId: '',
   provider: '',
   endPoint: '',
-  providerId: '',
-  supportFeatures: [] as string[],
+  supportReasoning: false,
+  supportEmbedding: false,
+  supportRerank: false,
+  supportTool: false,
+  supportFree: false,
   options: {
     llmEndpoint: '',
     chatPath: '',
@@ -102,21 +132,15 @@ const formData = reactive({
     rerankPath: '',
   },
 });
-const modelAbility = ref<
-  Array<{
-    activeType: 'danger' | 'info' | 'primary' | 'success' | 'warning'; // 选中后的专属类型
-    defaultType: 'info'; // 默认灰色类型
-    label: string;
-    selected: boolean; // 选中状态
-    value: string;
-  }>
->([
+
+const modelAbility = ref<ModelAbilityItem[]>([
   {
     label: $t('llm.modelAbility.reasoning'),
     value: 'reasoning',
     defaultType: 'info',
     activeType: 'success',
     selected: false,
+    field: 'supportReasoning', // 关联 supportReasoning
   },
   {
     label: $t('llm.modelAbility.tool'),
@@ -124,6 +148,7 @@ const modelAbility = ref<
     defaultType: 'info',
     activeType: 'primary',
     selected: false,
+    field: 'supportTool', // 关联 supportTool
   },
   {
     label: $t('llm.modelAbility.embedding'),
@@ -131,6 +156,7 @@ const modelAbility = ref<
     defaultType: 'info',
     activeType: 'warning',
     selected: false,
+    field: 'supportEmbedding', // 关联 supportEmbedding
   },
   {
     label: $t('llm.modelAbility.rerank'),
@@ -138,25 +164,28 @@ const modelAbility = ref<
     defaultType: 'info',
     activeType: 'danger',
     selected: false,
+    field: 'supportRerank', // 关联 supportRerank
+  },
+  {
+    label: $t('llm.modelAbility.free'),
+    value: 'free',
+    defaultType: 'info',
+    activeType: 'success',
+    selected: false,
+    field: 'supportFree', // 关联 supportFree
   },
 ]);
-const handleTagClick = (item: (typeof modelAbility.value)[0]) => {
-  item.selected = !item.selected;
 
-  if (!formData.supportFeatures) {
-    formData.supportFeatures = [];
-  }
-  if (item.selected) {
-    formData.supportFeatures.push(item.value);
-  } else {
-    formData.supportFeatures = formData.supportFeatures.filter(
-      (v) => v !== item.value,
-    );
-  }
+const syncTagSelectedStatus = () => {
+  modelAbility.value.forEach((tag) => {
+    tag.selected = formData[tag.field];
+  });
 };
+
 const closeDialog = () => {
   dialogVisible.value = false;
 };
+
 const rules = {
   title: [
     {
@@ -186,13 +215,6 @@ const rules = {
       trigger: 'blur',
     },
   ],
-  providerName: [
-    {
-      required: true,
-      message: $t('message.required'),
-      trigger: 'blur',
-    },
-  ],
   provider: [
     {
       required: true,
@@ -201,51 +223,34 @@ const rules = {
     },
   ],
 };
+
 const btnLoading = ref(false);
 const save = async () => {
   btnLoading.value = true;
   try {
     await formDataRef.value.validate();
+    const submitData = { ...formData };
     if (isAdd.value) {
-      api.post('/api/v1/aiLlm/save', formData).then((res) => {
-        if (res.errorCode === 0) {
-          ElMessage.success(res.message);
-          emit('reload');
-          closeDialog();
-        }
-      });
+      submitData.providerId = selectedProviderId.value;
+      const res = await api.post('/api/v1/aiLlm/save', submitData);
+      if (res.errorCode === 0) {
+        ElMessage.success(res.message);
+        emit('reload');
+        closeDialog();
+      }
     } else {
-      api.post('/api/v1/aiLlm/update', formData).then((res) => {
-        if (res.errorCode === 0) {
-          ElMessage.success(res.message);
-          emit('reload');
-          closeDialog();
-        }
-      });
+      const res = await api.post('/api/v1/aiLlm/update', submitData);
+      if (res.errorCode === 0) {
+        ElMessage.success(res.message);
+        emit('reload');
+        closeDialog();
+      }
     }
+  } catch {
+    ElMessage.error($t('message.operationFailed'));
   } finally {
     btnLoading.value = false;
   }
-};
-const handleChangeProvider = (val: string) => {
-  const tempProvider = providerList.find((item) => item.value === val);
-  if (!tempProvider) {
-    return;
-  }
-  formData.provider = tempProvider.value;
-  formData.providerId = props.providerId;
-  formData.options.llmEndpoint = providerOptions.value.find(
-    (item) => item.value === val,
-  )?.options.llmEndpoint;
-  formData.options.embedPath = providerOptions.value.find(
-    (item) => item.value === val,
-  )?.options.embedPath;
-  formData.options.chatPath = providerOptions.value.find(
-    (item) => item.value === val,
-  )?.options.chatPath;
-  formData.options.rerankPath = providerOptions.value.find(
-    (item) => item.value === val,
-  )?.options.rerankPath;
 };
 </script>
 
@@ -269,27 +274,6 @@ const handleChangeProvider = (val: string) => {
       <ElFormItem prop="title" :label="$t('llm.title')">
         <ElInput v-model.trim="formData.title" />
       </ElFormItem>
-      <ElFormItem prop="modelType" :label="$t('llm.modelType')">
-        <ElSelect v-model="formData.modelType" @change="handleChangeProvider">
-          <ElOption
-            v-for="item in modelTypes"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value || ''"
-          />
-        </ElSelect>
-      </ElFormItem>
-      <ElFormItem prop="provider" :label="$t('llm.provider')">
-        <ElSelect v-model="formData.provider" @change="handleChangeProvider">
-          <ElOption
-            v-for="item in providerOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value || ''"
-          />
-        </ElSelect>
-      </ElFormItem>
-
       <ElFormItem prop="llmModel" :label="$t('llm.llmModel')">
         <ElInput v-model.trim="formData.llmModel" />
       </ElFormItem>
@@ -304,20 +288,6 @@ const handleChangeProvider = (val: string) => {
       </ElFormItem>
       <ElFormItem prop="groupName" :label="$t('llm.groupName')">
         <ElInput v-model.trim="formData.groupName" />
-      </ElFormItem>
-      <ElFormItem prop="ability" :label="$t('llm.ability')">
-        <div class="model-ability">
-          <ElTag
-            class="model-ability-tag"
-            v-for="item in modelAbility"
-            :key="item.value"
-            :type="item.selected ? item.activeType : item.defaultType"
-            @click="handleTagClick(item)"
-            :class="{ 'tag-selected': item.selected }"
-          >
-            {{ item.label }}
-          </ElTag>
-        </div>
       </ElFormItem>
     </ElForm>
     <template #footer>
@@ -337,20 +307,6 @@ const handleChangeProvider = (val: string) => {
 </template>
 
 <style scoped>
-.headers-container-reduce {
-  align-items: center;
-}
-.addHeadersBtn {
-  width: 100%;
-  border-style: dashed;
-  border-color: var(--el-color-primary);
-  border-radius: 8px;
-  margin-top: 8px;
-}
-.head-con-content {
-  margin-bottom: 8px;
-  align-items: center;
-}
 .model-ability {
   display: flex;
   flex-wrap: nowrap;
@@ -359,5 +315,8 @@ const handleChangeProvider = (val: string) => {
 }
 .model-ability-tag {
   cursor: pointer;
+}
+.tag-selected {
+  font-weight: bold;
 }
 </style>

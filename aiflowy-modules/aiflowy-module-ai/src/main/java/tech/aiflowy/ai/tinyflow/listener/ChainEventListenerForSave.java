@@ -159,11 +159,12 @@ public class ChainEventListenerForSave implements ChainEventListener {
      * 递归查找顶级状态
      */
     private ChainState findAncestorState(ChainState state, Chain chain) {
-        String parentInstanceId = state.getParentInstanceId();
-        if (StrUtil.isEmpty(parentInstanceId)) {
-            return state;
-        }
-        ChainState chainState = chain.getChainStateRepository().load(parentInstanceId);
-        return findAncestorState(chainState, chain);
+//        String parentInstanceId = state.getParentInstanceId();
+//        if (StrUtil.isEmpty(parentInstanceId)) {
+//            return state;
+//        }
+//        ChainState chainState = chain.getChainStateRepository().load(parentInstanceId);
+//        return findAncestorState(chainState, chain);
+        return state;
     }
 }

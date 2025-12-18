@@ -1,30 +1,104 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { nextTick, reactive, ref } from 'vue';
 
 import {
-  ElButton,
+  CirclePlus,
+  Loading,
+  Minus,
+  RefreshRight,
+} from '@element-plus/icons-vue';
+import {
+  ElCollapse,
+  ElCollapseItem,
   ElDialog,
   ElForm,
   ElFormItem,
+  ElIcon,
   ElInput,
-  ElMessage,
-  ElOption,
-  ElSelect,
+  ElTabPane,
+  ElTabs,
+  ElTooltip,
 } from 'element-plus';
 
 import { api } from '#/api/request';
-import UploadAvatar from '#/components/upload/UploadAvatar.vue';
 import { $t } from '#/locales';
-
-import providerList from './providerList.json';
+import LlmViewItemOperation from '#/views/ai/llm/LlmViewItemOperation.vue';
 
 const emit = defineEmits(['reload']);
-
+const tabList = ref<any>([]);
+const isLoading = ref(false);
+const chatModelTabList = [
+  // {
+  //   label: $t('llm.all'),
+  //   name: 'all',
+  // },
+  {
+    label: $t('llmProvider.chatModel'),
+    name: 'chatModel',
+  },
+  {
+    label: $t('llm.modelAbility.free'),
+    name: 'supportFree',
+  },
+];
+const embeddingModelTabList = [
+  // {
+  //   label: $t('llm.all'),
+  //   name: 'all',
+  // },
+  {
+    label: $t('llmProvider.embeddingModel'),
+    name: 'embeddingModel',
+  },
+  {
+    label: $t('llm.modelAbility.free'),
+    name: 'supportFree',
+  },
+];
 const formDataRef = ref();
-
+const providerInfo = ref<any>();
+const getProviderInfo = (id: string) => {
+  api.get(`/api/v1/aiLlmProvider/detail?id=${id}`).then((res) => {
+    if (res.errorCode === 0) {
+      providerInfo.value = res.data;
+    }
+  });
+};
+const modelList = ref<any>([]);
+const getLlmList = (providerId: string, modelType: string) => {
+  isLoading.value = true;
+  const url =
+    modelType === ''
+      ? `/api/v1/aiLlm/selectLlmByProviderAndModelType?providerId=${providerId}&modelType=${modelType}&supportFree=true`
+      : `/api/v1/aiLlm/selectLlmByProviderAndModelType?providerId=${providerId}&modelType=${modelType}&selectText=${searchFormDada.searchText}`;
+  api.get(url).then((res) => {
+    if (res.errorCode === 0) {
+      const chatModelMap = res.data || {};
+      modelList.value = Object.entries(chatModelMap).map(
+        ([groupName, llmList]) => ({
+          groupName,
+          llmList,
+        }),
+      );
+    }
+    isLoading.value = false;
+  });
+};
+const selectedProviderId = ref('');
 defineExpose({
-  openAddDialog() {
+  // providerId: 供应商id， clickModelType 父组件点击的是什么类型的模型 可以是chatModel or embeddingModel
+  openDialog(providerId: string, clickModelType: string) {
+    if (clickModelType === 'chatModel') {
+      tabList.value = [...chatModelTabList];
+    } else if (clickModelType === 'embeddingModel') {
+      tabList.value = [...embeddingModelTabList];
+    }
+    selectedProviderId.value = providerId;
     formDataRef.value?.resetFields();
+    modelList.value = [];
+    activeName.value = tabList.value[0].name;
+    getProviderInfo(providerId);
+    getLlmList(providerId, clickModelType);
     dialogVisible.value = true;
   },
   openEditDialog(item: any) {
@@ -35,8 +109,6 @@ defineExpose({
     formData.provider = item.provider;
   },
 });
-const providerOptions =
-  ref<Array<{ label: string; options: any; value: string }>>(providerList);
 const isAdd = ref(true);
 const dialogVisible = ref(false);
 const formData = reactive({
@@ -51,53 +123,64 @@ const formData = reactive({
 const closeDialog = () => {
   dialogVisible.value = false;
 };
-const rules = {
-  providerName: [
-    {
-      required: true,
-      message: $t('message.required'),
-      trigger: 'blur',
-    },
-  ],
-  provider: [
-    {
-      required: true,
-      message: $t('message.required'),
-      trigger: 'blur',
-    },
-  ],
+const handleTabClick = async () => {
+  await nextTick();
+  getLlmList(providerInfo.value.id, activeName.value);
 };
-const btnLoading = ref(false);
-const save = async () => {
-  btnLoading.value = true;
-  try {
-    await formDataRef.value.validate();
-    api.post('/api/v1/aiLlmProvider/save', formData).then((res) => {
+const activeName = ref('all');
+const handleGroupNameDelete = (groupName: string) => {
+  api
+    .post(`/api/v1/aiLlm/removeByEntity`, {
+      groupName,
+      providerId: selectedProviderId.value,
+    })
+    .then((res) => {
       if (res.errorCode === 0) {
-        ElMessage.success(res.message);
+        getLlmList(providerInfo.value.id, activeName.value);
         emit('reload');
-        closeDialog();
       }
     });
-  } finally {
-    btnLoading.value = false;
-  }
 };
-const handleChangeProvider = (val: string) => {
-  const tempProvider = providerList.find((item) => item.value === val);
-  if (!tempProvider) {
-    return;
-  }
-  formData.providerName = tempProvider.label;
-  formData.endPoint = providerOptions.value.find(
-    (item) => item.value === val,
-  )?.options.llmEndpoint;
-  formData.chatPath = providerOptions.value.find(
-    (item) => item.value === val,
-  )?.options.chatPath;
-  formData.embedPath = providerOptions.value.find(
-    (item) => item.value === val,
-  )?.options.embedPath;
+const handleDeleteLlm = (id: any) => {
+  api.post(`/api/v1/aiLlm/removeLlmByIds`, { id }).then((res) => {
+    if (res.errorCode === 0) {
+      getLlmList(providerInfo.value.id, activeName.value);
+      emit('reload');
+    }
+  });
+};
+const handleAddLlm = (id: string) => {
+  api
+    .post(`/api/v1/aiLlm/update`, {
+      id,
+      added: true,
+    })
+    .then((res) => {
+      if (res.errorCode === 0) {
+        getLlmList(providerInfo.value.id, activeName.value);
+        emit('reload');
+      }
+    });
+};
+const searchFormDada = reactive({
+  searchText: '',
+});
+const handleAddAllLlm = () => {
+  api
+    .post(`/api/v1/aiLlm/addAllLlm`, {
+      providerId: selectedProviderId.value,
+      added: true,
+    })
+    .then((res) => {
+      if (res.errorCode === 0) {
+        getLlmList(providerInfo.value.id, activeName.value);
+        emit('reload');
+      }
+    });
+};
+const handleRefresh = () => {
+  if (isLoading.value) return;
+  getLlmList(providerInfo.value.id, activeName.value);
 };
 </script>
 
@@ -105,81 +188,127 @@ const handleChangeProvider = (val: string) => {
   <ElDialog
     v-model="dialogVisible"
     draggable
-    :title="isAdd ? $t('button.add') : $t('button.edit')"
+    :title="`${providerInfo?.providerName}${$t('llmProvider.model')}`"
     :before-close="closeDialog"
     :close-on-click-modal="false"
     align-center
-    width="482"
+    width="762"
   >
-    <ElForm
-      label-width="100px"
-      ref="formDataRef"
-      :model="formData"
-      status-icon
-      :rules="rules"
-    >
-      <ElFormItem
-        prop="icon"
-        style="display: flex; align-items: center"
-        :label="$t('llmProvider.icon')"
-      >
-        <UploadAvatar v-model="formData.icon" />
-      </ElFormItem>
-      <ElFormItem prop="providerName" :label="$t('llmProvider.providerName')">
-        <ElInput v-model.trim="formData.providerName" />
-      </ElFormItem>
-      <ElFormItem prop="provider" :label="$t('llmProvider.provider')">
-        <ElSelect v-model="formData.provider" @change="handleChangeProvider">
-          <ElOption
-            v-for="item in providerOptions"
-            :key="item.value"
+    <div class="manage-llm-container">
+      <div>
+        <ElForm ref="formDataRef" :model="searchFormDada" status-icon>
+          <ElFormItem prop="searchText">
+            <div class="search-container">
+              <ElInput
+                v-model.trim="searchFormDada.searchText"
+                @input="handleRefresh"
+                :placeholder="$t('llm.searchTextPlaceholder')"
+              />
+              <ElTooltip
+                :content="$t('llm.button.addAllLlm')"
+                placement="top"
+                effect="dark"
+              >
+                <ElIcon
+                  size="20"
+                  @click="handleAddAllLlm"
+                  class="cursor-pointer"
+                >
+                  <CirclePlus />
+                </ElIcon>
+              </ElTooltip>
+              <ElTooltip
+                :content="$t('llm.button.RetrieveAgain')"
+                placement="top"
+                effect="dark"
+              >
+                <ElIcon size="20" @click="handleRefresh" class="cursor-pointer">
+                  <RefreshRight />
+                </ElIcon>
+              </ElTooltip>
+            </div>
+          </ElFormItem>
+        </ElForm>
+      </div>
+      <div class="llm-table-container">
+        <ElTabs v-model="activeName" @tab-click="handleTabClick">
+          <ElTabPane
             :label="item.label"
-            :value="item.value || ''"
-          />
-        </ElSelect>
-      </ElFormItem>
-      <ElFormItem prop="apiKey" :label="$t('llmProvider.apiKey')">
-        <ElInput v-model.trim="formData.apiKey" />
-      </ElFormItem>
-      <ElFormItem prop="endPoint" :label="$t('llmProvider.endPoint')">
-        <ElInput v-model.trim="formData.endPoint" />
-      </ElFormItem>
-      <ElFormItem prop="chatPath" :label="$t('llmProvider.chatPath')">
-        <ElInput v-model.trim="formData.chatPath" />
-      </ElFormItem>
-      <ElFormItem prop="embedPath" :label="$t('llmProvider.embedPath')">
-        <ElInput v-model.trim="formData.embedPath" />
-      </ElFormItem>
-    </ElForm>
-    <template #footer>
-      <ElButton @click="closeDialog">
-        {{ $t('button.cancel') }}
-      </ElButton>
-      <ElButton
-        type="primary"
-        @click="save"
-        :loading="btnLoading"
-        :disabled="btnLoading"
-      >
-        {{ $t('button.save') }}
-      </ElButton>
-    </template>
+            :name="item.name"
+            v-for="item in tabList"
+            default-active="all"
+            :key="item.name"
+          >
+            <div v-if="isLoading" class="collapse-loading">
+              <ElIcon class="is-loading" size="24">
+                <Loading />
+              </ElIcon>
+            </div>
+            <div v-else>
+              <ElCollapse
+                expand-icon-position="left"
+                v-if="modelList.length > 0"
+              >
+                <ElCollapseItem
+                  v-for="group in modelList"
+                  :key="group.groupName"
+                  :title="group.groupName"
+                  :name="group.groupName"
+                >
+                  <template #title>
+                    <div class="flex items-center justify-between pr-2">
+                      <span>{{ group.groupName }}</span>
+                      <span>
+                        <ElIcon
+                          @click.stop="handleGroupNameDelete(group.groupName)"
+                        >
+                          <Minus />
+                        </ElIcon>
+                      </span>
+                    </div>
+                  </template>
+                  <LlmViewItemOperation
+                    :need-hidden-setting-icon="true"
+                    :llm-list="group.llmList"
+                    @delete-llm="handleDeleteLlm"
+                    @add-llm="handleAddLlm"
+                    :is-management="true"
+                  />
+                </ElCollapseItem>
+              </ElCollapse>
+            </div>
+          </ElTabPane>
+        </ElTabs>
+      </div>
+    </div>
   </ElDialog>
 </template>
 
 <style scoped>
-.headers-container-reduce {
-  align-items: center;
+.manage-llm-container {
+  height: 540px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
 }
-.addHeadersBtn {
+.search-container {
   width: 100%;
-  border-style: dashed;
-  border-color: var(--el-color-primary);
-  border-radius: 8px;
-  margin-top: 8px;
-}
-.head-con-content {
-  margin-bottom: 8px;
+  display: flex;
+  gap: 12px;
   align-items: center;
+  justify-content: space-between;
+}
+.llm-table-container {
+  flex: 1;
+}
+.collapse-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 12px;
+  color: var(--el-text-color-secondary);
 }
 </style>

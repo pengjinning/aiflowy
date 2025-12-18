@@ -1,228 +1,418 @@
 <script setup>
-import { markRaw, nextTick, onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 import { $t } from '@aiflowy/locales';
 
-import { DeleteFilled, Edit, MoreFilled, Plus } from '@element-plus/icons-vue';
+import { Delete, Edit, Minus, Plus } from '@element-plus/icons-vue';
 import {
   ElButton,
-  ElDropdown,
-  ElDropdownItem,
-  ElDropdownMenu,
+  ElCollapse,
+  ElCollapseItem,
+  ElForm,
+  ElFormItem,
   ElIcon,
-  ElImage,
+  ElInput,
   ElMessage,
   ElMessageBox,
-  ElTable,
-  ElTableColumn,
-  ElTag,
 } from 'element-plus';
 
-import { deleteLlm, getLlmBrandList } from '#/api/ai/llm.js';
-import CategoryPanel from '#/components/categoryPanel/CategoryPanel.vue';
-import HeaderSearch from '#/components/headerSearch/HeaderSearch.vue';
-import PageData from '#/components/page/PageData.vue';
+import { getLlmProviderList } from '#/api/ai/llm.js';
+import { api } from '#/api/request.js';
+import PageSide from '#/components/page/PageSide.vue';
+import AddLlmModal from '#/views/ai/llm/AddLlmModal.vue';
+import AddLlmProviderModal from '#/views/ai/llm/AddLlmProviderModal.vue';
+import { getIconByValue } from '#/views/ai/llm/defaultIcon.js';
 import LlmModal from '#/views/ai/llm/LlmModal.vue';
-import QuickAddLlmModal from '#/views/ai/llm/QuickAddLlmModal.vue';
+import LlmVerifyConfig from '#/views/ai/llm/LlmVerifyConfig.vue';
+import LlmViewItemOperation from '#/views/ai/llm/LlmViewItemOperation.vue';
+import ManageLlmModal from '#/views/ai/llm/ManageLlmModal.vue';
+import { modelTypes } from '#/views/ai/llm/modelTypes.js';
 
 const brandListData = ref([]);
+const defaultSelectProviderId = ref('');
+const defaultIcon = ref('');
 const LlmAddOrUpdateDialog = ref(false);
+const modelListData = ref([]);
 onMounted(() => {
-  getLlmBrandList().then((res) => {
-    brandListData.value = [
-      { title: $t('common.allCategories'), key: 'allCategories' },
-      ...res.data,
-    ];
-  });
+  getLlmProviderListData();
 });
 
-const handleCategoryClick = (category) => {
-  pageDataRef.value.setQuery({ brand: category.item.key });
+const checkAndFillDefaultIcon = (list) => {
+  if (!list || list.length === 0) return;
+  list.forEach((item) => {
+    if (!item.icon) {
+      item.icon = getIconByValue(item.provider);
+    }
+  });
+};
+const chatModelListData = ref([]);
+const embeddingModelListData = ref([]);
+const getLlmDetailList = (providerId) => {
+  api
+    .get(`/api/v1/aiLlm/getList?providerId=${providerId}&added=true`, {})
+    .then((res) => {
+    if (res.errorCode === 0) {
+      modelListData.value = res.data;
+      // 初始化模型分组数据（按modelType分类，存储groupName和对应的llm列表）
+      chatModelListData.value = [];
+      embeddingModelListData.value = [];
+
+      // 处理chatModel数据
+      const chatModelMap = res.data.chatModel || {};
+      // 将chatModel的key-value（groupName-llmList）转为数组，方便v-for遍历
+      chatModelListData.value = Object.entries(chatModelMap).map(
+        ([groupName, llmList]) => ({
+          groupName,
+          llmList,
+        }),
+      );
+      // 处理embeddingModel数据
+      const embeddingModelMap = res.data.embeddingModel || {};
+      embeddingModelListData.value = Object.entries(embeddingModelMap).map(
+        ([groupName, llmList]) => ({
+          groupName,
+          llmList,
+        }),
+      );
+    }
+  });
 };
 
-// 按钮配置
-const headerButtons = ref([
-  {
-    key: 'add',
-    text: $t('button.addLlm'),
-    icon: markRaw(Plus),
-    type: 'primary',
-    data: { action: 'addLlm' },
-    permission: '/api/v1/aiLlm/save',
-  },
-  {
-    key: 'edit',
-    text: $t('button.oneClickAdd'),
-    type: 'primary',
-    icon: markRaw(Plus),
-    data: { action: 'oneClickAdd' },
-    permission: '/api/v1/aiLlm/save',
-  },
-]);
+const getLlmProviderListData = () => {
+  getLlmProviderList().then((res) => {
+    brandListData.value = res.data;
+    checkAndFillDefaultIcon(brandListData.value);
+    if (!defaultSelectProviderId.value) {
+      defaultSelectProviderId.value = res.data[0].id;
+      defaultIcon.value = res.data[0].icon;
+    }
+    llmProviderForm.value = {
+      ...res.data[0],
+    };
+    getLlmDetailList(defaultSelectProviderId.value);
+  });
+};
+const selectCategory = ref({
+  providerName: '',
+  provider: '',
+});
+const handleCategoryClick = (category) => {
+  selectCategory.value.providerName = category.providerName;
+  selectCategory.value.provider = category.provider;
+  defaultSelectProviderId.value = category.id;
+  defaultIcon.value = category.icon;
+  llmProviderForm.value = {
+    ...category,
+  };
+  getLlmDetailList(category.id);
+};
 
 const LlmAddOrUpdateDialogRef = ref(null);
 
-const addLlm = async (isEdit = false) => {
-  await nextTick();
-  if (LlmAddOrUpdateDialogRef.value) {
-    if (isEdit) {
-      LlmAddOrUpdateDialogRef.value.openUpdateDialog(editRecord.value);
-    } else {
-      LlmAddOrUpdateDialogRef.value.openAddDialog();
-    }
-  }
-};
-const oneClickAddLlmRef = ref();
-const oneClickAdd = () => {
-  oneClickAddLlmRef.value.openQuickAddLlmDialog();
-};
-// 处理搜索事件
-const handleSearch = (searchValue) => {
-  pageDataRef.value.setQuery({ title: searchValue, isQueryOr: true });
-  // 执行搜索逻辑
-};
-// 处理按钮点击事件
-const handleButtonClick = (event) => {
-  // 根据按钮 key 执行不同操作
-  switch (event.key) {
-    case 'add': {
-      addLlm();
-      break;
-    }
-    case 'edit': {
-      oneClickAdd();
-      break;
-    }
-  }
-};
-
 const pageDataRef = ref();
-
-const handleDelete = (row) => {
+// 添加模型供应商
+const addLlmProviderRef = ref();
+// 模型管理ref
+const manageLlmRef = ref();
+// 模型验证配置ref
+const llmVerifyConfigRef = ref();
+// 添加模型
+const addLlmRef = ref();
+const handleDeleteProvider = (row) => {
   ElMessageBox.confirm($t('message.deleteAlert'), $t('message.noticeTitle'), {
     confirmButtonText: $t('message.ok'),
     cancelButtonText: $t('message.cancel'),
     type: 'warning',
-  })
-    .then(() => {
-      deleteLlm({ id: row.id }).then((res) => {
+  }).then(() => {
+    api
+      .post('/api/v1/aiLlmProvider/remove', {
+        id: row.id,
+      })
+      .then((res) => {
         if (res.errorCode === 0) {
           ElMessage.success(res.message);
-          pageDataRef.value.setQuery();
+          getLlmProviderListData();
         }
       });
-    })
-    .catch(() => {
-      // 取消逻辑
-    });
+  });
 };
-
 const editRecord = ref({});
-const handleEdit = (row) => {
-  editRecord.value = row;
-  addLlm(true);
-};
+const llmProviderForm = ref({});
+const llmProviderFormRef = ref();
 const handleSuccess = () => {
   pageDataRef.value.setQuery();
+};
+const isEdit = ref(false);
+const dialogAddProviderVisible = ref(false);
+const controlBtns = [
+  {
+    icon: Edit,
+    label: $t('button.edit'),
+    onClick(row) {
+      isEdit.value = true;
+      dialogAddProviderVisible.value = true;
+      addLlmProviderRef.value.openEditDialog(row);
+    },
+  },
+  {
+    type: 'danger',
+    icon: Delete,
+    label: $t('button.delete'),
+    onClick(row) {
+      handleDeleteProvider(row);
+    },
+  },
+];
+const footerButton = {
+  icon: Plus,
+  label: $t('button.add'),
+  onClick() {
+    dialogAddProviderVisible.value = true;
+    addLlmProviderRef.value.openAddDialog();
+    isEdit.value = false;
+  },
+};
+const handleAddLlm = (modelType) => {
+  addLlmRef.value.openAddDialog(modelType);
+};
+const handleManageLlm = (clickModelType) => {
+  manageLlmRef.value.openDialog(defaultSelectProviderId.value, clickModelType);
+};
+const handleDeleteLlm = (id) => {
+  ElMessageBox.confirm($t('message.deleteAlert'), $t('message.noticeTitle'), {
+    confirmButtonText: $t('message.ok'),
+    cancelButtonText: $t('message.cancel'),
+    type: 'warning',
+  }).then(() => {
+    api.post('/api/v1/aiLlm/remove', { id }).then((res) => {
+      if (res.errorCode === 0) {
+        ElMessage.success($t('message.deleteOkMessage'));
+        getLlmDetailList(defaultSelectProviderId.value);
+      }
+    });
+  });
+};
+
+const handleEditLlm = (id) => {
+  api.get(`/api/v1/aiLlm/detail?id=${id}`).then((res) => {
+    if (res.errorCode === 0) {
+      addLlmRef.value.openEditDialog(res.data);
+    }
+  });
+};
+
+const handleGroupNameDelete = (groupName) => {
+  ElMessageBox.confirm($t('message.deleteAlert'), $t('message.noticeTitle'), {
+    confirmButtonText: $t('message.ok'),
+    cancelButtonText: $t('message.cancel'),
+    type: 'warning',
+  }).then(() => {
+    api
+      .post('/api/v1/aiLlm/removeByEntity', {
+        provider: selectCategory.value.provider,
+        groupName,
+      })
+      .then((res) => {
+        if (res.errorCode === 0) {
+          ElMessage.success($t('message.deleteOkMessage'));
+          getLlmDetailList(selectCategory.value.provider);
+        }
+      });
+  });
+};
+
+// 输入框失去焦点时更新配置
+const handleFormBlur = async () => {
+  if (!defaultSelectProviderId.value) return;
+
+  try {
+    const res = await api.post('/api/v1/aiLlmProvider/update', {
+      id: defaultSelectProviderId.value,
+      apiKey: llmProviderForm.value.apiKey,
+      endPoint: llmProviderForm.value.endPoint,
+      chatPath: llmProviderForm.value.chatPath,
+      embedPath: llmProviderForm.value.embedPath,
+    });
+
+    if (res.errorCode === 0) {
+      getLlmProviderList().then((res) => {
+        brandListData.value = res.data;
+        brandListData.value.forEach((item) => {
+          if (item.id === defaultSelectProviderId.value) {
+            llmProviderForm.value = { ...item };
+          }
+        });
+      });
+    } else {
+      ElMessage.error(res.message || $t('message.updateFail'));
+    }
+  } catch (error) {
+    ElMessage.error($t('message.networkError'));
+    console.error('更新失败:', error);
+  }
+};
+const handleTest = () => {
+  llmVerifyConfigRef.value.openDialog(defaultSelectProviderId.value);
 };
 </script>
 
 <template>
   <div class="llm-container">
-    <div class="llm-header">
-      <HeaderSearch
-        :buttons="headerButtons"
-        @search="handleSearch"
-        @button-click="handleButtonClick"
+    <div>
+      <PageSide
+        :title="$t('llm.addProvider')"
+        label-key="providerName"
+        value-key="id"
+        :menus="brandListData"
+        :control-btns="controlBtns"
+        :footer-button="footerButton"
+        @change="handleCategoryClick"
+        :default-selected="defaultSelectProviderId"
+        :icon-size="21"
       />
     </div>
+    <div class="llm-table-container">
+      <div class="llm-form-container">
+        <div class="title">{{ selectCategory.providerName }}</div>
+        <ElForm ref="llmProviderFormRef" :model="llmProviderForm" status-icon>
+          <ElFormItem
+            prop="apiKey"
+            style="display: flex; align-items: center"
+            :label="$t('llmProvider.apiKey')"
+          >
+            <ElInput
+              v-model="llmProviderForm.apiKey"
+              @blur="handleFormBlur"
+              type="password"
+              show-password
+            >
+              <template #append>
+                <ElButton
+                  @click="handleTest"
+                  style="
+                    background-color: var(--el-bg-color);
+                    width: 80px;
+                    border: 1px solid #f0f0f0;
+                    border-radius: 0 8px 8px 0;
+                  "
+                >
+                  {{ $t('llm.button.test') }}
+                </ElButton>
+              </template>
+            </ElInput>
+          </ElFormItem>
+          <ElFormItem prop="endPoint" :label="$t('llmProvider.endPoint')">
+            <ElInput
+              v-model.trim="llmProviderForm.endPoint"
+              @blur="handleFormBlur"
+            />
+          </ElFormItem>
+          <ElFormItem prop="chatPath" :label="$t('llmProvider.chatPath')">
+            <ElInput
+              v-model.trim="llmProviderForm.chatPath"
+              @blur="handleFormBlur"
+            />
+          </ElFormItem>
+          <ElFormItem prop="embedPath" :label="$t('llmProvider.embedPath')">
+            <ElInput
+              v-model.trim="llmProviderForm.embedPath"
+              @blur="handleFormBlur"
+            />
+          </ElFormItem>
+          <ElFormItem prop="rerankPath" :label="$t('llmProvider.rerankPath')">
+            <ElInput
+              v-model.trim="llmProviderForm.rerankPath"
+              @blur="handleFormBlur"
+            />
+          </ElFormItem>
+        </ElForm>
+        <div class="llm-manage-container">
+          <div
+            v-for="model in modelTypes"
+            :key="model.value"
+            class="model-container"
+          >
+            <div class="model-common-title">{{ model.label }}</div>
 
-    <div class="llm-content">
-      <div>
-        <CategoryPanel
-          default-selected-category="allCategories"
-          :categories="brandListData"
-          title-key="title"
-          value-key="key"
-          :use-img-for-svg="true"
-          :expand-width="150"
-          @click="handleCategoryClick"
-        />
-      </div>
-      <div class="llm-table">
-        <PageData
-          ref="pageDataRef"
-          page-url="/api/v1/aiLlm/page"
-          :page-size="10"
-        >
-          <template #default="{ pageList }">
-            <ElTable :data="pageList" style="width: 100%" border size="large">
-              <ElTableColumn prop="icon" label="Icon" width="80">
-                <template #default="scope">
-                  <ElImage
-                    v-if="scope.row.icon"
-                    :src="scope.row.icon"
-                    style="width: 30px; height: 30px"
+            <!-- 对话模型（chatModel）遍历 -->
+            <div
+              v-if="model.value === 'chatModel' && chatModelListData.length > 0"
+            >
+              <ElCollapse expand-icon-position="left">
+                <ElCollapseItem
+                  v-for="group in chatModelListData"
+                  :key="group.groupName"
+                  :title="group.groupName"
+                  :name="group.groupName"
+                >
+                  <template #title>
+                    <div class="flex items-center justify-between pr-2">
+                      <span>{{ group.groupName }}</span>
+                      <span>
+                        <ElIcon
+                          @click.stop="handleGroupNameDelete(group.groupName)"
+                        >
+                          <Minus />
+                        </ElIcon>
+                      </span>
+                    </div>
+                  </template>
+                  <LlmViewItemOperation
+                    :llm-list="group.llmList"
+                    :icon="defaultIcon"
+                    @delete-llm="handleDeleteLlm"
+                    @edit-llm="handleEditLlm"
                   />
-                </template>
-              </ElTableColumn>
-              <ElTableColumn
-                prop="title"
-                :label="$t('llm.filed.title')"
-                width="180"
-              />
-              <ElTableColumn
-                prop="supportFeatures"
-                :label="$t('llm.filed.ability')"
-                width="240"
-              >
-                <template #default="scope">
-                  <ElTag
-                    v-for="item in scope.row.supportFeatures"
-                    :key="item"
-                    class="mr-1"
-                  >
-                    {{ item }}
-                  </ElTag>
-                </template>
-              </ElTableColumn>
-              <ElTableColumn
-                prop="description"
-                :label="$t('llm.filed.description')"
-              />
-              <ElTableColumn
-                fixed="right"
-                :label="$t('common.handle')"
-                width="80"
-              >
-                <template #default="scope">
-                  <ElDropdown>
-                    <ElButton link>
-                      <ElIcon>
-                        <MoreFilled />
-                      </ElIcon>
-                    </ElButton>
+                </ElCollapseItem>
+              </ElCollapse>
+            </div>
 
-                    <template #dropdown>
-                      <ElDropdownMenu>
-                        <ElDropdownItem @click="handleEdit(scope.row)">
-                          <ElButton :icon="Edit" link>
-                            {{ $t('button.edit') }}
-                          </ElButton>
-                        </ElDropdownItem>
-                        <ElDropdownItem @click="handleDelete(scope.row)">
-                          <ElButton type="danger" :icon="DeleteFilled" link>
-                            {{ $t('button.delete') }}
-                          </ElButton>
-                        </ElDropdownItem>
-                      </ElDropdownMenu>
-                    </template>
-                  </ElDropdown>
-                </template>
-              </ElTableColumn>
-            </ElTable>
-          </template>
-        </PageData>
+            <!-- 嵌入模型（embeddingModel）遍历-->
+            <div
+              v-if="
+                model.value === 'embeddingModel' &&
+                embeddingModelListData.length > 0
+              "
+            >
+              <ElCollapse expand-icon-position="left">
+                <ElCollapseItem
+                  v-for="group in embeddingModelListData"
+                  :key="group.groupName"
+                  :title="group.groupName"
+                  :name="group.groupName"
+                >
+                  <template #title>
+                    <div class="flex items-center justify-between pr-2">
+                      <span>{{ group.groupName }}</span>
+                      <span
+                        @click.stop="handleGroupNameDelete(group.groupName)"
+                      >
+                        <ElIcon>
+                          <Minus />
+                        </ElIcon>
+                      </span>
+                    </div>
+                  </template>
+                  <LlmViewItemOperation
+                    :llm-list="group.llmList"
+                    :icon="defaultIcon"
+                    @delete-llm="handleDeleteLlm"
+                    @edit-llm="handleEditLlm"
+                  />
+                </ElCollapseItem>
+              </ElCollapse>
+            </div>
+
+            <div class="model-operation-container">
+              <ElButton type="primary" @click="handleManageLlm(model.value)">
+                {{ $t('llm.button.management') }}
+              </ElButton>
+              <ElButton :icon="Plus" @click="handleAddLlm(model.value)">
+                {{ $t('button.add') }}
+              </ElButton>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -233,28 +423,100 @@ const handleSuccess = () => {
       @success="handleSuccess"
       @close="LlmAddOrUpdateDialog = false"
     />
-    <!--    一键添加大模型模态框-->
-    <QuickAddLlmModal ref="oneClickAddLlmRef" @success="handleSuccess" />
+    <!--添加模型供应商模态框-->
+    <AddLlmProviderModal
+      ref="addLlmProviderRef"
+      @reload="getLlmProviderListData()"
+    />
+    <!--添加模型模态框-->
+    <AddLlmModal
+      ref="addLlmRef"
+      @reload="getLlmProviderListData()"
+      :provider-id="defaultSelectProviderId"
+    />
+    <!--模型管理模态框-->
+    <ManageLlmModal ref="manageLlmRef" @reload="getLlmProviderListData()" />
+
+    <!--模型检测配置模态框-->
+    <LlmVerifyConfig ref="llmVerifyConfigRef" />
   </div>
 </template>
 
 <style scoped>
 .llm-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   padding: 20px;
-}
-
-.llm-header {
-  margin-bottom: 20px;
-}
-
-.llm-content {
-  display: flex;
+  height: 100%;
   gap: 20px;
 }
 
-.llm-table {
+.title {
+  font-weight: 500;
+  font-size: 16px;
+  color: #333333;
+  line-height: 22px;
+  text-align: left;
+  font-style: normal;
+  margin-bottom: 20px;
+}
+
+.llm-table-container {
+  flex: 1;
+  padding: 24px;
+  background-color: var(--el-bg-color);
+  border-radius: 8px;
+}
+
+.llm-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   width: 100%;
+}
+
+.model-common-title {
+  font-weight: 500;
+  font-size: 14px;
+  color: #333333;
+  line-height: 20px;
+  text-align: left;
+  font-style: normal;
+  margin: 20px 0;
+}
+
+:deep(.el-collapse-item__header) {
+  background-color: #f9fafc;
+  padding: 0 9px 0 24px;
+  border-radius: 8px;
+}
+
+:deep(.el-collapse) {
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  box-sizing: border-box;
+}
+
+:deep(.el-collapse-item__header) {
+  border-bottom: 1px solid #e4e7ed;
+  border-radius: 0;
+}
+
+:deep(.el-collapse-item:last-child .el-collapse-item__header) {
+  border-bottom: none;
+}
+
+:deep(.el-collapse-item__content) {
+  border: 1px solid #f0f0f0;
+  background: #ffffff;
+  border-radius: 0px 0px 8px 8px;
+}
+
+.model-operation-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
 }
 </style>

@@ -4,8 +4,10 @@
   "icon": "Icon",
   "apiKey": "ApiKey",
   "endPoint": "APIAddress",
-  "embedPath": "embedPath",
-  "chatPath": "chatPath",
-  "embeddingModel": "embeddingModel",
-  "chatModel": "chatModel"
+  "embedPath": "EmbedPath",
+  "chatPath": "ChatPath",
+  "rerankPath": "RerankPath",
+  "embeddingModel": "EmbeddingModel",
+  "chatModel": "ChatModel",
+  "model": "Model"
 }

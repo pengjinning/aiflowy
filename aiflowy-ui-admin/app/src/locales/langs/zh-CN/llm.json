@@ -52,10 +52,21 @@
   "groupName": "分组名称",
   "provider": "供应商",
   "ability": "模型能力",
+  "button": {
+    "management": "管理",
+    "test": "检测",
+    "addAllLlm": "添加列表中的所有模型",
+    "RetrieveAgain": "重新获取模型列表"
+  },
+  "all": "全部",
+  "verifyLlmTitle": "请选择要检测的模型",
+  "testSuccess": "检测成功",
+  "searchTextPlaceholder": "搜索模型名称或名称",
   "modelAbility": {
     "reasoning": "推理",
     "tool": "工具",
     "embedding": "嵌入",
-    "rerank": "重排"
+    "rerank": "重排",
+    "free": "免费"
   }
 }

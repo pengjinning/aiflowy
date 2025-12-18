@@ -22,12 +22,17 @@ import { $t } from '#/locales';
 const emit = defineEmits(['reload']);
 const embeddingLlmList = ref<any>([]);
 const rerankerLlmList = ref<any>([]);
-
-onMounted(() => {
-  api.get('/api/v1/aiLlm/list?supportEmbed=true').then((res) => {
-    embeddingLlmList.value = res.data;
+const getEmbeddingLlmListData = async () => {
+  const url = `/api/v1/aiLlm/list?modelType=embeddingModel`;
+  api.get(url, {}).then((res) => {
+    if (res.errorCode === 0) {
+      embeddingLlmList.value = res.data;
+    }
   });
-  api.get('/api/v1/aiLlm/list?supportRerankerLlmList=true').then((res) => {
+};
+onMounted(() => {
+  getEmbeddingLlmListData();
+  api.get('/api/v1/aiLlm/list?modelType=embeddingModel').then((res) => {
     rerankerLlmList.value = res.data;
   });
 });

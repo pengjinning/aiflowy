@@ -55,10 +55,21 @@
   "groupName": "GroupName",
   "provider": "供应商",
   "ability": "ModelAbility",
+  "button": {
+    "management": "Management",
+    "test": "Test",
+    "addAllLlm": "Add models from the list",
+    "RetrieveAgain": "Retrieve the model list again"
+  },
+  "all": "All",
+  "verifyLlmTitle": "Verify Large Model",
+  "searchTextPlaceholder": "Search for model name or name",
+  "testSuccess": "TestSuccess",
   "modelAbility": {
     "reasoning": "reasoning",
     "tool": "Tool",
     "embedding": "Embedding",
-    "rerank": "Rerank"
+    "rerank": "Rerank",
+    "free": "Free"
   }
 }

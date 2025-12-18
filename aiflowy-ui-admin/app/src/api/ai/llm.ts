@@ -39,4 +39,6 @@ export interface llmType {
   description: string;
   modelType: string;
   groupName: string;
+  added: boolean;
+  aiLlmProvider: any;
 }

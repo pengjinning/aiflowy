@@ -1,38 +1,55 @@
 
 package tech.aiflowy.ai.service.impl;
 
+import cn.hutool.core.util.StrUtil;
+import com.agentsflex.core.model.chat.ChatModel;
 import com.agentsflex.core.model.chat.response.AiMessageResponse;
 import com.agentsflex.core.model.embedding.EmbeddingModel;
+import com.agentsflex.core.prompt.SimplePrompt;
 import com.agentsflex.core.store.VectorData;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.alicp.jetcache.Cache;
+import com.mybatisflex.core.query.DistinctQueryColumn;
+import com.mybatisflex.core.query.QueryColumn;
+import com.mybatisflex.core.query.QueryWrapper;
 import dev.tinyflow.core.llm.Llm;
+import org.springframework.util.CollectionUtils;
 import tech.aiflowy.ai.entity.AiLlm;
+import tech.aiflowy.ai.entity.AiLlmProvider;
 import tech.aiflowy.ai.mapper.AiLlmMapper;
+import tech.aiflowy.ai.service.AiLlmProviderService;
 import tech.aiflowy.ai.service.AiLlmService;
 import tech.aiflowy.common.domain.Result;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.aiflowy.common.entity.LoginAccount;
+import tech.aiflowy.common.util.StringUtil;
 import tech.aiflowy.common.web.exceptions.BusinessException;
 
-import java.util.List;
-import java.util.Map;
+import java.math.BigInteger;
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.agentsflex.rerank.DefaultRerankModel;
 import com.agentsflex.rerank.DefaultRerankModelConfig;
-import java.util.ArrayList;
 import com.agentsflex.core.document.Document;
 import org.springframework.util.StringUtils;
+
 import javax.annotation.Resource;
+
 import tech.aiflowy.ai.entity.AiLlmBrand;
-import java.util.HashMap;
+
+import java.util.stream.Collectors;
+
 import tech.aiflowy.common.util.Maps;
 import cn.dev33.satoken.stp.StpUtil;
 import tech.aiflowy.common.satoken.util.SaTokenUtil;
+
+import static com.mybatisflex.core.query.QueryMethods.distinct;
+import static tech.aiflowy.ai.entity.table.AiLlmTableDef.AI_LLM;
 
 /**
  * 服务层实现。
@@ -45,6 +62,9 @@ public class AiLlmServiceImpl extends ServiceImpl<AiLlmMapper, AiLlm> implements
 
     @Autowired
     AiLlmMapper aiLlmMapper;
+
+    @Autowired
+    AiLlmProviderService llmProviderService;
 
     @Resource
     private Cache<String, Object> cache;
@@ -64,16 +84,16 @@ public class AiLlmServiceImpl extends ServiceImpl<AiLlmMapper, AiLlm> implements
     @Override
     public void verifyLlmConfig(AiLlm llm) {
 
-        Boolean supportChat = llm.getSupportChat();
+        Boolean supportReasoning = llm.getSupportReasoning();
 
-        if (supportChat != null && supportChat) {
+        if (supportReasoning != null && supportReasoning) {
             // 走聊天验证逻辑
             verifyChatLlm(llm);
             return;
         }
 
-        Boolean supportEmbed = llm.getSupportEmbed();
-        if (supportEmbed != null && supportEmbed) {
+        Boolean supportEmbedding = llm.getSupportEmbedding();
+        if (supportEmbedding != null && supportEmbedding) {
 
             // 走向量化验证逻辑
             verifyEmbedLlm(llm);
@@ -202,6 +222,37 @@ public class AiLlmServiceImpl extends ServiceImpl<AiLlmMapper, AiLlm> implements
 //        saveBatch(aiLlmList);
     }
 
+    @Override
+    public Map<String, Map<String, List<AiLlm>>> getList(AiLlm entity) {
+        String[] llmModelTypes = {"chatModel", "embeddingModel"};
+        Map<String, Map<String, List<AiLlm>>> result = new HashMap<>();
+
+        QueryWrapper queryWrapper = new QueryWrapper()
+                .eq(AiLlm::getProviderId, entity.getProviderId());
+        queryWrapper.eq(AiLlm::getAdded, entity.getAdded());
+        List<AiLlm> totalList = aiLlmMapper.selectListWithRelationsByQuery(queryWrapper);
+        for (String modelType : llmModelTypes) {
+            Map<String, List<AiLlm>> groupMap = groupLlmByGroupName(totalList, modelType);
+            if (!CollectionUtils.isEmpty(groupMap)) {
+                result.put(modelType, groupMap);
+            }
+        }
+
+        return result;
+    }
+
+    private Map<String, List<AiLlm>> groupLlmByGroupName(List<AiLlm> totalList, String targetModelType) {
+        if (CollectionUtils.isEmpty(totalList)) {
+            return Collections.emptyMap();
+        }
+
+        return totalList.stream()
+                .filter(aiLlm -> targetModelType.equals(aiLlm.getModelType())
+                        && aiLlm.getGroupName() != null)
+                .collect(Collectors.groupingBy(AiLlm::getGroupName));
+    }
+
+
     private void verifyRerankLlm(AiLlm llm) {
 //        try {
 //            DefaultRerankModelConfig rerankModelConfig = new DefaultRerankModelConfig();
@@ -255,11 +306,23 @@ public class AiLlmServiceImpl extends ServiceImpl<AiLlmMapper, AiLlm> implements
 
     private void verifyChatLlm(AiLlm llm) {
 
-//        Llm transLlm = llm.toLlm();
-//
-//        TextPrompt textPrompt = null;
-//
-//        Map<String, Object> options = llm.getOptions();
+        ChatModel chatModel = llm.toChatModel();
+        if (chatModel == null) {
+            throw new BusinessException("chatModel为空");
+        }
+        try {
+            String response = chatModel.chat("我在对模型配置进行校验，你收到这条消息无需做任何思考，直接回复一个“你好”即可!");
+            if (response == null) {
+                throw new BusinessException("校验未通过，请前往后端日志查看详情！");
+            }
+            log.info("校验结果：{}", response);
+        } catch (Exception e) {
+            log.error("校验失败：{}", e.getMessage());
+            throw new BusinessException("校验未通过，请前往后端日志查看详情！");
+        }
+
+
+        Map<String, Object> options = llm.getOptions();
 //        if (options != null && options.get("multimodal") != null && (boolean) options.get("multimodal")) {
 //
 //            textPrompt = new ImagePrompt("我在对模型配置进行校验，你无需描述图片，只需回答“看到了图片”即可",
@@ -268,18 +331,62 @@ public class AiLlmServiceImpl extends ServiceImpl<AiLlmMapper, AiLlm> implements
 //        } else {
 //            textPrompt = new TextPrompt("我在对模型配置进行校验，你收到这条消息无需做任何思考，直接回复一个“你好”即可!");
 //        }
-//
-//        try {
-//            AiMessageResponse chatResponse = transLlm.chat(textPrompt);
-//            String content = chatResponse.getMessage().getContent();
-//            String fullContent = chatResponse.getMessage().getFullContent();
-//            if (!StringUtils.hasLength(content) && !StringUtils.hasLength(fullContent)) {
-//                throw new BusinessException("校验未通过，请前往后端日志查看详情！");
-//            }
-//            log.info("校验结果：response:{},aiMessage:{}", chatResponse.getResponse(), chatResponse.getMessage());
-//        } catch (Exception e) {
-//            log.error("模型配置校验失败:{}", e.getMessage());
-//            throw new BusinessException("校验未通过，请前往后端日志查看详情！");
-//        }
+
+
     }
+
+    @Override
+    public void removeByEntity(AiLlm entity) {
+        QueryWrapper queryWrapper = QueryWrapper.create().eq(AiLlm::getProvider, entity.getProvider()).eq(AiLlm::getGroupName, entity.getGroupName());
+        aiLlmMapper.deleteByQuery(queryWrapper);
+    }
+
+    @Override
+    public AiLlm getLlmInstance(BigInteger llmId) {
+        AiLlm aillm = getById(llmId);
+        if (aillm == null) {
+            return null;
+        }
+        AiLlmProvider provider = llmProviderService.getById(aillm.getProviderId());
+        if (provider == null) {
+            return aillm;
+        }
+        aillm.setAiLlmProvider(provider);
+        if (StrUtil.isBlank(aillm.getLlmApiKey())) {
+            aillm.setLlmApiKey(provider.getApiKey());
+        }
+        if (StrUtil.isBlank(aillm.getLlmEndpoint())) {
+            aillm.setLlmEndpoint(provider.getEndPoint());
+        }
+
+        Map<String, Object> options = aillm.getOptions();
+        if (options == null) {
+            options = new HashMap<>();
+            aillm.setOptions(options);
+        }
+
+        String chatPath = (String) options.get("chatPath");
+        if (StrUtil.isBlank(chatPath)) {
+            options.put("chatPath", provider.getChatPath());
+        }
+
+        String embedPath = (String) options.get("embedPath");
+        if (StrUtil.isBlank(embedPath)) {
+            options.put("embedPath", provider.getEmbedPath());
+        }
+
+//        String rerankPath = (String) options.get("rerankPath");
+//        if (StrUtil.isBlank(rerankPath)) {
+//            options.put("rerankPath", provider.getRerankPath());
+//        }
+
+        String llmEndpoint = (String) options.get("llmEndpoint");
+        if (StrUtil.isBlank(llmEndpoint)) {
+            options.put("llmEndpoint", provider.getEndPoint());
+        }
+
+        return aillm;
+    }
+
+
 }

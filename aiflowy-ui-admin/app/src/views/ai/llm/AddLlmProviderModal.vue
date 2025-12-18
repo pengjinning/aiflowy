@@ -30,9 +30,7 @@ defineExpose({
   openEditDialog(item: any) {
     dialogVisible.value = true;
     isAdd.value = false;
-    formData.icon = item.icon;
-    formData.providerName = item.providerName;
-    formData.provider = item.provider;
+    Object.assign(formData, item);
   },
 });
 const providerOptions =
@@ -40,6 +38,7 @@ const providerOptions =
 const isAdd = ref(true);
 const dialogVisible = ref(false);
 const formData = reactive({
+  id: '',
   icon: '',
   providerName: '',
   provider: '',
@@ -47,6 +46,7 @@ const formData = reactive({
   endPoint: '',
   chatPath: '',
   embedPath: '',
+  rerankPath: '',
 });
 const closeDialog = () => {
   dialogVisible.value = false;
@@ -71,6 +71,16 @@ const btnLoading = ref(false);
 const save = async () => {
   btnLoading.value = true;
   try {
+    if (!isAdd.value) {
+      api.post('/api/v1/aiLlmProvider/update', formData).then((res) => {
+        if (res.errorCode === 0) {
+          ElMessage.success(res.message);
+          emit('reload');
+          closeDialog();
+        }
+      });
+      return;
+    }
     await formDataRef.value.validate();
     api.post('/api/v1/aiLlmProvider/save', formData).then((res) => {
       if (res.errorCode === 0) {
@@ -146,6 +156,9 @@ const handleChangeProvider = (val: string) => {
       </ElFormItem>
       <ElFormItem prop="chatPath" :label="$t('llmProvider.chatPath')">
         <ElInput v-model.trim="formData.chatPath" />
+      </ElFormItem>
+      <ElFormItem prop="rerankPath" :label="$t('llmProvider.rerankPath')">
+        <ElInput v-model.trim="formData.rerankPath" />
       </ElFormItem>
       <ElFormItem prop="embedPath" :label="$t('llmProvider.embedPath')">
         <ElInput v-model.trim="formData.embedPath" />

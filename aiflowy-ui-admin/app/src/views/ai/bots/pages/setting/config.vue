@@ -24,12 +24,7 @@ import {
   ElSlider,
 } from 'element-plus';
 
-import {
-  getAiLlmList,
-  getPerQuestions,
-  updateLlmId,
-  updateLlmOptions,
-} from '#/api';
+import { getPerQuestions, updateLlmId, updateLlmOptions } from '#/api';
 import { api } from '#/api/request';
 import ProblemPresupposition from '#/components/chat/ProblemPresupposition.vue';
 import PublishWxOfficalAccount from '#/components/chat/PublishWxOfficalAccount.vue';
@@ -134,15 +129,20 @@ const getBotDetail = async () => {
       }
     });
 };
+const getLlmListData = async () => {
+  const url = `/api/v1/aiLlm/list?modelType=chatModel&added=true`;
+  api.get(url, {}).then((res) => {
+    if (res.errorCode === 0) {
+      options.value = res.data;
+    }
+  });
+};
 onMounted(async () => {
-  const [, res] = await tryit(getAiLlmList({ supportFunctionCalling: true }));
   getAiBotPluginToolList();
   getAiBotKnowledgeList();
   getAiBotWorkflowList();
   getBotDetail();
-  if (res?.errorCode === 0) {
-    options.value = res.data;
-  }
+  getLlmListData();
 });
 
 const handleLlmChange = async (value: string) => {

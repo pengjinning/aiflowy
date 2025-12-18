@@ -11,16 +11,15 @@ import com.agentsflex.llm.ollama.OllamaChatConfig;
 import com.agentsflex.llm.ollama.OllamaChatModel;
 import com.agentsflex.llm.openai.OpenAIChatConfig;
 import com.agentsflex.llm.openai.OpenAIChatModel;
-import com.agentsflex.llm.qwen.QwenChatConfig;
-import com.agentsflex.llm.qwen.QwenChatModel;
+import com.mybatisflex.annotation.RelationManyToOne;
+import com.mybatisflex.annotation.RelationOneToMany;
+import com.mybatisflex.annotation.RelationOneToOne;
 import com.mybatisflex.annotation.Table;
 import org.springframework.util.StringUtils;
 import tech.aiflowy.ai.entity.base.AiLlmBase;
 import tech.aiflowy.common.util.PropertiesUtil;
 import tech.aiflowy.common.util.StringUtil;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -34,64 +33,75 @@ import java.util.Properties;
 @Table("tb_ai_llm")
 public class AiLlm extends AiLlmBase {
 
-    public List<String> getSupportFeatures() {
-        List<String> features = new ArrayList<>();
-        if (getSupportChat() != null && getSupportChat()) {
-            features.add("对话");
-        }
+    @RelationManyToOne(selfField = "providerId", targetField = "id")
+    private AiLlmProvider aiLlmProvider;
 
-        if (getSupportFunctionCalling() != null && getSupportFunctionCalling()) {
-            features.add("方法调用");
-        }
-
-        if (getSupportEmbed() != null && getSupportEmbed()) {
-            features.add("Embedding");
-        }
-
-        if (getSupportReranker() != null && getSupportReranker()) {
-            features.add("重排");
-        }
-
-        if (getSupportTextToImage() != null && getSupportTextToImage()) {
-            features.add("文生图");
-        }
-
-        if (getSupportImageToImage() != null && getSupportImageToImage()) {
-            features.add("图生图");
-        }
-
-        if (getSupportTextToAudio() != null && getSupportTextToAudio()) {
-            features.add("文生音频");
-        }
-
-        if (getSupportAudioToAudio() != null && getSupportAudioToAudio()) {
-            features.add("音频转音频");
-        }
-
-        if (getSupportTextToVideo() != null && getSupportTextToVideo()) {
-            features.add("文生视频");
-        }
-
-        if (getSupportImageToVideo() != null && getSupportImageToVideo()) {
-            features.add("图生视频");
-        }
-
-        if (getOptions() != null && !getOptions().isEmpty()) {
-            Boolean multimodal = (Boolean) getOptions().get("multimodal");
-            if (multimodal != null && multimodal) {
-                features.add("多模态");
-            }
-        }
-
-        return features;
+    public AiLlmProvider getAiLlmProvider() {
+        return aiLlmProvider;
     }
 
+    public void setAiLlmProvider(AiLlmProvider aiLlmProvider) {
+        this.aiLlmProvider = aiLlmProvider;
+    }
+
+    //    public List<String> getSupportFeatures() {
+//        List<String> features = new ArrayList<>();
+//        if (getSupportChat() != null && getSupportChat()) {
+//            features.add("对话");
+//        }
+//
+//        if (getSupportFunctionCalling() != null && getSupportFunctionCalling()) {
+//            features.add("方法调用");
+//        }
+//
+//        if (getSupportEmbed() != null && getSupportEmbed()) {
+//            features.add("Embedding");
+//        }
+//
+//        if (getSupportReranker() != null && getSupportReranker()) {
+//            features.add("重排");
+//        }
+//
+//        if (getSupportTextToImage() != null && getSupportTextToImage()) {
+//            features.add("文生图");
+//        }
+//
+//        if (getSupportImageToImage() != null && getSupportImageToImage()) {
+//            features.add("图生图");
+//        }
+//
+//        if (getSupportTextToAudio() != null && getSupportTextToAudio()) {
+//            features.add("文生音频");
+//        }
+//
+//        if (getSupportAudioToAudio() != null && getSupportAudioToAudio()) {
+//            features.add("音频转音频");
+//        }
+//
+//        if (getSupportTextToVideo() != null && getSupportTextToVideo()) {
+//            features.add("文生视频");
+//        }
+//
+//        if (getSupportImageToVideo() != null && getSupportImageToVideo()) {
+//            features.add("图生视频");
+//        }
+//
+//        if (getOptions() != null && !getOptions().isEmpty()) {
+//            Boolean multimodal = (Boolean) getOptions().get("multimodal");
+//            if (multimodal != null && multimodal) {
+//                features.add("多模态");
+//            }
+//        }
+//
+//        return features;
+//    }
+
     public ChatModel toChatModel() {
-        String brand = getBrand();
-        if (StringUtil.noText(brand)) {
+        String provider = getAiLlmProvider().getProviderName();
+        if (StringUtil.noText(provider)) {
             return null;
         }
-        switch (brand.toLowerCase()) {
+        switch (provider.toLowerCase()) {
             case "ollama":
                 return ollamaLlm();
             default:
@@ -147,11 +157,11 @@ public class AiLlm extends AiLlmBase {
                 endpoint = endpointFromOptions;
             }
         }
-        String brand = getBrand();
-        if (StringUtil.noText(brand)) {
+        String providerName = getAiLlmProvider().getProviderName();
+        if (StringUtil.noText(providerName)) {
             return null;
         }
-        switch (brand.toLowerCase()) {
+        switch (providerName.toLowerCase()) {
             case "ollama":
                 OllamaEmbeddingConfig ollamaEmbeddingConfig = new OllamaEmbeddingConfig();
                 ollamaEmbeddingConfig.setEndpoint(endpoint);
