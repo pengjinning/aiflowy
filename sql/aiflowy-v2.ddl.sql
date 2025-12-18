@@ -262,30 +262,31 @@ CREATE TABLE `tb_ai_knowledge`
 DROP TABLE IF EXISTS `tb_ai_llm`;
 CREATE TABLE `tb_ai_llm`
 (
-    `id`                       bigint UNSIGNED NOT NULL COMMENT 'ID',
-    `dept_id`                  bigint UNSIGNED NOT NULL COMMENT '部门ID',
-    `tenant_id`                bigint UNSIGNED NOT NULL COMMENT '租户ID',
-    `title`                    varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标题或名称',
-    `brand`                    varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '品牌',
-    `icon`                     varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'ICON',
-    `description`              varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '描述',
-    `support_chat`             tinyint(1) NULL DEFAULT NULL COMMENT '是否支持对话',
-    `support_function_calling` tinyint(1) NULL DEFAULT NULL COMMENT '是否支持方法调用',
-    `support_embed`            tinyint(1) NULL DEFAULT NULL COMMENT '是否支持向量化',
-    `support_reranker`         tinyint(1) NULL DEFAULT NULL COMMENT '是否支持重排',
-    `support_text_to_image`    tinyint(1) NULL DEFAULT NULL COMMENT '是否支持文字生成图片',
-    `support_image_to_image`   tinyint(1) NULL DEFAULT NULL COMMENT '是否支持图片生成图片',
-    `support_text_to_audio`    tinyint(1) NULL DEFAULT NULL COMMENT '是否支持文字生成语音',
-    `support_audio_to_audio`   tinyint(1) NULL DEFAULT NULL COMMENT '是否支持语音生成语音',
-    `support_text_to_video`    tinyint(1) NULL DEFAULT NULL COMMENT '是否支持文字生成视频',
-    `support_image_to_video`   tinyint(1) NULL DEFAULT NULL COMMENT '是否支持图片生成视频',
-    `llm_endpoint`             varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '大模型请求地址',
-    `llm_model`                varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '大模型名称',
-    `llm_api_key`              varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '大模型 API KEY',
-    `llm_extra_config`         text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '大模型其他属性配置',
-    `options`                  text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '其他配置内容',
+    `id`                bigint(0) UNSIGNED NOT NULL COMMENT 'ID',
+    `dept_id`           bigint(0) UNSIGNED NOT NULL COMMENT '部门ID',
+    `tenant_id`         bigint(0) UNSIGNED NOT NULL COMMENT '租户ID',
+    `title`             varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标题或名称',
+    `brand`             varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '品牌',
+    `icon`              varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'ICON',
+    `description`       varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '描述',
+    `llm_endpoint`      varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '大模型请求地址',
+    `llm_model`         varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '大模型名称',
+    `llm_api_key`       varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '大模型 API KEY',
+    `llm_extra_config`  text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '大模型其他属性配置',
+    `options`           text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '其他配置内容',
+    `group_name`        varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '分组名称',
+    `model_type`        varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '模型类型',
+    `provider`          varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '供应商',
+    `support_reasoning` tinyint(1) NULL DEFAULT NULL COMMENT '是否支持推理',
+    `support_tool`      tinyint(1) NULL DEFAULT NULL COMMENT '是否支持工具',
+    `support_embedding` tinyint(1) NULL DEFAULT NULL COMMENT '是否支持嵌入',
+    `support_rerank`    tinyint(1) NULL DEFAULT NULL COMMENT '是否支持重排',
+    `provider_id`       bigint(0) UNSIGNED NULL DEFAULT NULL COMMENT '供应商id',
+    `added`             tinyint(1) NULL DEFAULT NULL COMMENT '是否添加',
+    `can_delete`        tinyint(1) NULL DEFAULT NULL COMMENT '是否能删除',
+    `support_free`      tinyint(1) NULL DEFAULT NULL COMMENT '是否免费',
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '大模型管理' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '大模型管理' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tb_ai_plugin
@@ -312,6 +313,28 @@ CREATE TABLE `tb_ai_plugin`
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `tb_ai_plugin_alias_uindex`(`alias`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '插件表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for tb_ai_llm_provider
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_ai_llm_provider`;
+CREATE TABLE `tb_ai_llm_provider`
+(
+    `id`            bigint(0) UNSIGNED NOT NULL COMMENT 'id',
+    `provider_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '供应商名称',
+    `created`       datetime(0) NOT NULL COMMENT '创建时间',
+    `created_by`    bigint(0) UNSIGNED NOT NULL COMMENT '创建者',
+    `modified`      datetime(0) NOT NULL COMMENT '修改时间',
+    `modified_by`   bigint(0) UNSIGNED NOT NULL COMMENT '修改者',
+    `icon`          varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '图标',
+    `api_key`       varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'apiKey',
+    `end_point`     varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'endPoint',
+    `chat_path`     varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '对话地址',
+    `embed_path`    varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '向量地址',
+    `provider`      varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '供应商',
+    `rerank_path`   varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '重排路径',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tb_ai_plugin_categories
