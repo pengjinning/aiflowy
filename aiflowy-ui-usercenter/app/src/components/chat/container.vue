@@ -17,6 +17,8 @@ import {
   ElHeader,
   ElInput,
   ElMain,
+  ElMessage,
+  ElMessageBox,
   ElTooltip,
 } from 'element-plus';
 
@@ -29,6 +31,7 @@ import {
   CardTitle,
 } from '#/components/card';
 import ChatIcon from '#/components/icons/ChatIcon.vue';
+import { $t } from '#/locales';
 
 interface Props {
   bot: any;
@@ -93,9 +96,12 @@ function getMessageList() {
     });
 }
 function formatCreatedTime(time: string) {
-  const createTime = Math.floor(new Date(time).getTime() / 1000);
-  const today = Math.floor(Date.now() / 1000 / 86_400) * 86_400;
-  return time.split(' ')[createTime < today ? 0 : 1];
+  if (time) {
+    const createTime = Math.floor(new Date(time).getTime() / 1000);
+    const today = Math.floor(Date.now() / 1000 / 86_400) * 86_400;
+    return time.split(' ')[createTime < today ? 0 : 1];
+  }
+  return '';
 }
 const handleMouseEvent = (id?: string) => {
   if (id === undefined) {
@@ -106,6 +112,60 @@ const handleMouseEvent = (id?: string) => {
     hoverId.value = id;
   }
 };
+const updateLoading = ref(false);
+function updateTitle() {
+  updateLoading.value = true;
+  api
+    .get('/userCenter/conversation/updateConversation', {
+      params: {
+        botId: props.bot.id,
+        sessionId: currentSession.value.sessionId,
+        title: currentSession.value.title,
+      },
+    })
+    .then((res) => {
+      updateLoading.value = false;
+      if (res.errorCode === 0) {
+        dialogVisible.value = false;
+        ElMessage.success('成功');
+        getSessionList();
+      }
+    });
+}
+function remove(row: any) {
+  ElMessageBox.confirm($t('message.deleteAlert'), $t('message.noticeTitle'), {
+    confirmButtonText: $t('message.ok'),
+    cancelButtonText: $t('message.cancel'),
+    type: 'warning',
+    beforeClose: (action, instance, done) => {
+      if (action === 'confirm') {
+        instance.confirmButtonLoading = true;
+        api
+          .get('/userCenter/conversation/deleteConversation', {
+            params: {
+              botId: props.bot.id,
+              sessionId: row.sessionId,
+            },
+          })
+          .then((res) => {
+            instance.confirmButtonLoading = false;
+            if (res.errorCode === 0) {
+              props.onMessageList?.([]);
+              currentSession.value = {};
+              ElMessage.success(res.message);
+              done();
+              getSessionList();
+            }
+          })
+          .catch(() => {
+            instance.confirmButtonLoading = false;
+          });
+      } else {
+        done();
+      }
+    },
+  }).catch(() => {});
+}
 </script>
 
 <template>
@@ -172,6 +232,7 @@ const handleMouseEvent = (id?: string) => {
               )
             "
             @click.stop
+            trigger="click"
           >
             <ElButton link :icon="MoreFilled" />
 
@@ -184,7 +245,14 @@ const handleMouseEvent = (id?: string) => {
                   <ElButton link :icon="Edit">编辑</ElButton>
                 </ElDropdownItem>
                 <ElDropdownItem>
-                  <ElButton link type="danger" :icon="Delete">删除</ElButton>
+                  <ElButton
+                    @click="remove(session)"
+                    link
+                    type="danger"
+                    :icon="Delete"
+                  >
+                    删除
+                  </ElButton>
                 </ElDropdownItem>
               </ElDropdownMenu>
             </template>
@@ -209,14 +277,19 @@ const handleMouseEvent = (id?: string) => {
       <div class="p-5">
         <ElForm>
           <ElFormItem>
-            <ElInput />
+            <ElInput
+              v-model="currentSession.title"
+              placeholder="请输入会话名称"
+            />
           </ElFormItem>
         </ElForm>
       </div>
 
       <template #footer>
         <ElButton @click="dialogVisible = false">取消</ElButton>
-        <ElButton type="primary">确认</ElButton>
+        <ElButton type="primary" @click="updateTitle" :loading="updateLoading">
+          确认
+        </ElButton>
       </template>
     </ElDialog>
   </ElContainer>

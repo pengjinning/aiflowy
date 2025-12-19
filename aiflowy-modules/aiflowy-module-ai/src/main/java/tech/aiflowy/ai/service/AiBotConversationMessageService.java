@@ -16,12 +16,7 @@ import java.math.BigInteger;
  */
 public interface AiBotConversationMessageService extends IService<AiBotConversationMessage> {
 
-    Result deleteConversation(String botId, String sessionId);
+    void deleteConversation(String botId, String sessionId, BigInteger accountId);
 
-    Result updateConversation(String botId, String sessionId, String title);
-
-    Result externalList(BigInteger botId);
-
-    Boolean needRefreshConversationTitle(String sessionId, String userPrompt, ChatModel chatModel, BigInteger botId, int isExternalMsg);
-
+    void updateConversation(String botId, String sessionId, String title, BigInteger accountId);
 }
