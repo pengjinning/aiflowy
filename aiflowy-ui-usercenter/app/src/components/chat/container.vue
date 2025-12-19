@@ -32,10 +32,14 @@ const currentSession = ref<any>({});
 watch(
   () => props.bot.id,
   () => {
-    getSessionList();
+    getSessionList(true);
   },
 );
-function getSessionList() {
+defineExpose({
+  getSessionList,
+  updateSessionTitle,
+});
+function getSessionList(resetSession = false) {
   api
     .get('/userCenter/conversation/list', {
       params: {
@@ -45,7 +49,9 @@ function getSessionList() {
     .then((res) => {
       if (res.errorCode === 0) {
         sessionList.value = res.data;
-        currentSession.value = {};
+        if (resetSession) {
+          currentSession.value = {};
+        }
       }
     });
 }
@@ -75,6 +81,12 @@ function getMessageList() {
         props.onMessageList?.(res.data);
       }
     });
+}
+function updateSessionTitle(title: string) {
+  api.post('/userCenter/conversation/update', {
+    sessionId: currentSession.value.sessionId,
+    title,
+  });
 }
 </script>
 
