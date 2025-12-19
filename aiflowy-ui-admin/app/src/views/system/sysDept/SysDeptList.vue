@@ -133,7 +133,7 @@ function getTree() {
       </div>
     </div>
 
-    <div class="bg-background flex-1 rounded-lg p-5">
+    <div class="bg-background border-border flex-1 rounded-lg border p-5">
       <ElTable :data="treeData" row-key="id" v-loading="loading" border>
         <ElTableColumn prop="deptName" :label="$t('sysDept.deptName')">
           <template #default="{ row }">

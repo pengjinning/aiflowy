@@ -81,7 +81,7 @@ function handleSave() {
 
 <template>
   <div class="settings-container">
-    <div class="settings-config-container">
+    <div class="settings-config-container border-border border">
       <!-- <div class="settings-notice">
         注意：有很多大模型（比如：暗月之面等）都是兼容 ChatGPT
         的，因此若需要配置系统未内置的平台的大模型，供应商可以选择OpenAi。

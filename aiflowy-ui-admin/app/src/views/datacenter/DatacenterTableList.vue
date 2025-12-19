@@ -102,7 +102,7 @@ function toDetailPage(row: any) {
       @button-click="showDialog({})"
     />
 
-    <div class="bg-background flex-1 rounded-lg p-5">
+    <div class="bg-background border-border flex-1 rounded-lg border p-5">
       <PageData
         ref="pageDataRef"
         page-url="/api/v1/datacenterTable/page"

@@ -99,7 +99,7 @@ function getTree() {
       </ElButton>
     </div>
 
-    <div class="bg-background flex-1 rounded-lg p-5">
+    <div class="bg-background border-border flex-1 rounded-lg border p-5">
       <ElTable :data="treeData" row-key="id" v-loading="loading">
         <ElTableColumn prop="menuType" :label="$t('sysMenu.menuType')">
           <template #default="{ row }">

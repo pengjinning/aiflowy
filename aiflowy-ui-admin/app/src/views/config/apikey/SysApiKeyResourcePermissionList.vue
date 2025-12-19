@@ -71,31 +71,33 @@ function remove(row: any) {
 </script>
 
 <template>
-  <div class="page-container">
+  <div class="page-container !m-0">
     <SysApiKeyResourcePermissionModal ref="saveDialog" @reload="reset" />
-    <ElForm ref="formRef" :inline="true" :model="formInline">
-      <ElFormItem :label="$t('sysApiKeyResourcePermission.title')" prop="title">
-        <ElInput
-          v-model="formInline.title"
-          :placeholder="$t('sysApiKeyResourcePermission.title')"
-        />
-      </ElFormItem>
-      <ElFormItem>
-        <ElButton @click="search(formRef)" type="primary">
-          {{ $t('button.query') }}
+    <div class="flex items-center justify-between">
+      <ElForm ref="formRef" :inline="true" :model="formInline">
+        <ElFormItem prop="title">
+          <ElInput
+            v-model="formInline.title"
+            :placeholder="$t('sysApiKeyResourcePermission.title')"
+          />
+        </ElFormItem>
+        <ElFormItem>
+          <ElButton @click="search(formRef)" type="primary">
+            {{ $t('button.query') }}
+          </ElButton>
+          <ElButton @click="reset(formRef)">
+            {{ $t('button.reset') }}
+          </ElButton>
+        </ElFormItem>
+      </ElForm>
+      <div class="mb-5">
+        <ElButton @click="showDialog({})" type="primary">
+          <ElIcon class="mr-1">
+            <Plus />
+          </ElIcon>
+          {{ $t('button.add') }}
         </ElButton>
-        <ElButton @click="reset(formRef)">
-          {{ $t('button.reset') }}
-        </ElButton>
-      </ElFormItem>
-    </ElForm>
-    <div class="handle-div">
-      <ElButton @click="showDialog({})" type="primary">
-        <ElIcon class="mr-1">
-          <Plus />
-        </ElIcon>
-        {{ $t('button.add') }}
-      </ElButton>
+      </div>
     </div>
     <PageData
       ref="pageDataRef"
