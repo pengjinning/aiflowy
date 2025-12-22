@@ -14,21 +14,18 @@ import com.agentsflex.llm.ollama.OllamaChatConfig;
 import com.agentsflex.llm.ollama.OllamaChatModel;
 import com.agentsflex.llm.openai.OpenAIChatConfig;
 import com.agentsflex.llm.openai.OpenAIChatModel;
+import com.agentsflex.rerank.DefaultRerankModel;
+import com.agentsflex.rerank.DefaultRerankModelConfig;
 import com.agentsflex.rerank.gitee.GiteeRerankModel;
 import com.agentsflex.rerank.gitee.GiteeRerankModelConfig;
 import com.mybatisflex.annotation.RelationManyToOne;
-import com.mybatisflex.annotation.RelationOneToMany;
-import com.mybatisflex.annotation.RelationOneToOne;
 import com.mybatisflex.annotation.Table;
-import dev.tinyflow.core.llm.Llm;
 import org.springframework.util.StringUtils;
 import tech.aiflowy.ai.entity.base.AiLlmBase;
-import tech.aiflowy.common.util.PropertiesUtil;
 import tech.aiflowy.common.util.StringUtil;
 import tech.aiflowy.common.web.exceptions.BusinessException;
 
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * 实体类。
@@ -81,6 +78,7 @@ public class AiLlm extends AiLlmBase {
 
     private ChatModel deepSeekLLm() {
         DeepseekConfig deepseekConfig = new DeepseekConfig();
+        deepseekConfig.setProvider(getProvider());
         deepseekConfig.setEndpoint(getPath(Llm_Endpoint));
         deepseekConfig.setApiKey(getLlmApiKey());
         deepseekConfig.setModel(getLlmModel());
@@ -90,6 +88,7 @@ public class AiLlm extends AiLlmBase {
 
     private ChatModel openaiLLm() {
         OpenAIChatConfig openAIChatConfig = new OpenAIChatConfig();
+        openAIChatConfig.setProvider(getProvider());
         openAIChatConfig.setEndpoint(getPath(Llm_Endpoint));
         openAIChatConfig.setApiKey(getLlmApiKey());
         openAIChatConfig.setModel(getLlmModel());
@@ -110,7 +109,12 @@ public class AiLlm extends AiLlmBase {
                 giteeRerankModelConfig.setRequestPath(rerankPath);
                 return new GiteeRerankModel(giteeRerankModelConfig);
             default:
-                return null;
+                DefaultRerankModelConfig defaultRerankModelConfig = new DefaultRerankModelConfig();
+                defaultRerankModelConfig.setApiKey(apiKey);
+                defaultRerankModelConfig.setEndpoint(endpoint);
+                defaultRerankModelConfig.setRequestPath(rerankPath);
+                defaultRerankModelConfig.setModel(getLlmModel());
+                return new DefaultRerankModel(defaultRerankModelConfig);
         }
     }
 
