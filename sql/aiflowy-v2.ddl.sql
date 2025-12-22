@@ -1067,9 +1067,9 @@ CREATE TABLE `tb_sys_role_menu`
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色-菜单表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_workflow_exec_record
+-- Table structure for tb_workflow_exec_result
 -- ----------------------------
-CREATE TABLE `tb_workflow_exec_record`
+CREATE TABLE `tb_workflow_exec_result`
 (
     `id`            bigint unsigned NOT NULL COMMENT '主键',
     `exec_key`      varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '执行标识',

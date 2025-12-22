@@ -2,9 +2,9 @@ SET
 FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for tb_workflow_exec_record
+-- Table structure for tb_workflow_exec_result
 -- ----------------------------
-CREATE TABLE `tb_workflow_exec_record`
+CREATE TABLE `tb_workflow_exec_result`
 (
     `id`            bigint unsigned NOT NULL COMMENT '主键',
     `exec_key`      varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '执行标识',
