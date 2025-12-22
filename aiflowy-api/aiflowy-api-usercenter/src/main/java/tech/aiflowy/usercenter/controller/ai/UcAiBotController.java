@@ -10,7 +10,6 @@ import com.agentsflex.core.model.chat.ChatModel;
 import com.agentsflex.core.model.chat.ChatOptions;
 import com.agentsflex.core.model.chat.tool.Tool;
 import com.agentsflex.core.prompt.MemoryPrompt;
-import com.alibaba.fastjson.JSON;
 import com.alicp.jetcache.Cache;
 import com.mybatisflex.core.query.QueryWrapper;
 import org.slf4j.Logger;
@@ -24,13 +23,13 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tech.aiflowy.ai.entity.*;
 import tech.aiflowy.ai.mapper.AiBotConversationMessageMapper;
 import tech.aiflowy.ai.service.*;
-import tech.aiflowy.common.ai.ChatManager;
 import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.audio.core.AudioServiceManager;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.satoken.util.SaTokenUtil;
 import tech.aiflowy.common.util.MapUtil;
 import tech.aiflowy.common.util.Maps;
+import tech.aiflowy.common.util.SSEUtil;
 import tech.aiflowy.common.web.controller.BaseCurdController;
 import tech.aiflowy.common.web.exceptions.BusinessException;
 import tech.aiflowy.common.web.jsonbody.JsonBody;
@@ -163,12 +162,12 @@ public class UcAiBotController extends BaseCurdController<AiBotService, AiBot> {
 
         AiBot aiBot = service.getById(botId);
         if (aiBot == null) {
-            return ChatManager.getInstance().sseEmitterForContent(JSON.toJSONString(Maps.of("content", "机器人不存在")));
+            return SSEUtil.sseEmitterForContent("机器人不存在");
         }
 
         boolean login = StpUtil.isLogin();
         if (!login && !aiBot.isAnonymousEnabled()) {
-            return ChatManager.getInstance().sseEmitterForContent(JSON.toJSONString(Maps.of("content", "此bot不支持匿名访问")));
+            return SSEUtil.sseEmitterForContent("此bot不支持匿名访问");
         }
 
         Map<String, Object> llmOptions = aiBot.getLlmOptions();
@@ -176,12 +175,12 @@ public class UcAiBotController extends BaseCurdController<AiBotService, AiBot> {
 
         AiLlm aiLlm = aiLlmService.getLlmInstance(aiBot.getLlmId());
         if (aiLlm == null) {
-            return ChatManager.getInstance().sseEmitterForContent(JSON.toJSONString(Maps.of("content", "LLM不存在")));
+            return SSEUtil.sseEmitterForContent( "LLM不存在");
         }
 
         ChatModel chatModel = aiLlm.toChatModel();
         if (chatModel == null) {
-            return ChatManager.getInstance().sseEmitterForContent(JSON.toJSONString(Maps.of("content", "LLM获取为空")));
+            return SSEUtil.sseEmitterForContent( "LLM获取为空");
         }
         final MemoryPrompt memoryPrompt = new MemoryPrompt();
         Integer maxMessageCount = MapUtil.getInteger(llmOptions, "maxMessageCount");
