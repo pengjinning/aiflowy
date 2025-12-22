@@ -6,7 +6,7 @@ import cn.dev33.satoken.util.SaResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tech.aiflowy.common.ai.util.UUIDGenerator;
+import tech.aiflowy.common.util.IdUtil;
 
 @RestController
 @RequestMapping("/api/v1/token")
@@ -15,7 +15,7 @@ public class SysGenerateTokenController {
     @GetMapping("/generateToken")
     public SaResult generateToken() {
         long loginId = StpUtil.getLoginIdAsLong();             // 假设这是你要绑定的账号ID
-        String customToken = UUIDGenerator.generateUUID();; // 自定义的 Token 字符串
+        String customToken = IdUtil.generateUUID();; // 自定义的 Token 字符串
         SaLoginModel saLoginModel = new SaLoginModel();
         saLoginModel.setToken(customToken);
         saLoginModel.setTimeout(-1);

@@ -9,19 +9,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tech.aiflowy.common.ai.util.UUIDGenerator;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.entity.LoginAccount;
 import tech.aiflowy.common.satoken.util.SaTokenUtil;
+import tech.aiflowy.common.util.IdUtil;
+import tech.aiflowy.common.vo.PkVo;
 import tech.aiflowy.common.web.controller.BaseCurdController;
 import tech.aiflowy.system.entity.SysApiKey;
-import tech.aiflowy.common.vo.PkVo;
 import tech.aiflowy.system.entity.SysApiKeyResourcePermissionRelationship;
 import tech.aiflowy.system.service.SysApiKeyResourcePermissionRelationshipService;
 import tech.aiflowy.system.service.SysApiKeyService;
 
 import javax.annotation.Resource;
-import javax.management.Query;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
 import java.time.LocalDate;
@@ -52,7 +51,7 @@ public class SysApiKeyController extends BaseCurdController<SysApiKeyService, Sy
     @PostMapping("/key/save")
     @SaCheckPermission("/api/v1/sysApiKey/save")
     public Result<PkVo> save() {
-        String apiKey = UUIDGenerator.generateUUID();
+        String apiKey = IdUtil.generateUUID();
         SysApiKey entity = new SysApiKey();
         entity.setApiKey(apiKey);
         entity.setCreated(new Date());
