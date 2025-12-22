@@ -50,7 +50,7 @@ public class AiBotMessageServiceImpl extends ServiceImpl<AiBotMessageMapper, AiB
         if (login) {
             QueryWrapper queryConversation = QueryWrapper.create()
                     .select("id","bot_id","account_id","session_id","content","role","created","options")
-                    .from("tb_ai_bot_message")
+                    .from("tb_bot_message")
                     .where("bot_id = ? ", botId)
                     .where("session_id = ? ", sessionId)
                     .where("account_id = ? ", SaTokenUtil.getLoginAccount().getId());
@@ -127,7 +127,7 @@ public class AiBotMessageServiceImpl extends ServiceImpl<AiBotMessageMapper, AiB
     public boolean removeMsg(String botId, String sessionId) {
         QueryWrapper queryWrapper =  QueryWrapper.create()
                  .select("*")
-                 .from("tb_ai_bot_message")
+                 .from("tb_bot_message")
                  .where("bot_id = ? ", botId)
                  .where("session_id = ? ", sessionId);
 

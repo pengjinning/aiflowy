@@ -10,6 +10,6 @@ import com.mybatisflex.annotation.Table;
  * @since 2024-08-23
  */
 
-@Table(value = "tb_ai_chat_topic", comment = "AI 话题表")
+@Table(value = "tb_chat_topic", comment = "AI 话题表")
 public class AiChatTopic extends AiChatTopicBase {
 }

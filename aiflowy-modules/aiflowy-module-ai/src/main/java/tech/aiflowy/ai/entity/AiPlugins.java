@@ -12,7 +12,7 @@ import com.mybatisflex.annotation.Table;
  * @author ArkLight
  * @since 2025-04-01
  */
-@Table(value = "tb_ai_plugins", comment = "插件")
+@Table(value = "tb_plugins", comment = "插件")
 public class AiPlugins extends AiPluginsBase {
 
     @Column(ignore = true)

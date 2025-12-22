@@ -14,7 +14,7 @@ import java.util.List;
  * @author Administrator
  * @since 2025-04-15
  */
-@Table("tb_ai_bot_conversation_message")
+@Table("tb_bot_conversation_message")
 public class AiBotConversationMessage extends AiBotConversationMessageBase {
     @Column(ignore = true)
     private List<AiBotMessage> aiBotMessageList;

@@ -10,7 +10,7 @@ import tech.aiflowy.ai.entity.base.AiChatMessageBase;
  * @since 2024-08-23
  */
 
-@Table(value = "tb_ai_chat_message", comment = "AI 消息记录表")
+@Table(value = "tb_chat_message", comment = "AI 消息记录表")
 public class AiChatMessage extends AiChatMessageBase {
 //    public Message toMessage() {
 //        String role = getRole();

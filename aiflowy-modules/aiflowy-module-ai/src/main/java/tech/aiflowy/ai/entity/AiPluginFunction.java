@@ -69,7 +69,7 @@ public class AiPluginFunction  extends BaseTool {
     private AiPlugin getAiPlugin(BigInteger pluginId) {
         QueryWrapper queryWrapper = QueryWrapper.create()
                 .select("*")
-                .from("tb_ai_plugin")
+                .from("tb_plugin")
                 .where("id = ?", pluginId);
         AiPluginMapper aiPluginMapper = SpringContextUtil.getBean(AiPluginMapper.class);
         AiPlugin aiPlugin1 = aiPluginMapper.selectOneByQuery(queryWrapper);
@@ -80,7 +80,7 @@ public class AiPluginFunction  extends BaseTool {
         AiPluginToolService pluginToolService = SpringContextUtil.getBean(AiPluginToolService.class);
         QueryWrapper queryAiPluginToolWrapper = QueryWrapper.create()
                 .select("*")
-                .from("tb_ai_plugin_tool")
+                .from("tb_plugin_tool")
                 .where("id = ? ", this.pluginToolId);
         AiPluginTool aiPluginTool = pluginToolService.getMapper().selectOneByQuery(queryAiPluginToolWrapper);
         List<Map<String, Object>> dataList = null;
@@ -147,7 +147,7 @@ public class AiPluginFunction  extends BaseTool {
         AiPluginToolService pluginToolService = SpringContextUtil.getBean(AiPluginToolService.class);
         QueryWrapper queryAiPluginToolWrapper = QueryWrapper.create()
                 .select("*")
-                .from("tb_ai_plugin_tool")
+                .from("tb_plugin_tool")
                 .where("id = ? ", pluginId);
         AiPluginTool aiPluginTool = pluginToolService.getMapper().selectOneByQuery(queryAiPluginToolWrapper);
         String method = aiPluginTool.getRequestMethod().toUpperCase();

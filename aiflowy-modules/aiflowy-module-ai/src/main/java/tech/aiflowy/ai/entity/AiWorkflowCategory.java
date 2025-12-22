@@ -10,6 +10,6 @@ import tech.aiflowy.ai.entity.base.AiWorkflowCategoryBase;
  * @author ArkLight
  * @since 2025-12-11
  */
-@Table("tb_ai_workflow_category")
+@Table("tb_workflow_category")
 public class AiWorkflowCategory extends AiWorkflowCategoryBase {
 }

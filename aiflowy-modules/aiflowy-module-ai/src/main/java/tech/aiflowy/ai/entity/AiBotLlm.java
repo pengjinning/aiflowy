@@ -10,6 +10,6 @@ import com.mybatisflex.annotation.Table;
  * @since 2024-08-28
  */
 
-@Table("tb_ai_bot_llm")
+@Table("tb_bot_llm")
 public class AiBotLlm extends AiBotLlmBase {
 }

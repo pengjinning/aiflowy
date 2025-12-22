@@ -10,7 +10,7 @@ import tech.aiflowy.ai.entity.base.AiWorkflowExecRecordBase;
  * @author ArkLight
  * @since 2025-05-28
  */
-@Table(value = "tb_ai_workflow_exec_record", comment = "工作流执行记录")
+@Table(value = "tb_workflow_exec_record", comment = "工作流执行记录")
 public class AiWorkflowExecRecord extends AiWorkflowExecRecordBase {
 
     public Long getExecTime() {

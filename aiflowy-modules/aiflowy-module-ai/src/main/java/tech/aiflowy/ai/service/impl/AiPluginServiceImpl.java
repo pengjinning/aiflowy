@@ -102,7 +102,7 @@ public class AiPluginServiceImpl extends ServiceImpl<AiPluginMapper, AiPlugin> i
     @Override
     public boolean updatePlugin(AiPlugin aiPlugin) {
         QueryWrapper queryWrapper = QueryWrapper.create().select("id")
-                .from("tb_ai_plugin")
+                .from("tb_plugin")
                 .where("id = ?", aiPlugin.getId());
         int update = aiPluginMapper.updateByQuery(aiPlugin, queryWrapper);
         if (update <= 0) {
@@ -114,7 +114,7 @@ public class AiPluginServiceImpl extends ServiceImpl<AiPluginMapper, AiPlugin> i
     @Override
     public List<AiPlugin> getList() {
         QueryWrapper queryWrapper = QueryWrapper.create().select("id, name, description, icon")
-                .from("tb_ai_plugin");
+                .from("tb_plugin");
         List<AiPlugin> aiPlugins = aiPluginMapper.selectListByQueryAs(queryWrapper, AiPlugin.class);
         return aiPlugins;
     }
@@ -123,7 +123,7 @@ public class AiPluginServiceImpl extends ServiceImpl<AiPluginMapper, AiPlugin> i
     public Result<Page<AiPlugin>> pageByCategory(Long pageNumber, Long pageSize, int category) {
         // 通过分类查询插件
         QueryWrapper queryWrapper = QueryWrapper.create().select("plugin_id")
-                .from("tb_ai_plugin_category_relation")
+                .from("tb_plugin_category_relation")
                 .where("category_id = ? ", category);
         // 分页查询该分类中的插件
         Page<BigInteger> pagePluginIds = aiPluginCategoryRelationMapper.paginateAs(new Page<>(pageNumber, pageSize), queryWrapper, BigInteger.class);
@@ -135,7 +135,7 @@ public class AiPluginServiceImpl extends ServiceImpl<AiPluginMapper, AiPlugin> i
         List<BigInteger> pluginIds = pagePluginIds.getRecords();
         // 查询对应的插件信息
         QueryWrapper queryPluginWrapper = QueryWrapper.create().select("*")
-                .from("tb_ai_plugin")
+                .from("tb_plugin")
                 .in("id", pluginIds);
         aiPlugins = aiPluginMapper.selectListByQuery(queryPluginWrapper);
         Page<AiPlugin> aiPluginPage = new Page<>(aiPlugins, pageNumber, pageSize, paginateCategories.getTotalRow());

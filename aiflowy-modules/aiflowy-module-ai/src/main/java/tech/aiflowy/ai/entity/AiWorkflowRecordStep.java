@@ -11,7 +11,7 @@ import tech.aiflowy.ai.entity.base.AiWorkflowRecordStepBase;
  * @author ArkLight
  * @since 2025-05-28
  */
-@Table(value = "tb_ai_workflow_record_step", comment = "执行记录步骤")
+@Table(value = "tb_workflow_record_step", comment = "执行记录步骤")
 public class AiWorkflowRecordStep extends AiWorkflowRecordStepBase {
 
     /**

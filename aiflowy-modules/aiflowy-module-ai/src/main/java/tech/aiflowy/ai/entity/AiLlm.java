@@ -34,7 +34,7 @@ import java.util.Map;
  * @since 2024-08-23
  */
 
-@Table("tb_ai_llm")
+@Table("tb_llm")
 public class AiLlm extends AiLlmBase {
 
     @RelationManyToOne(selfField = "providerId", targetField = "id")

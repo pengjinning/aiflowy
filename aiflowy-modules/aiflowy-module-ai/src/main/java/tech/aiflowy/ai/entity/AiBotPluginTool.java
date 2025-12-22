@@ -4,7 +4,7 @@ package tech.aiflowy.ai.entity;
 import com.mybatisflex.annotation.RelationOneToOne;
 import com.mybatisflex.annotation.Table;
 
-@Table("tb_ai_bot_plugins")
+@Table("tb_bot_plugins")
 public class AiBotPluginTool {
 
     @RelationOneToOne(selfField = "pluginId", targetField = "id")

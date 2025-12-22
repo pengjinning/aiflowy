@@ -389,7 +389,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
         if (pluginToolIds != null && !pluginToolIds.isEmpty()) {
             QueryWrapper queryTool = QueryWrapper.create()
                     .select("*")
-                    .from("tb_ai_plugin_tool")
+                    .from("tb_plugin_tool")
                     .in("id", pluginToolIds);
             List<AiPluginTool> aiPluginTools = aiPluginToolService.getMapper().selectListWithRelationsByQuery(queryTool);
             if (aiPluginTools != null && !aiPluginTools.isEmpty()) {

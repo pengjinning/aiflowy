@@ -11,7 +11,7 @@ import com.mybatisflex.annotation.Table;
  * @since 2024-08-28
  */
 
-@Table("tb_ai_bot_workflow")
+@Table("tb_bot_workflow")
 public class AiBotWorkflow extends AiBotWorkflowBase {
 
     @RelationOneToOne(selfField = "workflowId", targetField = "id")

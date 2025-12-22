@@ -10,6 +10,6 @@ import tech.aiflowy.ai.entity.base.AiResourceBase;
  * @author ArkLight
  * @since 2025-06-27
  */
-@Table(value = "tb_ai_resource", comment = "素材库")
+@Table(value = "tb_resource", comment = "素材库")
 public class AiResource extends AiResourceBase {
 }

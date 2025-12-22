@@ -11,7 +11,7 @@ import tech.aiflowy.ai.entity.base.AiBotPluginsBase;
  * @author michael
  * @since 2025-04-07
  */
-@Table("tb_ai_bot_plugins")
+@Table("tb_bot_plugins")
 public class AiBotPlugins extends AiBotPluginsBase {
 
     @RelationOneToOne(selfField = "pluginId", targetField = "id")

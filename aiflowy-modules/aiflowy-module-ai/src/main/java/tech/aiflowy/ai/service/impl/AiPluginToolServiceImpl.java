@@ -56,13 +56,13 @@ public class AiPluginToolServiceImpl extends ServiceImpl<AiPluginToolMapper, AiP
         //查询当前插件工具
         QueryWrapper queryAiPluginToolWrapper = QueryWrapper.create()
                 .select("*")
-                .from("tb_ai_plugin_tool")
+                .from("tb_plugin_tool")
                 .where("id = ? ", aiPluginToolId);
         AiPluginTool aiPluginTool = aiPluginToolMapper.selectOneByQuery(queryAiPluginToolWrapper);
         // 查询当前的插件信息
         QueryWrapper queryAiPluginWrapper = QueryWrapper.create()
                 .select("*")
-                .from("tb_ai_plugin")
+                .from("tb_plugin")
                 .where("id = ?", aiPluginTool.getPluginId());
         AiPlugin aiPlugin = aiPluginMapper.selectOneByQuery(queryAiPluginWrapper);
         Map<String, Object> result = new HashMap<>();
@@ -84,13 +84,13 @@ public class AiPluginToolServiceImpl extends ServiceImpl<AiPluginToolMapper, AiP
     public List<AiPluginTool> searchPluginToolByPluginId(BigInteger pluginId, BigInteger botId) {
         QueryWrapper queryAiPluginToolWrapper = QueryWrapper.create()
                 .select("*")
-                .from("tb_ai_plugin_tool")
+                .from("tb_plugin_tool")
                 .where("plugin_id = ? ", pluginId);
         List<AiPluginTool> aiPluginTools = aiPluginToolMapper.selectListByQueryAs(queryAiPluginToolWrapper, AiPluginTool.class);
         // 查询当前bot有哪些插件工具方法
         QueryWrapper queryBotPluginTools = QueryWrapper.create()
                 .select("plugin_tool_id")
-                .from("tb_ai_bot_plugins")
+                .from("tb_bot_plugins")
                 .where("bot_id = ? ", botId);
         List<BigInteger> aiBotPluginToolIds = aiBotPluginsMapper.selectListWithRelationsByQueryAs(queryBotPluginTools, BigInteger.class);
         aiBotPluginToolIds.forEach(botPluginTooId -> {
@@ -107,7 +107,7 @@ public class AiPluginToolServiceImpl extends ServiceImpl<AiPluginToolMapper, AiP
     public List<AiPluginTool> getPluginToolList(BigInteger botId) {
         QueryWrapper queryAiPluginToolWrapper = QueryWrapper.create()
                 .select("plugin_tool_id")
-                .from("tb_ai_bot_plugins")
+                .from("tb_bot_plugins")
                 .where("bot_id = ? ", botId);
         List<BigInteger> pluginToolIds = aiBotPluginsMapper.selectListByQueryAs(queryAiPluginToolWrapper, BigInteger.class);
         if (pluginToolIds == null || pluginToolIds.isEmpty()) {

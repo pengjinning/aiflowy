@@ -11,7 +11,7 @@ import tech.aiflowy.ai.entity.base.AiWorkflowBase;
  * @since 2024-08-23
  */
 
-@Table("tb_ai_workflow")
+@Table("tb_workflow")
 public class AiWorkflow extends AiWorkflowBase {
 
     public Tool toFunction(boolean needEnglishName) {

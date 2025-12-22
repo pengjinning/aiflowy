@@ -36,7 +36,7 @@ public class AiPluginCategoryRelationServiceImpl extends ServiceImpl<AiPluginCat
     public boolean updateRelation(long pluginId, ArrayList<Integer> categoryIds) {
         if (categoryIds == null){
             QueryWrapper queryWrapper = QueryWrapper.create().select("*")
-                    .from("tb_ai_plugin_category_relation")
+                    .from("tb_plugin_category_relation")
                     .where("plugin_id  = ?", pluginId);
             int delete = relationMapper.deleteByQuery(queryWrapper);
             if (delete <= 0){
@@ -46,7 +46,7 @@ public class AiPluginCategoryRelationServiceImpl extends ServiceImpl<AiPluginCat
         }
         for (Integer categoryId : categoryIds) {
             QueryWrapper queryWrapper = QueryWrapper.create().select("*")
-                    .from("tb_ai_plugin_category_relation")
+                    .from("tb_plugin_category_relation")
                     .where("plugin_id  = ?", pluginId)
                     .where("category_id  = ?", categoryId);
             AiPluginCategoryRelation selectedOneByQuery = relationMapper.selectOneByQuery(queryWrapper);
@@ -60,7 +60,7 @@ public class AiPluginCategoryRelationServiceImpl extends ServiceImpl<AiPluginCat
                 }
             } else {
                 QueryWrapper queryWrapperUpdate = QueryWrapper.create().select("*")
-                        .from("tb_ai_plugin_category_relation")
+                        .from("tb_plugin_category_relation")
                         .where("plugin_id  = ?", pluginId);
                 AiPluginCategoryRelation selectedOne = relationMapper.selectOneByQuery(queryWrapper);
                 if (selectedOne != null){
@@ -79,7 +79,7 @@ public class AiPluginCategoryRelationServiceImpl extends ServiceImpl<AiPluginCat
     @Override
     public List<AiPluginCategories>  getPluginCategories(long pluginId) {
         QueryWrapper categoryQueryWrapper =   QueryWrapper.create().select("category_id")
-                .from("tb_ai_plugin_category_relation")
+                .from("tb_plugin_category_relation")
                 .where("plugin_id  = ?", pluginId);
         List<BigInteger> categoryIdList =  relationMapper.selectListByQueryAs(categoryQueryWrapper, BigInteger.class);
         List<AiPluginCategories> aiPluginCategories = new ArrayList<AiPluginCategories>();
@@ -87,7 +87,7 @@ public class AiPluginCategoryRelationServiceImpl extends ServiceImpl<AiPluginCat
             return aiPluginCategories;
         }
         QueryWrapper categoryQuery =  QueryWrapper.create().select("id, name")
-                .from("tb_ai_plugin_categories")
+                .from("tb_plugin_categories")
                 .in("id", categoryIdList);
         aiPluginCategories = aiPluginCategoriesMapper.selectListByQuery(categoryQuery);
         return aiPluginCategories;

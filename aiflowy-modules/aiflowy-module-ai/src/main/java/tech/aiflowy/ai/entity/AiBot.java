@@ -12,7 +12,7 @@ import java.util.Map;
  * @since 2024-08-23
  */
 
-@Table("tb_ai_bot")
+@Table("tb_bot")
 public class AiBot extends AiBotBase {
 
 

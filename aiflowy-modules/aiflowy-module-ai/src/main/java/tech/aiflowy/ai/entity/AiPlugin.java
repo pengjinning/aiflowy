@@ -15,10 +15,10 @@ import java.util.List;
  * @author Administrator
  * @since 2025-04-25
  */
-@Table("tb_ai_plugin")
+@Table("tb_plugin")
 public class AiPlugin extends AiPluginBase {
 
-    @RelationOneToMany(selfField = "id", targetField = "pluginId", targetTable = "tb_ai_plugin_tool")
+    @RelationOneToMany(selfField = "id", targetField = "pluginId", targetTable = "tb_plugin_tool")
     private List<AiPluginTool> tools;
 
     public String getTitle() {

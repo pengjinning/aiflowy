@@ -12,11 +12,11 @@ import com.mybatisflex.annotation.Table;
  * @since 2024-08-23
  */
 
-@Table("tb_ai_document_chunk")
+@Table("tb_document_chunk")
 public class AiDocumentChunk extends AiDocumentChunkBase {
 
     @RelationOneToOne(selfField = "documentId",
-            targetTable = "tb_ai_document",
+            targetTable = "tb_document",
             targetField = "id",
             valueField = "title")
     @Column(ignore = true)

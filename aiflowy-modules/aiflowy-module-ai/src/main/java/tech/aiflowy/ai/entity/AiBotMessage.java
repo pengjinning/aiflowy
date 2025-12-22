@@ -16,7 +16,7 @@ import tech.aiflowy.ai.entity.base.AiBotMessageBase;
  * @since 2024-11-04
  */
 
-@Table(value = "tb_ai_bot_message", comment = "Bot 消息记录表")
+@Table(value = "tb_bot_message", comment = "Bot 消息记录表")
 public class AiBotMessage extends AiBotMessageBase {
 
     @Column(ignore = true)

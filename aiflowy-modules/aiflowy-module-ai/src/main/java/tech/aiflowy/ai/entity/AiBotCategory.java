@@ -9,6 +9,6 @@ import tech.aiflowy.ai.entity.base.AiBotCategoryBase;
  * @author ArkLight
  * @since 2025-12-18
  */
-@Table(value = "tb_ai_bot_category", comment = "bot分类")
+@Table(value = "tb_bot_category", comment = "bot分类")
 public class AiBotCategory extends AiBotCategoryBase {
 }

@@ -10,6 +10,6 @@ import tech.aiflowy.ai.entity.base.AiBotApiKeyBase;
  * @author ArkLight
  * @since 2025-07-18
  */
-@Table(value = "tb_ai_bot_api_key", comment = "bot apiKey 表")
+@Table(value = "tb_bot_api_key", comment = "bot apiKey 表")
 public class AiBotApiKey extends AiBotApiKeyBase {
 }

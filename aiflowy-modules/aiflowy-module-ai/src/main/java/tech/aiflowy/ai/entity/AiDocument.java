@@ -13,7 +13,7 @@ import java.math.BigInteger;
  * @since 2024-08-23
  */
 
-@Table("tb_ai_document")
+@Table("tb_document")
 public class AiDocument extends AiDocumentBase {
 
     // 每条document对应的有多少条documentChunk分段

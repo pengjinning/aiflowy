@@ -43,7 +43,7 @@ public class AiBotPluginsServiceImpl extends ServiceImpl<AiBotPluginsMapper, AiB
     @Override
     public boolean doRemove(String botId, String pluginToolId) {
         QueryWrapper queryWrapper = QueryWrapper.create().select("id")
-                .from("tb_ai_bot_plugins")
+                .from("tb_bot_plugins")
                 .where("bot_id = ?", botId)
                 .where("plugin_tool_id = ?", pluginToolId);
         BigInteger id = aiBotPluginsMapper.selectOneByQueryAs(queryWrapper, BigInteger.class);

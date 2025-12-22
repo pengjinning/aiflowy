@@ -10,6 +10,6 @@ import tech.aiflowy.ai.entity.base.AiLlmProviderBase;
  * @author 12076
  * @since 2025-12-16
  */
-@Table("tb_ai_llm_provider")
+@Table("tb_llm_provider")
 public class AiLlmProvider extends AiLlmProviderBase {
 }

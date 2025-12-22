@@ -83,9 +83,9 @@ public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocum
         // 构建 QueryWrapper
         QueryWrapper queryWrapper = QueryWrapper.create()
                 .select("dt.*", "COUNT(ck.document_id) AS chunk_count") // 选择字段
-                .from("tb_ai_document")
+                .from("tb_document")
                 .as("dt")// 主表
-                .leftJoin("tb_ai_document_chunk")
+                .leftJoin("tb_document_chunk")
                 .as("ck").on("dt.id = ck.document_id") // 左连接
                 .where("dt.knowledge_id = ?", knowledgeId); // 条件 1
         // 动态添加 fileName 条件
@@ -133,9 +133,9 @@ public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocum
         embeddingOptions.setModel(aiLlm.getLlmModel());
         options.setEmbeddingOptions(embeddingOptions);
         options.setCollectionName(knowledge.getVectorStoreCollection());
-        // 查询文本分割表tb_ai_document_chunk中对应的有哪些数据，找出来删除
+        // 查询文本分割表tb_document_chunk中对应的有哪些数据，找出来删除
         QueryWrapper queryWrapper = QueryWrapper.create()
-                .select("id").from("tb_ai_document_chunk").where("document_id = ?", id);
+                .select("id").from("tb_document_chunk").where("document_id = ?", id);
         List<BigInteger> chunkIds = aiDocumentChunkMapper.selectListByQueryAs(queryWrapper, BigInteger.class);
         documentStore.delete(chunkIds, options);
         // 删除搜索引擎中的数据

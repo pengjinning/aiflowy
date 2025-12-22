@@ -10,6 +10,6 @@ import com.mybatisflex.annotation.Table;
  * @since 2024-08-23
  */
 
-@Table("tb_ai_document_history")
+@Table("tb_document_history")
 public class AiDocumentHistory extends AiDocumentHistoryBase {
 }

@@ -10,6 +10,6 @@ import tech.aiflowy.ai.entity.base.AiPluginCategoriesBase;
  * @author Administrator
  * @since 2025-05-21
  */
-@Table("tb_ai_plugin_categories")
+@Table("tb_plugin_categories")
 public class AiPluginCategories extends AiPluginCategoriesBase {
 }

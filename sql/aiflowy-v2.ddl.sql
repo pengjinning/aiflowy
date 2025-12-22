@@ -3,10 +3,10 @@ SET
 FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
--- Table structure for tb_ai_bot
+-- Table structure for tb_bot
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_bot`;
-CREATE TABLE `tb_ai_bot`
+DROP TABLE IF EXISTS `tb_bot`;
+CREATE TABLE `tb_bot`
 (
     `id`          bigint UNSIGNED NOT NULL COMMENT '主键ID',
     `alias`       varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '别名',
@@ -25,14 +25,14 @@ CREATE TABLE `tb_ai_bot`
     `status`      tinyint(1) NULL DEFAULT NULL COMMENT '数据状态',
     `category_id` bigint unsigned DEFAULT NULL COMMENT '分类ID',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `tb_ai_bot_alias_uindex`(`alias`) USING BTREE
+    UNIQUE INDEX `tb_bot_alias_uindex`(`alias`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_bot_api_key
+-- Table structure for tb_bot_api_key
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_bot_api_key`;
-CREATE TABLE `tb_ai_bot_api_key`
+DROP TABLE IF EXISTS `tb_bot_api_key`;
+CREATE TABLE `tb_bot_api_key`
 (
     `id`      bigint                                                         NOT NULL COMMENT 'id',
     `api_key` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT 'apiKey，请勿手动修改！',
@@ -43,10 +43,10 @@ CREATE TABLE `tb_ai_bot_api_key`
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'bot apiKey 表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_bot_conversation_message
+-- Table structure for tb_bot_conversation_message
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_bot_conversation_message`;
-CREATE TABLE `tb_ai_bot_conversation_message`
+DROP TABLE IF EXISTS `tb_bot_conversation_message`;
+CREATE TABLE `tb_bot_conversation_message`
 (
     `session_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '会话id',
     `title`      varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '会话标题',
@@ -57,10 +57,10 @@ CREATE TABLE `tb_ai_bot_conversation_message`
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_bot_knowledge
+-- Table structure for tb_bot_knowledge
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_bot_knowledge`;
-CREATE TABLE `tb_ai_bot_knowledge`
+DROP TABLE IF EXISTS `tb_bot_knowledge`;
+CREATE TABLE `tb_bot_knowledge`
 (
     `id`           bigint UNSIGNED NOT NULL AUTO_INCREMENT,
     `bot_id`       bigint UNSIGNED NULL DEFAULT NULL,
@@ -70,10 +70,10 @@ CREATE TABLE `tb_ai_bot_knowledge`
 ) ENGINE = InnoDB AUTO_INCREMENT = 36 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_bot_llm
+-- Table structure for tb_bot_llm
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_bot_llm`;
-CREATE TABLE `tb_ai_bot_llm`
+DROP TABLE IF EXISTS `tb_bot_llm`;
+CREATE TABLE `tb_bot_llm`
 (
     `id`      bigint UNSIGNED NOT NULL,
     `bot_id`  bigint UNSIGNED NULL DEFAULT NULL,
@@ -83,10 +83,10 @@ CREATE TABLE `tb_ai_bot_llm`
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_bot_message
+-- Table structure for tb_bot_message
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_bot_message`;
-CREATE TABLE `tb_ai_bot_message`
+DROP TABLE IF EXISTS `tb_bot_message`;
+CREATE TABLE `tb_bot_message`
 (
     `id`              bigint UNSIGNED NOT NULL,
     `bot_id`          bigint UNSIGNED NULL DEFAULT NULL COMMENT 'Bot ID',
@@ -106,10 +106,10 @@ CREATE TABLE `tb_ai_bot_message`
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'Bot 消息记录表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_bot_plugins
+-- Table structure for tb_bot_plugins
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_bot_plugins`;
-CREATE TABLE `tb_ai_bot_plugins`
+DROP TABLE IF EXISTS `tb_bot_plugins`;
+CREATE TABLE `tb_bot_plugins`
 (
     `id`             bigint UNSIGNED NOT NULL,
     `bot_id`         bigint UNSIGNED NULL DEFAULT NULL,
@@ -119,10 +119,10 @@ CREATE TABLE `tb_ai_bot_plugins`
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_bot_workflow
+-- Table structure for tb_bot_workflow
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_bot_workflow`;
-CREATE TABLE `tb_ai_bot_workflow`
+DROP TABLE IF EXISTS `tb_bot_workflow`;
+CREATE TABLE `tb_bot_workflow`
 (
     `id`          bigint UNSIGNED NOT NULL,
     `bot_id`      bigint UNSIGNED NULL DEFAULT NULL,
@@ -132,10 +132,10 @@ CREATE TABLE `tb_ai_bot_workflow`
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_chat_message
+-- Table structure for tb_chat_message
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_chat_message`;
-CREATE TABLE `tb_ai_chat_message`
+DROP TABLE IF EXISTS `tb_chat_message`;
+CREATE TABLE `tb_chat_message`
 (
     `id`                bigint UNSIGNED NOT NULL,
     `topic_id`          bigint UNSIGNED NULL DEFAULT NULL,
@@ -154,10 +154,10 @@ CREATE TABLE `tb_ai_chat_message`
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'AI 消息记录表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_chat_topic
+-- Table structure for tb_chat_topic
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_chat_topic`;
-CREATE TABLE `tb_ai_chat_topic`
+DROP TABLE IF EXISTS `tb_chat_topic`;
+CREATE TABLE `tb_chat_topic`
 (
     `id`         bigint UNSIGNED NOT NULL,
     `account_id` bigint UNSIGNED NULL DEFAULT NULL,
@@ -169,10 +169,10 @@ CREATE TABLE `tb_ai_chat_topic`
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'AI 话题表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_document
+-- Table structure for tb_document
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_document`;
-CREATE TABLE `tb_ai_document`
+DROP TABLE IF EXISTS `tb_document`;
+CREATE TABLE `tb_document`
 (
     `id`            bigint UNSIGNED NOT NULL,
     `knowledge_id`  bigint UNSIGNED NOT NULL COMMENT '知识库ID',
@@ -193,10 +193,10 @@ CREATE TABLE `tb_ai_document`
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '文档' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_document_chunk
+-- Table structure for tb_document_chunk
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_document_chunk`;
-CREATE TABLE `tb_ai_document_chunk`
+DROP TABLE IF EXISTS `tb_document_chunk`;
+CREATE TABLE `tb_document_chunk`
 (
     `id`           bigint UNSIGNED NOT NULL,
     `document_id`  bigint UNSIGNED NOT NULL COMMENT '文档ID',
@@ -207,10 +207,10 @@ CREATE TABLE `tb_ai_document_chunk`
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_document_history
+-- Table structure for tb_document_history
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_document_history`;
-CREATE TABLE `tb_ai_document_history`
+DROP TABLE IF EXISTS `tb_document_history`;
+CREATE TABLE `tb_document_history`
 (
     `id`                bigint UNSIGNED NOT NULL AUTO_INCREMENT,
     `document_id`       bigint NULL DEFAULT NULL COMMENT '修改的文档ID',
@@ -226,10 +226,10 @@ CREATE TABLE `tb_ai_document_history`
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_knowledge
+-- Table structure for tb_knowledge
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_knowledge`;
-CREATE TABLE `tb_ai_knowledge`
+DROP TABLE IF EXISTS `tb_knowledge`;
+CREATE TABLE `tb_knowledge`
 (
     `id`                      bigint UNSIGNED NOT NULL COMMENT 'Id',
     `alias`                   varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '别名',
@@ -253,14 +253,14 @@ CREATE TABLE `tb_ai_knowledge`
     `search_engine_enable`    tinyint(1) NULL DEFAULT NULL COMMENT '是否启用搜索引擎',
     `english_name`            varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '英文名称',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `tb_ai_knowledge_alias_uindex`(`alias`) USING BTREE
+    UNIQUE INDEX `tb_knowledge_alias_uindex`(`alias`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '知识库' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_llm
+-- Table structure for tb_llm
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_llm`;
-CREATE TABLE `tb_ai_llm`
+DROP TABLE IF EXISTS `tb_llm`;
+CREATE TABLE `tb_llm`
 (
     `id`                bigint(0) UNSIGNED NOT NULL COMMENT 'ID',
     `dept_id`           bigint(0) UNSIGNED NOT NULL COMMENT '部门ID',
@@ -289,10 +289,10 @@ CREATE TABLE `tb_ai_llm`
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '大模型管理' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for tb_ai_plugin
+-- Table structure for tb_plugin
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_plugin`;
-CREATE TABLE `tb_ai_plugin`
+DROP TABLE IF EXISTS `tb_plugin`;
+CREATE TABLE `tb_plugin`
 (
     `id`          bigint                                                       NOT NULL COMMENT '插件id',
     `alias`       varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '别名',
@@ -311,14 +311,14 @@ CREATE TABLE `tb_ai_plugin`
     `tenant_id`   bigint NULL DEFAULT NULL COMMENT '租户id',
     `created_by`  bigint NULL DEFAULT NULL COMMENT '创建人',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `tb_ai_plugin_alias_uindex`(`alias`) USING BTREE
+    UNIQUE INDEX `tb_plugin_alias_uindex`(`alias`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '插件表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_llm_provider
+-- Table structure for tb_llm_provider
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_llm_provider`;
-CREATE TABLE `tb_ai_llm_provider`
+DROP TABLE IF EXISTS `tb_llm_provider`;
+CREATE TABLE `tb_llm_provider`
 (
     `id`            bigint(0) UNSIGNED NOT NULL COMMENT 'id',
     `provider_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '供应商名称',
@@ -337,10 +337,10 @@ CREATE TABLE `tb_ai_llm_provider`
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
--- Table structure for tb_ai_plugin_categories
+-- Table structure for tb_plugin_categories
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_plugin_categories`;
-CREATE TABLE `tb_ai_plugin_categories`
+DROP TABLE IF EXISTS `tb_plugin_categories`;
+CREATE TABLE `tb_plugin_categories`
 (
     `id`         int                                                           NOT NULL AUTO_INCREMENT,
     `name`       varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -349,20 +349,20 @@ CREATE TABLE `tb_ai_plugin_categories`
 ) ENGINE = InnoDB AUTO_INCREMENT = 41 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_plugin_category_relation
+-- Table structure for tb_plugin_category_relation
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_plugin_category_relation`;
-CREATE TABLE `tb_ai_plugin_category_relation`
+DROP TABLE IF EXISTS `tb_plugin_category_relation`;
+CREATE TABLE `tb_plugin_category_relation`
 (
     `category_id` int    NOT NULL,
     `plugin_id`   bigint NOT NULL
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_plugin_tool
+-- Table structure for tb_plugin_tool
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_plugin_tool`;
-CREATE TABLE `tb_ai_plugin_tool`
+DROP TABLE IF EXISTS `tb_plugin_tool`;
+CREATE TABLE `tb_plugin_tool`
 (
     `id`             bigint                                                        NOT NULL COMMENT '插件工具id',
     `plugin_id`      bigint                                                        NOT NULL COMMENT '插件id',
@@ -381,10 +381,10 @@ CREATE TABLE `tb_ai_plugin_tool`
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '插件工具表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_resource
+-- Table structure for tb_resource
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_resource`;
-CREATE TABLE `tb_ai_resource`
+DROP TABLE IF EXISTS `tb_resource`;
+CREATE TABLE `tb_resource`
 (
     `id`            bigint UNSIGNED NOT NULL COMMENT '主键',
     `dept_id`       bigint UNSIGNED NOT NULL COMMENT '部门ID',
@@ -406,10 +406,10 @@ CREATE TABLE `tb_ai_resource`
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '素材库' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_workflow
+-- Table structure for tb_workflow
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_workflow`;
-CREATE TABLE `tb_ai_workflow`
+DROP TABLE IF EXISTS `tb_workflow`;
+CREATE TABLE `tb_workflow`
 (
     `id`           bigint UNSIGNED NOT NULL COMMENT 'ID 主键',
     `alias`        varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '别名',
@@ -427,14 +427,14 @@ CREATE TABLE `tb_ai_workflow`
     `status`       tinyint                                                       NOT NULL DEFAULT 0 COMMENT '数据状态',
     `category_id`  bigint UNSIGNED NULL DEFAULT NULL COMMENT '分类ID',
     PRIMARY KEY (`id`) USING BTREE,
-    UNIQUE INDEX `tb_ai_workflow_alias_uindex`(`alias`) USING BTREE
+    UNIQUE INDEX `tb_workflow_alias_uindex`(`alias`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '工作流' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_workflow_category
+-- Table structure for tb_workflow_category
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_ai_workflow_category`;
-CREATE TABLE `tb_ai_workflow_category`
+DROP TABLE IF EXISTS `tb_workflow_category`;
+CREATE TABLE `tb_workflow_category`
 (
     `id`            bigint UNSIGNED NOT NULL COMMENT '主键',
     `category_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '分类名称',
@@ -1083,9 +1083,9 @@ CREATE TABLE `tb_sys_token`
 ) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'iframe 嵌入用 Token 表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_ai_workflow_exec_record
+-- Table structure for tb_workflow_exec_record
 -- ----------------------------
-CREATE TABLE `tb_ai_workflow_exec_record`
+CREATE TABLE `tb_workflow_exec_record`
 (
     `id`            bigint unsigned NOT NULL COMMENT '主键',
     `exec_key`      varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '执行标识',
@@ -1107,9 +1107,9 @@ CREATE TABLE `tb_ai_workflow_exec_record`
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC COMMENT='工作流执行记录';
 
 -- ----------------------------
--- Table structure for tb_ai_workflow_record_step
+-- Table structure for tb_workflow_record_step
 -- ----------------------------
-CREATE TABLE `tb_ai_workflow_record_step`
+CREATE TABLE `tb_workflow_record_step`
 (
     `id`         bigint unsigned NOT NULL COMMENT '主键',
     `record_id`  bigint unsigned NOT NULL COMMENT '执行记录ID',
@@ -1130,9 +1130,9 @@ CREATE TABLE `tb_ai_workflow_record_step`
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC COMMENT='执行记录步骤';
 
 -- ----------------------------
--- Table structure for tb_ai_bot_category
+-- Table structure for tb_bot_category
 -- ----------------------------
-CREATE TABLE `tb_ai_bot_category`
+CREATE TABLE `tb_bot_category`
 (
     `id`            bigint unsigned NOT NULL COMMENT '主键',
     `category_name` varchar(50) NOT NULL COMMENT '分类名称',
@@ -1146,9 +1146,9 @@ CREATE TABLE `tb_ai_bot_category`
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='bot分类';
 
 -- ----------------------------
--- Table structure for tb_ai_bot_recently_used
+-- Table structure for tb_bot_recently_used
 -- ----------------------------
-CREATE TABLE `tb_ai_bot_recently_used`
+CREATE TABLE `tb_bot_recently_used`
 (
     `id`         bigint unsigned NOT NULL COMMENT '主键',
     `bot_id`     bigint unsigned NOT NULL COMMENT 'botId',

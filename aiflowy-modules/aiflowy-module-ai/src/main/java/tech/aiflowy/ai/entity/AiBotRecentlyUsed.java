@@ -9,6 +9,6 @@ import tech.aiflowy.ai.entity.base.AiBotRecentlyUsedBase;
  * @author ArkLight
  * @since 2025-12-18
  */
-@Table(value = "tb_ai_bot_recently_used", comment = "最近使用")
+@Table(value = "tb_bot_recently_used", comment = "最近使用")
 public class AiBotRecentlyUsed extends AiBotRecentlyUsedBase {
 }
