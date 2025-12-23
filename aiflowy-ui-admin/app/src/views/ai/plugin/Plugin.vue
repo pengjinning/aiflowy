@@ -120,14 +120,12 @@ const handleDelete = (item) => {
     type: 'warning',
   })
     .then(() => {
-      api
-        .post('/api/v1/plugin/plugin/remove', { id: item.id })
-        .then((res) => {
-          if (res.errorCode === 0) {
-            ElMessage.success($t('message.deleteOkMessage'));
-            pageDataRef.value.setQuery({});
-          }
-        });
+      api.post('/api/v1/plugin/plugin/remove', { id: item.id }).then((res) => {
+        if (res.errorCode === 0) {
+          ElMessage.success($t('message.deleteOkMessage'));
+          pageDataRef.value.setQuery({});
+        }
+      });
     })
     .catch(() => {});
 };
@@ -184,14 +182,12 @@ const handleEditCategory = (params) => {
     });
 };
 const handleAddCategory = (params) => {
-  api
-    .post('/api/v1/pluginCategory/save', { name: params.name })
-    .then((res) => {
-      if (res.errorCode === 0) {
-        getPluginCategoryList();
-        ElMessage.success($t('message.saveOkMessage'));
-      }
-    });
+  api.post('/api/v1/pluginCategory/save', { name: params.name }).then((res) => {
+    if (res.errorCode === 0) {
+      getPluginCategoryList();
+      ElMessage.success($t('message.saveOkMessage'));
+    }
+  });
 };
 const handleDeleteCategory = (params) => {
   api

@@ -90,8 +90,8 @@ function save() {
     btnLoading.value = true;
 
     const apiUrl = isAdd.value
-      ? 'api/v1/aiPluginTool/tool/save'
-      : 'api/v1/aiPluginTool/tool/update';
+      ? 'api/v1/pluginItem/tool/save'
+      : 'api/v1/pluginItem/tool/update';
 
     // 创建纯对象提交，避免 Proxy
     const submitData = { ...entity };

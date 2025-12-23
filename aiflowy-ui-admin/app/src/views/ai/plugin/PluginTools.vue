@@ -22,7 +22,7 @@ const headerButtons = [
   },
   {
     key: 'createTool',
-    text: $t('aiPluginTool.createPluginTool'),
+    text: $t('pluginItem.createPluginTool'),
     icon: markRaw(Plus),
     type: 'primary',
     data: { action: 'createTool' },
