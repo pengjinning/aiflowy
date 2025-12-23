@@ -40,6 +40,9 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.*;
 
+import static tech.aiflowy.ai.entity.table.BotPluginTableDef.BOT_PLUGIN;
+import static tech.aiflowy.ai.entity.table.PluginItemTableDef.PLUGIN_ITEM;
+
 /**
  * 控制层。
  *
@@ -197,16 +200,12 @@ public class BotController extends BaseCurdController<BotService, Bot> {
             memoryPrompt.setSystemMessage(SystemMessage.of(systemPrompt));
         }
 
-        if (StpUtil.isLogin()) {
-            BotMessageMemory memory = new BotMessageMemory(botId, SaTokenUtil.getLoginAccount().getId(), conversationId,
-                    botMessageService);
-            memoryPrompt.setMemory(memory);
-        }
+
         UserMessage userMessage = new UserMessage(prompt);
         userMessage.addTools(buildFunctionList(Maps.of("botId", botId).set("needEnglishName", false)));
-        memoryPrompt.addMessage(userMessage);
+
         ChatOptions chatOptions = getChatOptions(llmOptions);
-        return botService.startChat(botId, chatModel, prompt, memoryPrompt, chatOptions, conversationId, messages);
+        return botService.startChat(botId, chatModel, prompt, memoryPrompt, chatOptions, conversationId, messages, userMessage);
 
     }
 
@@ -390,14 +389,14 @@ public class BotController extends BaseCurdController<BotService, Bot> {
 
         // 插件 function 集合
         queryWrapper = QueryWrapper.create();
-        queryWrapper.select("plugin_tool_id").eq(BotPlugin::getBotId, botId);
+        queryWrapper.select(BOT_PLUGIN.PLUGIN_ITEM_ID).eq(BotPlugin::getBotId, botId);
         List<BigInteger> pluginToolIds = botPluginService.getMapper()
                 .selectListWithRelationsByQueryAs(queryWrapper, BigInteger.class);
         if (pluginToolIds != null && !pluginToolIds.isEmpty()) {
             QueryWrapper queryTool = QueryWrapper.create()
-                    .select("*")
-                    .from("tb_plugin_item")
-                    .in("id", pluginToolIds);
+                    .select(PLUGIN_ITEM.ALL_COLUMNS)
+                    .from(PLUGIN_ITEM)
+                    .where(PLUGIN_ITEM.ID.in(pluginToolIds));
             List<PluginItem> pluginItems = pluginItemService.getMapper().selectListWithRelationsByQuery(queryTool);
             if (pluginItems != null && !pluginItems.isEmpty()) {
                 for (PluginItem pluginItem : pluginItems) {

@@ -1,5 +1,6 @@
 package tech.aiflowy.ai.service;
 
+import com.agentsflex.core.message.UserMessage;
 import com.agentsflex.core.model.chat.ChatModel;
 import com.agentsflex.core.model.chat.ChatOptions;
 import com.agentsflex.core.prompt.MemoryPrompt;
@@ -25,5 +26,5 @@ public interface BotService extends IService<Bot> {
 
     Bot getByAlias(String alias);
 
-    SseEmitter startChat(BigInteger botId, ChatModel chatModel, String prompt, MemoryPrompt memoryPrompt, ChatOptions chatOptions, BigInteger conversationId, List<Map<String, String>> messages);
+    SseEmitter startChat(BigInteger botId, ChatModel chatModel, String prompt, MemoryPrompt memoryPrompt, ChatOptions chatOptions, BigInteger conversationId, List<Map<String, String>> messages, UserMessage userMessage);
 }

@@ -24,7 +24,7 @@ public class BotDocumentCollectionServiceImpl extends ServiceImpl<BotDocumentCol
     public List<BotDocumentCollection> listByBotId(BigInteger botId) {
 
         QueryWrapper queryWrapper = QueryWrapper.create();
-        queryWrapper.eq("bot_id",botId);
+        queryWrapper.eq(BotDocumentCollection::getBotId,botId);
 
         return list(queryWrapper);
     }

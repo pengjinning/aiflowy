@@ -169,7 +169,7 @@ public class DocumentCollectionServiceImpl extends ServiceImpl<DocumentCollectio
     public DocumentCollection getByAlias(String idOrAlias) {
 
         QueryWrapper queryWrapper = QueryWrapper.create();
-        queryWrapper.eq("alias", idOrAlias);
+        queryWrapper.eq(DocumentCollection::getAlias, idOrAlias);
 
         return getOne(queryWrapper);
 

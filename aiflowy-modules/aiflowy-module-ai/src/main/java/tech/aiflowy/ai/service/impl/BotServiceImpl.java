@@ -88,7 +88,7 @@ public class BotServiceImpl extends ServiceImpl<BotMapper, Bot> implements BotSe
     }
 
     @Override
-    public SseEmitter startChat(BigInteger botId, ChatModel chatModel, String prompt, MemoryPrompt memoryPrompt, ChatOptions chatOptions, BigInteger conversationId, List<Map<String, String>> messages) {
+    public SseEmitter startChat(BigInteger botId, ChatModel chatModel, String prompt, MemoryPrompt memoryPrompt, ChatOptions chatOptions, BigInteger conversationId, List<Map<String, String>> messages, UserMessage userMessage) {
 
         SseEmitter emitter = ChatSseEmitter.create();
         if (messages != null && !messages.isEmpty()) {
@@ -99,6 +99,9 @@ public class BotServiceImpl extends ServiceImpl<BotMapper, Bot> implements BotSe
             BotMessageMemory memory = new BotMessageMemory(botId, SaTokenUtil.getLoginAccount().getId(), conversationId, botMessageService);
             memoryPrompt.setMemory(memory);
         }
+
+        memoryPrompt.addMessage(userMessage);
+
         String emitterKey = StpUtil.getLoginIdAsString() + "_" + conversationId;
 
         emitter.onCompletion(() -> {

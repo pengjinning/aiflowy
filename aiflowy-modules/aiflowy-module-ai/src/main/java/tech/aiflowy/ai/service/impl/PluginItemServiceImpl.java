@@ -17,6 +17,8 @@ import javax.annotation.Resource;
 import java.math.BigInteger;
 import java.util.*;
 
+import static tech.aiflowy.ai.entity.table.BotPluginTableDef.BOT_PLUGIN;
+
 /**
  * 服务层实现。
  *
@@ -101,9 +103,9 @@ public class PluginItemServiceImpl extends ServiceImpl<PluginItemMapper, PluginI
     @Override
     public List<PluginItem> getPluginToolList(BigInteger botId) {
         QueryWrapper queryAiPluginToolWrapper = QueryWrapper.create()
-                .select("plugin_tool_id")
-                .from("tb_bot_plugin")
-                .where("bot_id = ? ", botId);
+                .select(BOT_PLUGIN.PLUGIN_ITEM_ID)
+                .from(BOT_PLUGIN)
+                .where(BOT_PLUGIN.BOT_ID.eq(botId));
         List<BigInteger> pluginToolIds = botPluginMapper.selectListByQueryAs(queryAiPluginToolWrapper, BigInteger.class);
         if (pluginToolIds == null || pluginToolIds.isEmpty()) {
             return Collections.emptyList();

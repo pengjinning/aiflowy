@@ -24,7 +24,7 @@ public class BotWorkflowServiceImpl extends ServiceImpl<BotWorkflowMapper, BotWo
     public List<BotWorkflow> listByBotId(BigInteger botId) {
 
         QueryWrapper queryWrapper = QueryWrapper.create();
-        queryWrapper.eq("bot_id",botId);
+        queryWrapper.eq(BotWorkflow::getBotId,botId);
 
         return list(queryWrapper);
     }

@@ -2,17 +2,19 @@ package tech.aiflowy.ai.service.impl;
 
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
 import tech.aiflowy.ai.entity.BotPlugin;
 import tech.aiflowy.ai.entity.Plugin;
 import tech.aiflowy.ai.mapper.BotPluginMapper;
 import tech.aiflowy.ai.mapper.PluginMapper;
 import tech.aiflowy.ai.service.BotPluginService;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+
+import static tech.aiflowy.ai.entity.table.BotPluginTableDef.BOT_PLUGIN;
 
 /**
  *  服务层实现。
@@ -21,7 +23,7 @@ import java.util.List;
  * @since 2025-04-07
  */
 @Service
-public class BotPluginServiceImpl extends ServiceImpl<BotPluginMapper, BotPlugin>  implements BotPluginService {
+public class BotPluginServiceImpl extends ServiceImpl<BotPluginMapper, BotPlugin> implements BotPluginService {
 
     @Resource
     private BotPluginMapper botPluginMapper;
@@ -31,26 +33,27 @@ public class BotPluginServiceImpl extends ServiceImpl<BotPluginMapper, BotPlugin
 
     @Override
     public List<Plugin> getList(String botId) {
-        QueryWrapper queryWrapper = QueryWrapper.create().select("plugin_tool_id").where("bot_id = ?", botId);
-        List<BigInteger> pluginIds = botPluginMapper.selectListByQueryAs(queryWrapper, BigInteger.class);
-        List<Plugin> plugins = pluginMapper.selectListByIds(pluginIds);
-        return plugins;
+        QueryWrapper w = QueryWrapper.create();
+        w.select(BOT_PLUGIN.PLUGIN_ITEM_ID)
+                .where(BOT_PLUGIN.BOT_ID.eq(botId));
+        List<BigInteger> pluginIds = botPluginMapper.selectListByQueryAs(w, BigInteger.class);
+        return pluginMapper.selectListByIds(pluginIds);
     }
 
     @Override
     public boolean doRemove(String botId, String pluginToolId) {
-        QueryWrapper queryWrapper = QueryWrapper.create().select("id")
-                .from("tb_bot_plugin")
-                .where("bot_id = ?", botId)
-                .where("plugin_tool_id = ?", pluginToolId);
-        BigInteger id = botPluginMapper.selectOneByQueryAs(queryWrapper, BigInteger.class);
+        QueryWrapper w = QueryWrapper.create();
+        w.select(BOT_PLUGIN.ID)
+                .where(BOT_PLUGIN.BOT_ID.eq(botId))
+                .and(BOT_PLUGIN.PLUGIN_ITEM_ID.eq(pluginToolId));
+        BigInteger id = botPluginMapper.selectOneByQueryAs(w, BigInteger.class);
         int delete = botPluginMapper.deleteById(id);
         return delete > 0;
     }
 
     @Override
     public List<BigInteger> getBotPluginToolIds(String botId) {
-        QueryWrapper queryWrapper = QueryWrapper.create().select("plugin_tool_id").where("bot_id = ?", botId);
+        QueryWrapper queryWrapper = QueryWrapper.create().select(BOT_PLUGIN.PLUGIN_ITEM_ID).where(BOT_PLUGIN.BOT_ID.eq(botId));
         return botPluginMapper.selectListByQueryAs(queryWrapper, BigInteger.class);
     }
 

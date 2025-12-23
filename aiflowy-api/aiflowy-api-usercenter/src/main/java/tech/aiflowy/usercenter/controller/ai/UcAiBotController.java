@@ -199,14 +199,9 @@ public class UcAiBotController extends BaseCurdController<BotService, Bot> {
             memoryPrompt.setSystemMessage(SystemMessage.of(systemPrompt));
         }
 
-        if (StpUtil.isLogin()) {
-            BotMessageMemory memory = new BotMessageMemory(botId, SaTokenUtil.getLoginAccount().getId(), conversationId,
-                    botMessageService);
-            memoryPrompt.setMemory(memory);
-        }
         UserMessage userMessage = new UserMessage(prompt);
         userMessage.addTools(buildFunctionList(Maps.of("botId", botId).set("needEnglishName", false)));
-        memoryPrompt.addMessage(userMessage);
+
         ChatOptions chatOptions = getChatOptions(llmOptions);
 
         BotConversation conversation = conversationMessageService.getById(conversationId);
@@ -224,7 +219,7 @@ public class UcAiBotController extends BaseCurdController<BotService, Bot> {
             conversationMessageService.save(conversation);
         }
 
-        return botService.startChat(botId, chatModel, prompt, memoryPrompt, chatOptions, conversationId, messages);
+        return botService.startChat(botId, chatModel, prompt, memoryPrompt, chatOptions, conversationId, messages, userMessage);
 
     }
 
