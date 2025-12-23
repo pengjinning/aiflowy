@@ -44,7 +44,7 @@ const pluginOutputData = ref<any[]>([]);
 
 function getPluginToolInfo() {
   api
-    .post('/api/v1/aiPluginTool/tool/search', {
+    .post('/api/v1/pluginItem/tool/search', {
       aiPluginToolId: toolId.value,
     })
     .then((res) => {
@@ -60,17 +60,17 @@ const pluginInputParamsEditable = ref(false);
 const pluginOutputParamsEditable = ref(false);
 
 const pluginBasicCollapse = ref({
-  title: $t('aiPluginTool.pluginToolEdit.basicInfo'),
+  title: $t('pluginItem.pluginToolEdit.basicInfo'),
   isOpen: true,
   isEdit: false,
 });
 const pluginBasicCollapseInputParams = ref({
-  title: $t('aiPluginTool.pluginToolEdit.configureInputParameters'),
+  title: $t('pluginItem.pluginToolEdit.configureInputParameters'),
   isOpen: false,
   isEdit: false,
 });
 const pluginBasicCollapseOutputParams = ref({
-  title: $t('aiPluginTool.pluginToolEdit.configureOutputParameters'),
+  title: $t('pluginItem.pluginToolEdit.configureOutputParameters'),
   isOpen: false,
   isEdit: false,
 });
@@ -139,7 +139,7 @@ const updatePluginTool = (index: number) => {
 };
 const updatePluginToolInfo = (index: number) => {
   api
-    .post('/api/v1/aiPluginTool/tool/update', {
+    .post('/api/v1/pluginItem/tool/update', {
       id: toolId.value,
       name: pluginToolInfo.value.name,
       englishName: pluginToolInfo.value.englishName,
@@ -254,7 +254,7 @@ const handleOpenRunModal = () => {
         {{ $t('button.back') }}
       </ElButton>
       <ElButton type="primary" :icon="VideoPlay" @click="handleOpenRunModal">
-        {{ $t('aiPluginTool.pluginToolEdit.trialRun') }}
+        {{ $t('pluginItem.pluginToolEdit.trialRun') }}
       </ElButton>
     </div>
     <!-- 折叠面板列表 -->
@@ -317,17 +317,17 @@ const handleOpenRunModal = () => {
                   status-icon
                   :rules="rules"
                 >
-                  <ElFormItem :label="$t('aiPluginTool.name')" prop="name">
+                  <ElFormItem :label="$t('pluginItem.name')" prop="name">
                     <ElInput v-model.trim="pluginToolInfo.name" />
                   </ElFormItem>
                   <ElFormItem
-                    :label="$t('aiPluginTool.englishName')"
+                    :label="$t('pluginItem.englishName')"
                     prop="englishName"
                   >
                     <ElInput v-model.trim="pluginToolInfo.englishName" />
                   </ElFormItem>
                   <ElFormItem
-                    :label="$t('aiPluginTool.pluginToolEdit.toolPath')"
+                    :label="$t('pluginItem.pluginToolEdit.toolPath')"
                     prop="basePath"
                   >
                     <ElInput v-model.trim="pluginToolInfo.basePath">
@@ -335,7 +335,7 @@ const handleOpenRunModal = () => {
                     </ElInput>
                   </ElFormItem>
                   <ElFormItem
-                    :label="$t('aiPluginTool.description')"
+                    :label="$t('pluginItem.description')"
                     prop="description"
                   >
                     <ElInput
@@ -345,7 +345,7 @@ const handleOpenRunModal = () => {
                     />
                   </ElFormItem>
                   <ElFormItem
-                    :label="$t('aiPluginTool.pluginToolEdit.requestMethod')"
+                    :label="$t('pluginItem.pluginToolEdit.requestMethod')"
                     prop="requestMethod"
                   >
                     <ElSelect
@@ -370,31 +370,31 @@ const handleOpenRunModal = () => {
             >
               <div class="plugin-tool-view-item">
                 <div class="view-item-title">
-                  {{ $t('aiPluginTool.name') }}:
+                  {{ $t('pluginItem.name') }}:
                 </div>
                 <div>{{ pluginToolInfo.name }}</div>
               </div>
               <div class="plugin-tool-view-item">
                 <div class="view-item-title">
-                  {{ $t('aiPluginTool.englishName') }}:
+                  {{ $t('pluginItem.englishName') }}:
                 </div>
                 <div>{{ pluginToolInfo.englishName }}</div>
               </div>
               <div class="plugin-tool-view-item">
                 <div class="view-item-title">
-                  {{ $t('aiPluginTool.description') }}:
+                  {{ $t('pluginItem.description') }}:
                 </div>
                 <div>{{ pluginToolInfo.description }}</div>
               </div>
               <div class="plugin-tool-view-item">
                 <div class="view-item-title">
-                  {{ $t('aiPluginTool.pluginToolEdit.toolPath') }}:
+                  {{ $t('pluginItem.pluginToolEdit.toolPath') }}:
                 </div>
                 <div>{{ pluginInfo.baseUrl }}{{ pluginToolInfo.basePath }}</div>
               </div>
               <div class="plugin-tool-view-item">
                 <div class="view-item-title">
-                  {{ $t('aiPluginTool.pluginToolEdit.requestMethod') }}:
+                  {{ $t('pluginItem.pluginToolEdit.requestMethod') }}:
                 </div>
                 <div>
                   {{ pluginToolInfo.requestMethod }}

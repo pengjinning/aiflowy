@@ -3,8 +3,8 @@ package tech.aiflowy.ai.service.impl;
 import com.agentsflex.search.engine.service.DocumentSearcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import tech.aiflowy.ai.config.SearcherFactory;
-import tech.aiflowy.ai.entity.AiDocumentChunk;
-import tech.aiflowy.ai.entity.AiKnowledge;
+import tech.aiflowy.ai.entity.DocumentChunk;
+import tech.aiflowy.ai.entity.DocumentCollection;
 import tech.aiflowy.ai.mapper.AiDocumentChunkMapper;
 import tech.aiflowy.ai.service.AiDocumentChunkService;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
@@ -19,13 +19,13 @@ import java.math.BigInteger;
  * @since 2024-08-23
  */
 @Service
-public class AiDocumentChunkServiceImpl extends ServiceImpl<AiDocumentChunkMapper, AiDocumentChunk> implements AiDocumentChunkService {
+public class AiDocumentChunkServiceImpl extends ServiceImpl<AiDocumentChunkMapper, DocumentChunk> implements AiDocumentChunkService {
 
     @Autowired
     private SearcherFactory searcherFactory;
 
     @Override
-    public boolean removeChunk(AiKnowledge knowledge, BigInteger chunkId) {
+    public boolean removeChunk(DocumentCollection knowledge, BigInteger chunkId) {
         DocumentSearcher searcher = searcherFactory.getSearcher();
         // 删除搜索引擎中的数据
         if (searcherFactory.getSearcher() == null){

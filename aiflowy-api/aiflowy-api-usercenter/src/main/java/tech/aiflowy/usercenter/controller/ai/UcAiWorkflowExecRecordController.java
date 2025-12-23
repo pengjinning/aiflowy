@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tech.aiflowy.ai.entity.AiWorkflowExecRecord;
-import tech.aiflowy.ai.entity.AiWorkflowRecordStep;
+import tech.aiflowy.ai.entity.WorkflowExecResult;
+import tech.aiflowy.ai.entity.WorkflowExecStep;
 import tech.aiflowy.ai.service.AiWorkflowExecRecordService;
 import tech.aiflowy.ai.service.AiWorkflowRecordStepService;
 import tech.aiflowy.ai.utils.WorkFlowUtil;
@@ -29,7 +29,7 @@ import java.math.BigInteger;
 @RestController
 @RequestMapping("/userCenter/aiWorkflowExecRecord")
 @UsePermission(moduleName = "/api/v1/aiWorkflow")
-public class UcAiWorkflowExecRecordController extends BaseCurdController<AiWorkflowExecRecordService, AiWorkflowExecRecord> {
+public class UcAiWorkflowExecRecordController extends BaseCurdController<AiWorkflowExecRecordService, WorkflowExecResult> {
 
     @Resource
     private AiWorkflowRecordStepService recordStepService;
@@ -46,25 +46,25 @@ public class UcAiWorkflowExecRecordController extends BaseCurdController<AiWorkf
     @SaCheckPermission("/api/v1/aiWorkflow/remove")
     public Result<Void> del(BigInteger id) {
         LoginAccount account = SaTokenUtil.getLoginAccount();
-        AiWorkflowExecRecord record = service.getById(id);
+        WorkflowExecResult record = service.getById(id);
         if (!account.getId().toString().equals(record.getCreatedBy())) {
             return Result.fail(1, "非法请求");
         }
         service.removeById(id);
         QueryWrapper w = QueryWrapper.create();
-        w.eq(AiWorkflowRecordStep::getRecordId, id);
+        w.eq(WorkflowExecStep::getRecordId, id);
         recordStepService.remove(w);
         return Result.ok();
     }
 
     @GetMapping("getPage")
-    public Result<Page<AiWorkflowExecRecord>> getPage(HttpServletRequest request,
-                                                   String sortKey,
-                                                   String sortType,
-                                                   Long pageNumber,
-                                                   Long pageSize,
-                                                   String queryBegin,
-                                                   String queryEnd) {
+    public Result<Page<WorkflowExecResult>> getPage(HttpServletRequest request,
+                                                    String sortKey,
+                                                    String sortType,
+                                                    Long pageNumber,
+                                                    Long pageSize,
+                                                    String queryBegin,
+                                                    String queryEnd) {
         if (pageNumber == null || pageNumber < 1) {
             pageNumber = 1L;
         }
@@ -74,17 +74,17 @@ public class UcAiWorkflowExecRecordController extends BaseCurdController<AiWorkf
 
         QueryWrapper queryWrapper = buildQueryWrapper(request);
         if (StrUtil.isNotEmpty(queryBegin) && StrUtil.isNotEmpty(queryEnd)) {
-            queryWrapper.between(AiWorkflowExecRecord::getStartTime, queryBegin, queryEnd);
+            queryWrapper.between(WorkflowExecResult::getStartTime, queryBegin, queryEnd);
         }
         queryWrapper.orderBy(buildOrderBy(sortKey, sortType, getDefaultOrderBy()));
         return Result.ok(queryPage(new Page<>(pageNumber, pageSize), queryWrapper));
     }
 
     @Override
-    protected Page<AiWorkflowExecRecord> queryPage(Page<AiWorkflowExecRecord> page, QueryWrapper queryWrapper) {
-        queryWrapper.eq(AiWorkflowExecRecord::getCreatedBy, SaTokenUtil.getLoginAccount().getId().toString());
-        Page<AiWorkflowExecRecord> res = super.queryPage(page, queryWrapper);
-        for (AiWorkflowExecRecord record : res.getRecords()) {
+    protected Page<WorkflowExecResult> queryPage(Page<WorkflowExecResult> page, QueryWrapper queryWrapper) {
+        queryWrapper.eq(WorkflowExecResult::getCreatedBy, SaTokenUtil.getLoginAccount().getId().toString());
+        Page<WorkflowExecResult> res = super.queryPage(page, queryWrapper);
+        for (WorkflowExecResult record : res.getRecords()) {
             record.setWorkflowJson(WorkFlowUtil.removeSensitiveInfo(record.getWorkflowJson()));
         }
         return res;

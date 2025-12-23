@@ -228,7 +228,7 @@
 //            return functionList;
 //        }
 //
-//        QueryWrapper queryTool = QueryWrapper.create().select("*").from("tb_plugin_tool").in("id", pluginToolIds);
+//        QueryWrapper queryTool = QueryWrapper.create().select("*").from("tb_plugin_item").in("id", pluginToolIds);
 //        List<AiPluginTool> aiPluginTools = pluginToolService.getMapper().selectListWithRelationsByQuery(queryTool);
 //        if (aiPluginTools != null && !aiPluginTools.isEmpty()) {
 //            for (AiPluginTool aiPluginTool : aiPluginTools) {

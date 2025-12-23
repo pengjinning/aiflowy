@@ -1,6 +1,6 @@
 package tech.aiflowy.ai.mapper;
 
-import tech.aiflowy.ai.entity.AiKnowledge;
+import tech.aiflowy.ai.entity.DocumentCollection;
 import com.mybatisflex.core.BaseMapper;
 
 /**
@@ -9,6 +9,6 @@ import com.mybatisflex.core.BaseMapper;
  * @author michael
  * @since 2024-08-23
  */
-public interface AiKnowledgeMapper extends BaseMapper<AiKnowledge> {
+public interface AiKnowledgeMapper extends BaseMapper<DocumentCollection> {
 
 }

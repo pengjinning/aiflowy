@@ -1,7 +1,7 @@
 package tech.aiflowy.admin.controller.ai;
 
 import tech.aiflowy.common.web.controller.BaseCurdController;
-import tech.aiflowy.ai.entity.AiBotApiKey;
+import tech.aiflowy.ai.entity.BotApiKey;
 import tech.aiflowy.ai.service.AiBotApiKeyService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,8 +15,6 @@ import java.util.List;
 
 import tech.aiflowy.common.web.exceptions.BusinessException;
 import cn.dev33.satoken.annotation.SaIgnore;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 
 /**
@@ -28,7 +26,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 @RestController
 @RequestMapping("/api/v1/aiBotApiKey")
 @UsePermission(moduleName = "/api/v1/aiBot")
-public class AiBotApiKeyController extends BaseCurdController<AiBotApiKeyService, AiBotApiKey> {
+public class AiBotApiKeyController extends BaseCurdController<AiBotApiKeyService, BotApiKey> {
     public AiBotApiKeyController(AiBotApiKeyService service) {
         super(service);
     }
@@ -47,11 +45,11 @@ public class AiBotApiKeyController extends BaseCurdController<AiBotApiKeyService
 
     @SaIgnore
     @Override
-    public Result<List<AiBotApiKey>> list(AiBotApiKey entity, Boolean asTree, String sortKey, String sortType) {
+    public Result<List<BotApiKey>> list(BotApiKey entity, Boolean asTree, String sortKey, String sortType) {
 
         Result<?> result = super.list(entity, asTree, sortKey, sortType);
         @SuppressWarnings("unchecked")
-        List<AiBotApiKey> data = (List<AiBotApiKey>) result.getData();
+        List<BotApiKey> data = (List<BotApiKey>) result.getData();
         if (data != null && !data.isEmpty()) {
             data.forEach(item -> {
                 item.setSalt(null);

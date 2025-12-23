@@ -7,8 +7,6 @@ import org.springframework.beans.BeanWrapperImpl;
 import java.beans.PropertyDescriptor;
 import java.util.HashSet;
 import java.util.Set;
-import tech.aiflowy.ai.entity.AiBot;
-import java.math.BigInteger;
 
 public class CustomBeanUtils {
 

@@ -1,7 +1,7 @@
 package tech.aiflowy.ai.mapper;
 
 import com.mybatisflex.core.BaseMapper;
-import tech.aiflowy.ai.entity.AiResource;
+import tech.aiflowy.ai.entity.Resource;
 
 /**
  * 素材库 映射层。
@@ -9,6 +9,6 @@ import tech.aiflowy.ai.entity.AiResource;
  * @author ArkLight
  * @since 2025-06-27
  */
-public interface AiResourceMapper extends BaseMapper<AiResource> {
+public interface AiResourceMapper extends BaseMapper<Resource> {
 
 }

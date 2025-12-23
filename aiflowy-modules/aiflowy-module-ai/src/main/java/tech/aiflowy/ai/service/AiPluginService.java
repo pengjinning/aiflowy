@@ -1,7 +1,7 @@
 package tech.aiflowy.ai.service;
 
 import com.mybatisflex.core.service.IService;
-import tech.aiflowy.ai.entity.AiPlugin;
+import tech.aiflowy.ai.entity.Plugin;
 import tech.aiflowy.common.domain.Result;
 
 import java.util.List;
@@ -12,15 +12,15 @@ import java.util.List;
  * @author WangGangqiang
  * @since 2025-04-25
  */
-public interface AiPluginService extends IService<AiPlugin> {
+public interface AiPluginService extends IService<Plugin> {
 
-    boolean savePlugin(AiPlugin aiPlugin);
+    boolean savePlugin(Plugin plugin);
 
     boolean removePlugin(String id);
 
-    boolean updatePlugin(AiPlugin aiPlugin);
+    boolean updatePlugin(Plugin plugin);
 
-    List<AiPlugin> getList();
+    List<Plugin> getList();
 
     Result pageByCategory(Long pageNumber, Long pageSize, int category);
 }

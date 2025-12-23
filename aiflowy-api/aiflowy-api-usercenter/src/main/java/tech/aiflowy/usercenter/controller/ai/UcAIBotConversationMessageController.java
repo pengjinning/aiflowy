@@ -1,12 +1,10 @@
 package tech.aiflowy.usercenter.controller.ai;
 
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.dev33.satoken.stp.StpUtil;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tech.aiflowy.ai.entity.AiBotConversationMessage;
+import tech.aiflowy.ai.entity.BotConversation;
 import tech.aiflowy.ai.service.AiBotConversationMessageService;
 import tech.aiflowy.ai.service.AiBotMessageService;
 import tech.aiflowy.common.domain.Result;
@@ -21,7 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/userCenter/conversation")
 @SaIgnore
-public class UcAIBotConversationMessageController extends BaseCurdController<AiBotConversationMessageService, AiBotConversationMessage> {
+public class UcAIBotConversationMessageController extends BaseCurdController<AiBotConversationMessageService, BotConversation> {
 
     @Resource
     private AiBotConversationMessageService conversationMessageService;
@@ -53,7 +51,7 @@ public class UcAIBotConversationMessageController extends BaseCurdController<AiB
     }
 
     @Override
-    public Result<List<AiBotConversationMessage>> list(AiBotConversationMessage entity, Boolean asTree, String sortKey, String sortType) {
+    public Result<List<BotConversation>> list(BotConversation entity, Boolean asTree, String sortKey, String sortType) {
         entity.setAccountId(SaTokenUtil.getLoginAccount().getId());
         sortKey = "created";
         sortType = "desc";
@@ -61,7 +59,7 @@ public class UcAIBotConversationMessageController extends BaseCurdController<AiB
     }
 
     @Override
-    protected Result<?> onSaveOrUpdateBefore(AiBotConversationMessage entity, boolean isSave) {
+    protected Result<?> onSaveOrUpdateBefore(BotConversation entity, boolean isSave) {
         entity.setAccountId(SaTokenUtil.getLoginAccount().getId());
         entity.setCreated(new Date());
         return super.onSaveOrUpdateBefore(entity, isSave);

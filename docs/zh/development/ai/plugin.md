@@ -19,8 +19,8 @@ appendPluginFunctions(botId, humanMessage);
 
 private void appendPluginFunctions(BigInteger botId, HumanMessage humanMessage) {
     QueryWrapper queryWrapper = QueryWrapper.create().eq(AiBotPlugins::getBotId, botId);
-    List<AiBotPlugins> aiBotPlugins = aiBotPluginsService.getMapper().selectListWithRelationsByQuery(queryWrapper);
-        for (AiBotPlugins aiBotPlugin : aiBotPlugins) {
+    List<AiBotPlugins> botPlugins = aiBotPluginsService.getMapper().selectListWithRelationsByQuery(queryWrapper);
+        for (AiBotPlugins aiBotPlugin : botPlugins) {
             Function function = aiBotPlugin.getAiPlugins().toFunction();
             humanMessage.addFunction(function);
         }

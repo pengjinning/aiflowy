@@ -2,7 +2,7 @@ package tech.aiflowy.ai.service.impl;
 
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import tech.aiflowy.ai.entity.AiWorkflowCategory;
+import tech.aiflowy.ai.entity.WorkflowCategory;
 import tech.aiflowy.ai.mapper.AiWorkflowCategoryMapper;
 import tech.aiflowy.ai.service.AiWorkflowCategoryService;
 
@@ -13,6 +13,6 @@ import tech.aiflowy.ai.service.AiWorkflowCategoryService;
  * @since 2025-12-11
  */
 @Service
-public class AiWorkflowCategoryServiceImpl extends ServiceImpl<AiWorkflowCategoryMapper, AiWorkflowCategory>  implements AiWorkflowCategoryService {
+public class AiWorkflowCategoryServiceImpl extends ServiceImpl<AiWorkflowCategoryMapper, WorkflowCategory>  implements AiWorkflowCategoryService {
 
 }

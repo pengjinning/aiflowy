@@ -4,7 +4,7 @@ import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.http.HttpUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tech.aiflowy.ai.entity.AiResource;
+import tech.aiflowy.ai.entity.Resource;
 import tech.aiflowy.ai.service.AiResourceService;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.entity.LoginAccount;
@@ -23,13 +23,13 @@ import java.util.Date;
  */
 @RestController
 @RequestMapping("/api/v1/aiResource")
-public class AiResourceController extends BaseCurdController<AiResourceService, AiResource> {
+public class AiResourceController extends BaseCurdController<AiResourceService, Resource> {
     public AiResourceController(AiResourceService service) {
         super(service);
     }
 
     @Override
-    protected Result<?> onSaveOrUpdateBefore(AiResource entity, boolean isSave) {
+    protected Result<?> onSaveOrUpdateBefore(Resource entity, boolean isSave) {
         LoginAccount loginUser = SaTokenUtil.getLoginAccount();
         if (isSave) {
             String resourceUrl = entity.getResourceUrl();

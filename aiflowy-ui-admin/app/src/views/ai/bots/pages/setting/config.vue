@@ -746,7 +746,7 @@ const handleUpdatePublishWx = () => {
       :title="$t('menus.ai.plugin')"
       width="730"
       ref="pluginToolDataRef"
-      page-url="/api/v1/aiPlugin/pageByCategory"
+      page-url="/api/v1/plugin/pageByCategory"
       :is-select-plugin="true"
       @get-data="confirmUpdateAiBotPlugin"
       :extra-query-params="{
@@ -759,7 +759,7 @@ const handleUpdatePublishWx = () => {
       :title="$t('menus.ai.knowledge')"
       width="730"
       ref="knowledgeDataRef"
-      page-url="/api/v1/aiKnowledge/page"
+      page-url="/api/v1/documentCollection/page"
       @get-data="confirmUpdateAiBotKnowledge"
     />
 
@@ -768,7 +768,7 @@ const handleUpdatePublishWx = () => {
       :title="$t('menus.ai.workflow')"
       width="730"
       ref="workflowDataRef"
-      page-url="/api/v1/aiWorkflow/page"
+      page-url="/api/v1/workflow/page"
       @get-data="confirmUpdateAiBotWorkflow"
     />
 

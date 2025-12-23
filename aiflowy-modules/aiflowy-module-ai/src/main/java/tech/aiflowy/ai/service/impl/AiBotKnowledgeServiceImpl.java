@@ -1,7 +1,6 @@
 package tech.aiflowy.ai.service.impl;
 
-import tech.aiflowy.ai.entity.AiBotKnowledge;
-import tech.aiflowy.ai.entity.AiBotPlugins;
+import tech.aiflowy.ai.entity.BotDocumentCollection;
 import tech.aiflowy.ai.mapper.AiBotKnowledgeMapper;
 import tech.aiflowy.ai.service.AiBotKnowledgeService;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
@@ -19,10 +18,10 @@ import com.mybatisflex.core.query.QueryWrapper;
  * @since 2024-08-28
  */
 @Service
-public class AiBotKnowledgeServiceImpl extends ServiceImpl<AiBotKnowledgeMapper, AiBotKnowledge> implements AiBotKnowledgeService {
+public class AiBotKnowledgeServiceImpl extends ServiceImpl<AiBotKnowledgeMapper, BotDocumentCollection> implements AiBotKnowledgeService {
 
     @Override
-    public List<AiBotKnowledge> listByBotId(BigInteger botId) {
+    public List<BotDocumentCollection> listByBotId(BigInteger botId) {
 
         QueryWrapper queryWrapper = QueryWrapper.create();
         queryWrapper.eq("bot_id",botId);
@@ -32,13 +31,13 @@ public class AiBotKnowledgeServiceImpl extends ServiceImpl<AiBotKnowledgeMapper,
 
     @Override
     public void saveBotAndKnowledge(BigInteger botId, BigInteger[] knowledgeIds) {
-        this.remove(QueryWrapper.create().eq(AiBotKnowledge::getBotId, botId));
-        List<AiBotKnowledge> list = new ArrayList<>(knowledgeIds.length);
+        this.remove(QueryWrapper.create().eq(BotDocumentCollection::getBotId, botId));
+        List<BotDocumentCollection> list = new ArrayList<>(knowledgeIds.length);
         for (BigInteger knowledgeId : knowledgeIds) {
-            AiBotKnowledge aiBotKnowledge = new AiBotKnowledge();
-            aiBotKnowledge.setBotId(botId);
-            aiBotKnowledge.setKnowledgeId(knowledgeId);
-            list.add(aiBotKnowledge);
+            BotDocumentCollection botDocumentCollection = new BotDocumentCollection();
+            botDocumentCollection.setBotId(botId);
+            botDocumentCollection.setKnowledgeId(knowledgeId);
+            list.add(botDocumentCollection);
         }
         this.saveBatch(list);
     }

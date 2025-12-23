@@ -173,7 +173,7 @@ status: END 表示本次对话正常结束
 ### 获取参数
 请求方式：POST
 
-请求地址：http://127.0.0.1:8080/api/v1/aiWorkflow/external/getRunningParams
+请求地址：http://127.0.0.1:8080/api/v1/workflow/external/getRunningParams
 
 请求头：
 Headers: {
@@ -203,7 +203,7 @@ Authorization: apiKey
 ### 运行
 请求方式：POST
 
-请求地址：http://127.0.0.1:8080/api/v1/aiWorkflow/external/run
+请求地址：http://127.0.0.1:8080/api/v1/workflow/external/run
 
 请求头：
 Headers: {

@@ -1,7 +1,7 @@
 package tech.aiflowy.ai.service;
 
 import com.mybatisflex.core.service.IService;
-import tech.aiflowy.ai.entity.AiResource;
+import tech.aiflowy.ai.entity.Resource;
 
 /**
  * 素材库 服务层。
@@ -9,6 +9,6 @@ import tech.aiflowy.ai.entity.AiResource;
  * @author ArkLight
  * @since 2025-06-27
  */
-public interface AiResourceService extends IService<AiResource> {
+public interface AiResourceService extends IService<Resource> {
 
 }

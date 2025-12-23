@@ -7,8 +7,8 @@ import com.mybatisflex.core.query.QueryWrapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tech.aiflowy.ai.entity.AiWorkflowExecRecord;
-import tech.aiflowy.ai.entity.AiWorkflowRecordStep;
+import tech.aiflowy.ai.entity.WorkflowExecResult;
+import tech.aiflowy.ai.entity.WorkflowExecStep;
 import tech.aiflowy.ai.service.AiWorkflowExecRecordService;
 import tech.aiflowy.ai.service.AiWorkflowRecordStepService;
 import tech.aiflowy.common.annotation.UsePermission;
@@ -28,7 +28,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/userCenter/aiWorkflowRecordStep")
 @UsePermission(moduleName = "/api/v1/aiWorkflow")
-public class UcAiWorkflowRecordStepController extends BaseCurdController<AiWorkflowRecordStepService, AiWorkflowRecordStep> {
+public class UcAiWorkflowRecordStepController extends BaseCurdController<AiWorkflowRecordStepService, WorkflowExecStep> {
 
     @Resource
     private AiWorkflowExecRecordService execRecordService;
@@ -41,11 +41,11 @@ public class UcAiWorkflowRecordStepController extends BaseCurdController<AiWorkf
      * 根据执行记录id获取执行记录步骤列表
      */
     @GetMapping("/getListByRecordId")
-    public Result<List<AiWorkflowRecordStep>> getListByRecordId(BigInteger recordId) {
+    public Result<List<WorkflowExecStep>> getListByRecordId(BigInteger recordId) {
         if (recordId == null) {
             throw new BusinessException("recordId不能为空！");
         }
-        AiWorkflowExecRecord record = execRecordService.getById(recordId);
+        WorkflowExecResult record = execRecordService.getById(recordId);
         String workflowJson = record.getWorkflowJson();
         JSONObject workflow = JSON.parseObject(workflowJson);
         Map<String, String> idTypeMap = new HashMap<>();
@@ -55,9 +55,9 @@ public class UcAiWorkflowRecordStepController extends BaseCurdController<AiWorkf
             idTypeMap.put(nodeObj.getString("id"), nodeObj.getString("type"));
         }
         QueryWrapper w = QueryWrapper.create();
-        w.eq(AiWorkflowRecordStep::getRecordId, recordId);
-        List<AiWorkflowRecordStep> list = service.list(w);
-        for (AiWorkflowRecordStep step : list) {
+        w.eq(WorkflowExecStep::getRecordId, recordId);
+        List<WorkflowExecStep> list = service.list(w);
+        for (WorkflowExecStep step : list) {
             step.setNodeData(null);
             step.setNodeType(idTypeMap.get(step.getNodeId()));
         }

@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import tech.aiflowy.ai.entity.AiPluginCategories;
+import tech.aiflowy.ai.entity.PluginCategory;
 import tech.aiflowy.ai.service.AiPluginCategoriesService;
 import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.domain.Result;
@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/api/v1/aiPluginCategories")
 @UsePermission(moduleName = "/api/v1/aiPlugin")
-public class AiPluginCategoriesController extends BaseCurdController<AiPluginCategoriesService, AiPluginCategories> {
+public class AiPluginCategoriesController extends BaseCurdController<AiPluginCategoriesService, PluginCategory> {
     public AiPluginCategoriesController(AiPluginCategoriesService service) {
         super(service);
     }

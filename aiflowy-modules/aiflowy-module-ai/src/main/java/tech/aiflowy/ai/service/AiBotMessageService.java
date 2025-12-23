@@ -1,7 +1,7 @@
 package tech.aiflowy.ai.service;
 
 import com.mybatisflex.core.service.IService;
-import tech.aiflowy.ai.entity.AiBotMessage;
+import tech.aiflowy.ai.entity.BotMessage;
 import tech.aiflowy.common.domain.Result;
 
 /**
@@ -10,7 +10,7 @@ import tech.aiflowy.common.domain.Result;
  * @author michael
  * @since 2024-11-04
  */
-public interface AiBotMessageService extends IService<AiBotMessage> {
+public interface AiBotMessageService extends IService<BotMessage> {
 
 
     Result messageList(String botId, String sessionId, String tempUserId, String tempUserSessionId);

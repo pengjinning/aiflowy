@@ -36,15 +36,15 @@ const inputDataParams = ref<any>(null);
 const runResultResponse = ref<any>(null);
 function getPluginToolInfo() {
   api
-    .post('/api/v1/aiPluginTool/tool/search', {
+    .post('/api/v1/pluginItem/tool/search', {
       aiPluginToolId: props.pluginToolId,
     })
     .then((res) => {
       if (res.errorCode === 0) {
         runTitle.value = `${res.data.aiPlugin.title} - ${res.data.data.name} ${$t(
-          'aiPluginTool.inputData',
+          'pluginItem.inputData',
         )}`;
-        runResult.value = `${$t('aiPluginTool.pluginToolEdit.runResult')}`;
+        runResult.value = `${$t('pluginItem.pluginToolEdit.runResult')}`;
         inputDataParams.value = JSON.parse(res.data.data.inputData || '[]');
       }
     });
@@ -62,7 +62,7 @@ function handleSubmitRun() {
   runLoading.value = true;
   const runParams = runParamsRef.value.handleSubmitParams();
   api
-    .post('/api/v1/aiPluginTool/test', {
+    .post('/api/v1/pluginItem/test', {
       pluginToolId: props.pluginToolId,
       inputData: JSON.stringify(runParams),
     })
@@ -84,7 +84,7 @@ function handleSubmitRun() {
     width="80%"
     align-center
     class="run-test-dialog"
-    :title="$t('aiPluginTool.pluginToolEdit.trialRun')"
+    :title="$t('pluginItem.pluginToolEdit.trialRun')"
   >
     <div class="run-test-container">
       <div class="run-test-params">
@@ -144,7 +144,7 @@ function handleSubmitRun() {
         @click="handleSubmitRun"
         :loading="runLoading"
       >
-        {{ $t('aiPluginTool.pluginToolEdit.run') }}
+        {{ $t('pluginItem.pluginToolEdit.run') }}
       </ElButton>
     </template>
   </ElDialog>

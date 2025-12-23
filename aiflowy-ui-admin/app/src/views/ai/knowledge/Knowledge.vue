@@ -22,16 +22,16 @@ const actions = ref([
     icon: Edit,
     text: $t('button.edit'),
     className: '',
-    permission: '/api/v1/aiKnowledge/save',
+    permission: '/api/v1/documentCollection/save',
     onClick(row) {
       aiKnowledgeModalRef.value.openDialog(row);
     },
   },
   {
     icon: Notebook,
-    text: $t('aiKnowledge.actions.knowledge'),
+    text: $t('documentCollection.actions.knowledge'),
     className: '',
-    permission: '/api/v1/aiKnowledge/save',
+    permission: '/api/v1/documentCollection/save',
     onClick(row) {
       router.replace({
         path: '/ai/knowledge/document',
@@ -44,7 +44,7 @@ const actions = ref([
   },
   {
     icon: Search,
-    text: $t('aiKnowledge.actions.retrieve'),
+    text: $t('documentCollection.actions.retrieve'),
     className: '',
     permission: '',
     onClick(row) {
@@ -56,7 +56,7 @@ const actions = ref([
     text: $t('button.delete'),
     icon: Delete,
     className: 'item-danger',
-    permission: '/api/v1/aiKnowledge/remove',
+    permission: '/api/v1/documentCollection/remove',
     onClick(row) {
       handleDelete(row);
     },
@@ -71,7 +71,7 @@ const handleDelete = (item) => {
     type: 'warning',
   })
     .then(() => {
-      api.post('/api/v1/aiKnowledge/remove', { id: item.id }).then((res) => {
+      api.post('/api/v1/documentCollection/remove', { id: item.id }).then((res) => {
         if (res.errorCode === 0) {
           ElMessage.success($t('message.deleteOkMessage'));
           pageDataRef.value.setQuery({});
@@ -88,11 +88,11 @@ const aiKnowledgeModalRef = ref();
 const headerButtons = [
   {
     key: 'add',
-    text: $t('aiKnowledge.actions.addKnowledge'),
+    text: $t('documentCollection.actions.addKnowledge'),
     icon: markRaw(Plus),
     type: 'primary',
     data: { action: 'add' },
-    permission: '/api/v1/aiKnowledge/save',
+    permission: '/api/v1/documentCollection/save',
   },
 ];
 const handleButtonClick = (event, _item) => {
@@ -120,7 +120,7 @@ const handleSearch = (params) => {
     <div class="kd-content-container">
       <PageData
         ref="pageDataRef"
-        page-url="/api/v1/aiKnowledge/page"
+        page-url="/api/v1/documentCollection/page"
         :page-size="12"
         :page-sizes="[12, 24, 36, 48]"
         :init-query-params="{ status: 1 }"
@@ -145,7 +145,7 @@ const handleSearch = (params) => {
       :close-on-click-modal="false"
       width="80%"
       align-center
-      :title="$t('aiKnowledge.knowledgeRetrieval')"
+      :title="$t('documentCollection.knowledgeRetrieval')"
     >
       <div class="search-knowledge-dialog">
         <KnowledgeSearch :knowledge-id="selectSearchKnowledgeId" />

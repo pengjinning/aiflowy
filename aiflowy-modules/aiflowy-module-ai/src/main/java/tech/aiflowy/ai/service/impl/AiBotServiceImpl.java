@@ -17,10 +17,10 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import tech.aiflowy.ai.entity.AiBot;
-import tech.aiflowy.ai.entity.AiBotMessage;
-import tech.aiflowy.ai.entity.AiBotMessageDefaultMemory;
-import tech.aiflowy.ai.entity.AiBotMessageMemory;
+import tech.aiflowy.ai.entity.Bot;
+import tech.aiflowy.ai.entity.BotMessage;
+import tech.aiflowy.ai.entity.DefaultBotMessageMemory;
+import tech.aiflowy.ai.entity.BotMessageMemory;
 import tech.aiflowy.ai.mapper.AiBotMapper;
 import tech.aiflowy.ai.service.AiBotMessageService;
 import tech.aiflowy.ai.service.AiBotService;
@@ -45,7 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2024-08-23
  */
 @Service
-public class AiBotServiceImpl extends ServiceImpl<AiBotMapper, AiBot> implements AiBotService {
+public class AiBotServiceImpl extends ServiceImpl<AiBotMapper, Bot> implements AiBotService {
 
     private static final Logger log = LoggerFactory.getLogger(AiBotServiceImpl.class);
 
@@ -63,8 +63,8 @@ public class AiBotServiceImpl extends ServiceImpl<AiBotMapper, AiBot> implements
     private static final String HEARTBEAT_MESSAGE = "ping";
 
     @Override
-    public AiBot getDetail(String id) {
-        AiBot aiBot = null;
+    public Bot getDetail(String id) {
+        Bot aiBot = null;
 
         if (id.matches(RegexUtils.ALL_NUMBER)) {
             aiBot = getById(id);
@@ -81,7 +81,7 @@ public class AiBotServiceImpl extends ServiceImpl<AiBotMapper, AiBot> implements
     }
 
     @Override
-    public AiBot getByAlias(String alias) {
+    public Bot getByAlias(String alias) {
         QueryWrapper queryWrapper = QueryWrapper.create();
         queryWrapper.eq("alias", alias);
         return getOne(queryWrapper);
@@ -92,11 +92,11 @@ public class AiBotServiceImpl extends ServiceImpl<AiBotMapper, AiBot> implements
 
         SseEmitter emitter = ChatSseEmitter.create();
         if (messages != null && !messages.isEmpty()) {
-            ChatMemory defaultChatMemory = new AiBotMessageDefaultMemory(sessionId, emitter, messages);
+            ChatMemory defaultChatMemory = new DefaultBotMessageMemory(sessionId, emitter, messages);
             defaultChatMemory.addMessage(new UserMessage(prompt));
             memoryPrompt.setMemory(defaultChatMemory);
         } else {
-            AiBotMessageMemory memory = new AiBotMessageMemory(botId, SaTokenUtil.getLoginAccount().getId(), sessionId, aiBotMessageService);
+            BotMessageMemory memory = new BotMessageMemory(botId, SaTokenUtil.getLoginAccount().getId(), sessionId, aiBotMessageService);
             memoryPrompt.setMemory(memory);
         }
         String emitterKey = StpUtil.getLoginIdAsString() + "_" + sessionId;
@@ -119,8 +119,8 @@ public class AiBotServiceImpl extends ServiceImpl<AiBotMapper, AiBot> implements
     }
 
     @Override
-    public void updateBotLlmId(AiBot aiBot) {
-        AiBot byId = getById(aiBot.getId());
+    public void updateBotLlmId(Bot aiBot) {
+        Bot byId = getById(aiBot.getId());
 
         if (byId == null) {
             log.error("修改bot的llmId失败，bot不存在！");
@@ -135,8 +135,8 @@ public class AiBotServiceImpl extends ServiceImpl<AiBotMapper, AiBot> implements
 
 
     @Override
-    public boolean updateById(AiBot entity) {
-        AiBot aiBot = getById(entity.getId());
+    public boolean updateById(Bot entity) {
+        Bot aiBot = getById(entity.getId());
         if (aiBot == null) {
             throw new BusinessException("bot 不存在");
         }
@@ -152,16 +152,16 @@ public class AiBotServiceImpl extends ServiceImpl<AiBotMapper, AiBot> implements
     }
 
 
-    public static List<AiBotMessage> parseFrontMessage(List<Map<String, String>> messages) {
-        List<AiBotMessage> newMessages = new ArrayList<>();
+    public static List<BotMessage> parseFrontMessage(List<Map<String, String>> messages) {
+        List<BotMessage> newMessages = new ArrayList<>();
         if (messages == null || messages.isEmpty()) {
             return newMessages;
         }
         messages.forEach(item -> {
-            AiBotMessage aiBotMessage = new AiBotMessage();
-            aiBotMessage.setRole(item.get("role"));
-            aiBotMessage.setContent(item.get("content"));
-            newMessages.add(aiBotMessage);
+            BotMessage botMessage = new BotMessage();
+            botMessage.setRole(item.get("role"));
+            botMessage.setContent(item.get("content"));
+            newMessages.add(botMessage);
         });
         return newMessages;
     }

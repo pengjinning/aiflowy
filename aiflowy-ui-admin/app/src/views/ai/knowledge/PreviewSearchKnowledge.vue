@@ -65,13 +65,13 @@ defineExpose({
         </ElIcon>
         {{
           isSearching
-            ? $t('aiKnowledge.searchResults')
-            : $t('aiKnowledge.documentPreview')
+            ? $t('documentCollection.searchResults')
+            : $t('documentCollection.documentPreview')
         }}
       </h3>
       <span class="preview-stats" v-if="props.data.length > 0">
-        {{ $t('aiKnowledge.total') }}
-        {{ total > 0 ? total : data.length }} {{ $t('aiKnowledge.segments') }}
+        {{ $t('documentCollection.total') }}
+        {{ total > 0 ? total : data.length }} {{ $t('documentCollection.segments') }}
       </span>
     </div>
 
@@ -89,7 +89,7 @@ defineExpose({
             </div>
             <div class="el-list-item-meta">
               <div v-if="!hideScore">
-                {{ $t('aiKnowledge.similarityScore') }}: {{ item.score }}
+                {{ $t('documentCollection.similarityScore') }}: {{ item.score }}
               </div>
               <div class="content-desc">{{ item.content }}</div>
             </div>
@@ -105,7 +105,7 @@ defineExpose({
           :style="{ minWidth: '100px', height: '36px' }"
           click="onCancel"
         >
-          {{ $t('aiKnowledge.confirmImport') }}
+          {{ $t('documentCollection.confirmImport') }}
         </ElButton>
         <ElButton
           type="primary"
@@ -113,7 +113,7 @@ defineExpose({
           :loading="disabledConfirm"
           click="onConfirm"
         >
-          {{ $t('aiKnowledge.cancelImport') }}
+          {{ $t('documentCollection.cancelImport') }}
         </ElButton>
       </div>
     </div>

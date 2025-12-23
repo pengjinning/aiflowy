@@ -3,7 +3,7 @@ package tech.aiflowy.ai.service.impl;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import tech.aiflowy.ai.entity.AiWorkflowExecRecord;
+import tech.aiflowy.ai.entity.WorkflowExecResult;
 import tech.aiflowy.ai.mapper.AiWorkflowExecRecordMapper;
 import tech.aiflowy.ai.service.AiWorkflowExecRecordService;
 
@@ -14,12 +14,12 @@ import tech.aiflowy.ai.service.AiWorkflowExecRecordService;
  * @since 2025-05-28
  */
 @Service
-public class AiWorkflowExecRecordServiceImpl extends ServiceImpl<AiWorkflowExecRecordMapper, AiWorkflowExecRecord>  implements AiWorkflowExecRecordService{
+public class AiWorkflowExecRecordServiceImpl extends ServiceImpl<AiWorkflowExecRecordMapper, WorkflowExecResult>  implements AiWorkflowExecRecordService{
 
     @Override
-    public AiWorkflowExecRecord getByExecKey(String execKey) {
+    public WorkflowExecResult getByExecKey(String execKey) {
         QueryWrapper w = QueryWrapper.create();
-        w.eq(AiWorkflowExecRecord::getExecKey, execKey);
+        w.eq(WorkflowExecResult::getExecKey, execKey);
         return getOne(w);
     }
 }

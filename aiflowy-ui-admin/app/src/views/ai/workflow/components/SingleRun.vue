@@ -30,7 +30,7 @@ function submit() {
         variables: runParams.value,
       };
       submitLoading.value = true;
-      api.post('/api/v1/aiWorkflow/singleRun', params).then((res) => {
+      api.post('/api/v1/workflow/singleRun', params).then((res) => {
         submitLoading.value = false;
         result.value = res.data;
         if (res.errorCode === 0) {
@@ -72,7 +72,7 @@ function submit() {
       </ElFormItem>
     </ElForm>
     <div class="mb-2.5 mt-2.5 font-semibold">
-      {{ $t('aiWorkflow.result') }}：
+      {{ $t('workflow.result') }}：
     </div>
     <ShowJson :value="result" />
   </div>

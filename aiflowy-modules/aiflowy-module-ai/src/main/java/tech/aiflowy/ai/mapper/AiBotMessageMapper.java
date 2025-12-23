@@ -1,6 +1,6 @@
 package tech.aiflowy.ai.mapper;
 
-import tech.aiflowy.ai.entity.AiBotMessage;
+import tech.aiflowy.ai.entity.BotMessage;
 import com.mybatisflex.core.BaseMapper;
 
 /**
@@ -9,6 +9,6 @@ import com.mybatisflex.core.BaseMapper;
  * @author michael
  * @since 2024-11-04
  */
-public interface AiBotMessageMapper extends BaseMapper<AiBotMessage> {
+public interface AiBotMessageMapper extends BaseMapper<BotMessage> {
 
 }

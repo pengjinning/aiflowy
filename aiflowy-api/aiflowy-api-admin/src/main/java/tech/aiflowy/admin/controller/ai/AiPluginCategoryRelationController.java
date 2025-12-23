@@ -1,8 +1,8 @@
 package tech.aiflowy.admin.controller.ai;
 
 import org.springframework.web.bind.annotation.*;
-import tech.aiflowy.ai.entity.AiPluginCategories;
-import tech.aiflowy.ai.entity.AiPluginCategoryRelation;
+import tech.aiflowy.ai.entity.PluginCategory;
+import tech.aiflowy.ai.entity.PluginCategoryMapping;
 import tech.aiflowy.ai.service.AiPluginCategoryRelationService;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.web.controller.BaseCurdController;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/v1/aiPluginCategoryRelation")
-public class AiPluginCategoryRelationController extends BaseCurdController<AiPluginCategoryRelationService, AiPluginCategoryRelation> {
+public class AiPluginCategoryRelationController extends BaseCurdController<AiPluginCategoryRelationService, PluginCategoryMapping> {
     public AiPluginCategoryRelationController(AiPluginCategoryRelationService service) {
         super(service);
     }
@@ -37,7 +37,7 @@ public class AiPluginCategoryRelationController extends BaseCurdController<AiPlu
     }
 
     @GetMapping("/getPluginCategories")
-    public Result<List<AiPluginCategories>> getPluginCategories(@RequestParam(value="pluginId") long pluginId
+    public Result<List<PluginCategory>> getPluginCategories(@RequestParam(value="pluginId") long pluginId
     ){
         return Result.ok(relationService.getPluginCategories(pluginId));
     }

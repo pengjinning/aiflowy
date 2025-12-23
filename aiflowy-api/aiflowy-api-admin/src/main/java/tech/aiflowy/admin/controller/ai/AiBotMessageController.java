@@ -7,7 +7,7 @@ import com.agentsflex.core.util.Maps;
 import com.agentsflex.core.util.StringUtil;
 import com.mybatisflex.core.query.QueryWrapper;
 import org.springframework.web.bind.annotation.*;
-import tech.aiflowy.ai.entity.AiBotMessage;
+import tech.aiflowy.ai.entity.BotMessage;
 import tech.aiflowy.ai.service.AiBotMessageService;
 import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.domain.Result;
@@ -28,7 +28,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/aiBotMessage")
 @UsePermission(moduleName = "/api/v1/aiBot")
-public class AiBotMessageController extends BaseCurdController<AiBotMessageService, AiBotMessage> {
+public class AiBotMessageController extends BaseCurdController<AiBotMessageService, BotMessage> {
     private final AiBotMessageService aiBotMessageService;
 
     public AiBotMessageController(AiBotMessageService service, AiBotMessageService aiBotMessageService) {
@@ -39,39 +39,39 @@ public class AiBotMessageController extends BaseCurdController<AiBotMessageServi
 
     @GetMapping("list")
     @Override
-    public Result list(AiBotMessage entity, Boolean asTree, String sortKey, String sortType) {
+    public Result list(BotMessage entity, Boolean asTree, String sortKey, String sortType) {
 
         if (entity.getBotId() == null) {
             return Result.fail("查询失败");
         }
 
         QueryWrapper queryWrapper = QueryWrapper.create();
-        queryWrapper.eq(AiBotMessage::getBotId, entity.getBotId());
-        queryWrapper.eq(AiBotMessage::getAccountId, SaTokenUtil.getLoginAccount().getId());
-        queryWrapper.eq(AiBotMessage::getSessionId, entity.getSessionId());
-        queryWrapper.orderBy(AiBotMessage::getCreated, true);
+        queryWrapper.eq(BotMessage::getBotId, entity.getBotId());
+        queryWrapper.eq(BotMessage::getAccountId, SaTokenUtil.getLoginAccount().getId());
+        queryWrapper.eq(BotMessage::getSessionId, entity.getSessionId());
+        queryWrapper.orderBy(BotMessage::getCreated, true);
 
-        List<AiBotMessage> list = service.list(queryWrapper);
+        List<BotMessage> list = service.list(queryWrapper);
 
         if (list == null || list.isEmpty()) {
             return Result.ok(Collections.emptyList());
         }
 
         List<Maps> maps = new ArrayList<>();
-        for (AiBotMessage aiBotMessage : list) {
-            Message message = aiBotMessage.getContentAsMessage();
+        for (BotMessage botMessage : list) {
+            Message message = botMessage.getContentAsMessage();
             if (message instanceof ToolMessage) {
                continue;
             }
-            if ("function".equals(aiBotMessage.getRole()) || !StringUtil.hasText(message.getTextContent())){
+            if ("function".equals(botMessage.getRole()) || !StringUtil.hasText(message.getTextContent())){
                 continue;
             }
-            maps.add(Maps.of("id", aiBotMessage.getId())
+            maps.add(Maps.of("id", botMessage.getId())
                     .set("content", message.getTextContent())
-                    .set("role", aiBotMessage.getRole())
-                    .set("options", aiBotMessage.getOptions())
-                    .set("created", aiBotMessage.getCreated().getTime())
-                    .set("updateAt", aiBotMessage.getCreated().getTime())
+                    .set("role", botMessage.getRole())
+                    .set("options", botMessage.getOptions())
+                    .set("created", botMessage.getCreated().getTime())
+                    .set("updateAt", botMessage.getCreated().getTime())
             );
         }
         return Result.ok(maps);
@@ -79,7 +79,7 @@ public class AiBotMessageController extends BaseCurdController<AiBotMessageServi
 
 
     @Override
-    protected Result<?> onSaveOrUpdateBefore(AiBotMessage entity, boolean isSave) {
+    protected Result<?> onSaveOrUpdateBefore(BotMessage entity, boolean isSave) {
         entity.setAccountId(SaTokenUtil.getLoginAccount().getId());
         return super.onSaveOrUpdateBefore(entity, isSave);
     }

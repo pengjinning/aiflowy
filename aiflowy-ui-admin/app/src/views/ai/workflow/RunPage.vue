@@ -28,7 +28,7 @@ const initState = ref(false);
 const tinyFlowData = ref<any>(null);
 const workflowForm = ref();
 async function getWorkflowInfo(workflowId: any) {
-  api.get(`/api/v1/aiWorkflow/detail?id=${workflowId}`).then((res) => {
+  api.get(`/api/v1/workflow/detail?id=${workflowId}`).then((res) => {
     workflowInfo.value = res.data;
     tinyFlowData.value = workflowInfo.value.content
       ? JSON.parse(workflowInfo.value.content)
@@ -37,7 +37,7 @@ async function getWorkflowInfo(workflowId: any) {
 }
 async function getRunningParams() {
   api
-    .get(`/api/v1/aiWorkflow/getRunningParameters?id=${workflowId.value}`)
+    .get(`/api/v1/workflow/getRunningParameters?id=${workflowId.value}`)
     .then((res) => {
       runParams.value = res.data;
     });
@@ -83,7 +83,7 @@ function onAsyncExecute(info: any) {
             body-class="overflow-auto h-full"
           >
             <div class="mb-2.5 font-semibold">
-              {{ $t('aiWorkflow.params') }}：
+              {{ $t('workflow.params') }}：
             </div>
             <WorkflowForm
               v-if="runParams && tinyFlowData"
@@ -101,7 +101,7 @@ function onAsyncExecute(info: any) {
             body-class="overflow-auto h-full"
           >
             <div class="mb-2.5 font-semibold">
-              {{ $t('aiWorkflow.steps') }}：
+              {{ $t('workflow.steps') }}：
             </div>
             <WorkflowSteps
               v-if="tinyFlowData"
@@ -117,7 +117,7 @@ function onAsyncExecute(info: any) {
       <ElCol :span="14">
         <ElCard shadow="never" class="h-full" body-class="h-full overflow-auto">
           <div class="mb-2.5 mt-2.5 font-semibold">
-            {{ $t('aiWorkflow.result') }}：
+            {{ $t('workflow.result') }}：
           </div>
           <ExecResult
             v-if="tinyFlowData"

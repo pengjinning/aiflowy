@@ -1,6 +1,6 @@
 package tech.aiflowy.ai.mapper;
 
-import tech.aiflowy.ai.entity.AiBotLlm;
+import tech.aiflowy.ai.entity.BotModel;
 import com.mybatisflex.core.BaseMapper;
 
 /**
@@ -9,6 +9,6 @@ import com.mybatisflex.core.BaseMapper;
  * @author michael
  * @since 2024-08-28
  */
-public interface AiBotLlmMapper extends BaseMapper<AiBotLlm> {
+public interface AiBotLlmMapper extends BaseMapper<BotModel> {
 
 }

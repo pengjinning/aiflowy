@@ -3,12 +3,10 @@ package tech.aiflowy.usercenter.controller.ai;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.stp.StpUtil;
 import dev.tinyflow.core.chain.*;
-import dev.tinyflow.core.chain.repository.ChainStateRepository;
-import dev.tinyflow.core.chain.repository.NodeStateRepository;
 import dev.tinyflow.core.chain.runtime.ChainExecutor;
 import dev.tinyflow.core.parser.ChainParser;
 import org.springframework.web.bind.annotation.*;
-import tech.aiflowy.ai.entity.AiWorkflow;
+import tech.aiflowy.ai.entity.Workflow;
 import tech.aiflowy.ai.service.AiWorkflowService;
 import tech.aiflowy.ai.tinyflow.entity.ChainInfo;
 import tech.aiflowy.ai.tinyflow.entity.NodeInfo;
@@ -31,7 +29,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/userCenter/aiWorkflow")
 @UsePermission(moduleName = "/api/v1/aiWorkflow")
-public class UcAiWorkflowController extends BaseCurdController<AiWorkflowService, AiWorkflow> {
+public class UcAiWorkflowController extends BaseCurdController<AiWorkflowService, Workflow> {
 
     @Resource
     private ChainExecutor chainExecutor;
@@ -54,7 +52,7 @@ public class UcAiWorkflowController extends BaseCurdController<AiWorkflowService
             @JsonBody(value = "nodeId", required = true) String nodeId,
             @JsonBody("variables") Map<String, Object> variables) {
 
-        AiWorkflow workflow = service.getById(workflowId);
+        Workflow workflow = service.getById(workflowId);
         if (workflow == null) {
             return Result.fail(1, "工作流不存在");
         }
@@ -72,7 +70,7 @@ public class UcAiWorkflowController extends BaseCurdController<AiWorkflowService
         if (variables == null) {
             variables = new HashMap<>();
         }
-        AiWorkflow workflow = service.getById(id);
+        Workflow workflow = service.getById(id);
         if (workflow == null) {
             throw new RuntimeException("工作流不存在");
         }
@@ -110,7 +108,7 @@ public class UcAiWorkflowController extends BaseCurdController<AiWorkflowService
     @GetMapping("getRunningParameters")
     @SaCheckPermission("/api/v1/aiWorkflow/query")
     public Result<?> getRunningParameters(@RequestParam BigInteger id) {
-        AiWorkflow workflow = service.getById(id);
+        Workflow workflow = service.getById(id);
 
         if (workflow == null) {
             return Result.fail(1, "can not find the workflow by id: " + id);
@@ -130,7 +128,7 @@ public class UcAiWorkflowController extends BaseCurdController<AiWorkflowService
     }
 
     @Override
-    protected Result<?> onSaveOrUpdateBefore(AiWorkflow entity, boolean isSave) {
+    protected Result<?> onSaveOrUpdateBefore(Workflow entity, boolean isSave) {
         return Result.fail("-");
     }
 

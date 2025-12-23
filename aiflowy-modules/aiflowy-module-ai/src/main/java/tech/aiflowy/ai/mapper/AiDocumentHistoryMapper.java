@@ -1,6 +1,6 @@
 package tech.aiflowy.ai.mapper;
 
-import tech.aiflowy.ai.entity.AiDocumentHistory;
+import tech.aiflowy.ai.entity.DocumentHistory;
 import com.mybatisflex.core.BaseMapper;
 
 /**
@@ -9,6 +9,6 @@ import com.mybatisflex.core.BaseMapper;
  * @author michael
  * @since 2024-08-23
  */
-public interface AiDocumentHistoryMapper extends BaseMapper<AiDocumentHistory> {
+public interface AiDocumentHistoryMapper extends BaseMapper<DocumentHistory> {
 
 }

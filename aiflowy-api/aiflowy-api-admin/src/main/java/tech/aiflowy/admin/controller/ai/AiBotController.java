@@ -47,7 +47,7 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/api/v1/aiBot")
-public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
+public class AiBotController extends BaseCurdController<AiBotService, Bot> {
 
     private final AiLlmService aiLlmService;
     private final AiBotWorkflowService aiBotWorkflowService;
@@ -87,7 +87,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
     @SaCheckPermission("/api/v1/aiBot/save")
     public Result<Void> updateOptions(@JsonBody("id") BigInteger id,
                                       @JsonBody("options") Map<String, Object> options) {
-        AiBot aiBot = service.getById(id);
+        Bot aiBot = service.getById(id);
         Map<String, Object> existOptions = aiBot.getOptions();
         if (existOptions == null) {
             existOptions = new HashMap<>();
@@ -105,7 +105,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
     public Result<Void> updateLlmOptions(@JsonBody("id")
                                          BigInteger id, @JsonBody("llmOptions")
                                          Map<String, Object> llmOptions) {
-        AiBot aiBot = service.getById(id);
+        Bot aiBot = service.getById(id);
         Map<String, Object> existLlmOptions = aiBot.getLlmOptions();
         if (existLlmOptions == null) {
             existLlmOptions = new HashMap<>();
@@ -156,7 +156,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
             throw new BusinessException("提示词不能为空！");
         }
 
-        AiBot aiBot = service.getById(botId);
+        Bot aiBot = service.getById(botId);
         if (aiBot == null) {
             return SSEUtil.sseEmitterForContent( "机器人不存在");
         }
@@ -170,13 +170,13 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
         Map<String, Object> llmOptions = aiBot.getLlmOptions();
         String systemPrompt = MapUtil.getString(llmOptions, "systemPrompt");
 
-        AiLlm aiLlm = aiLlmService.getLlmInstance(aiBot.getLlmId());
-        if (aiLlm == null) {
+        Model model = aiLlmService.getLlmInstance(aiBot.getLlmId());
+        if (model == null) {
             return SSEUtil.sseEmitterForContent( "LLM不存在");
         }
 
 
-        ChatModel chatModel = aiLlm.toChatModel();
+        ChatModel chatModel = model.toChatModel();
         if (chatModel == null) {
             return SSEUtil.sseEmitterForContent( "LLM获取为空");
         }
@@ -191,7 +191,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
         }
 
         if (StpUtil.isLogin()) {
-            AiBotMessageMemory memory = new AiBotMessageMemory(botId, SaTokenUtil.getLoginAccount().getId(), sessionId,
+            BotMessageMemory memory = new BotMessageMemory(botId, SaTokenUtil.getLoginAccount().getId(), sessionId,
                     aiBotMessageService);
             memoryPrompt.setMemory(memory);
         }
@@ -206,21 +206,21 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
     @PostMapping("updateLlmId")
     @SaCheckPermission("/api/v1/aiBot/save")
     public Result<Void> updateBotLlmId(@RequestBody
-                                       AiBot aiBot) {
+                                       Bot aiBot) {
         service.updateBotLlmId(aiBot);
         return Result.ok();
     }
 
     @GetMapping("getDetail")
     @SaIgnore
-    public Result<AiBot> getDetail(String id) {
+    public Result<Bot> getDetail(String id) {
         return Result.ok(aiBotService.getDetail(id));
     }
 
     @Override
     @SaIgnore
-    public Result<AiBot> detail(String id) {
-        AiBot data = aiBotService.getDetail(id);
+    public Result<Bot> detail(String id) {
+        Bot data = aiBotService.getDetail(id);
         if (data == null) {
             return Result.ok(data);
         }
@@ -235,7 +235,7 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
         }
 
         BigInteger llmId = data.getLlmId();
-        AiLlm llm = aiLlmService.getById(llmId);
+        Model llm = aiLlmService.getById(llmId);
 
         if (llm == null) {
             data.setLlmId(null);
@@ -256,12 +256,12 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
     }
 
     @Override
-    protected Result<?> onSaveOrUpdateBefore(AiBot entity, boolean isSave) {
+    protected Result<?> onSaveOrUpdateBefore(Bot entity, boolean isSave) {
 
         String alias = entity.getAlias();
 
         if (StringUtils.hasLength(alias)) {
-            AiBot aiBot = service.getByAlias(alias);
+            Bot aiBot = service.getByAlias(alias);
 
 
             if (aiBot != null && isSave) {
@@ -330,11 +330,11 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
 
     @Override
     protected Result<?> onRemoveBefore(Collection<Serializable> ids) {
-        QueryWrapper queryWrapperKnowledge = QueryWrapper.create().in(AiBotKnowledge::getBotId, ids);
+        QueryWrapper queryWrapperKnowledge = QueryWrapper.create().in(BotDocumentCollection::getBotId, ids);
         aiBotKnowledgeService.remove(queryWrapperKnowledge);
-        QueryWrapper queryWrapperBotWorkflow = QueryWrapper.create().in(AiBotWorkflow::getBotId, ids);
+        QueryWrapper queryWrapperBotWorkflow = QueryWrapper.create().in(BotWorkflow::getBotId, ids);
         aiBotWorkflowService.remove(queryWrapperBotWorkflow);
-        QueryWrapper queryWrapperBotPlugins = QueryWrapper.create().in(AiBotPlugins::getBotId, ids);
+        QueryWrapper queryWrapperBotPlugins = QueryWrapper.create().in(BotPlugin::getBotId, ids);
         aiBotPluginsService.remove(queryWrapperBotPlugins);
         return super.onRemoveBefore(ids);
     }
@@ -359,42 +359,42 @@ public class AiBotController extends BaseCurdController<AiBotService, AiBot> {
         QueryWrapper queryWrapper = QueryWrapper.create();
 
         // 工作流 function 集合
-        queryWrapper.eq(AiBotWorkflow::getBotId, botId);
-        List<AiBotWorkflow> aiBotWorkflows = aiBotWorkflowService.getMapper()
+        queryWrapper.eq(BotWorkflow::getBotId, botId);
+        List<BotWorkflow> botWorkflows = aiBotWorkflowService.getMapper()
                 .selectListWithRelationsByQuery(queryWrapper);
-        if (aiBotWorkflows != null && !aiBotWorkflows.isEmpty()) {
-            for (AiBotWorkflow aiBotWorkflow : aiBotWorkflows) {
-                Tool function = aiBotWorkflow.getWorkflow().toFunction(needEnglishName);
+        if (botWorkflows != null && !botWorkflows.isEmpty()) {
+            for (BotWorkflow botWorkflow : botWorkflows) {
+                Tool function = botWorkflow.getWorkflow().toFunction(needEnglishName);
                 functionList.add(function);
             }
         }
 
         // 知识库 function 集合
         queryWrapper = QueryWrapper.create();
-        queryWrapper.eq(AiBotKnowledge::getBotId, botId);
-        List<AiBotKnowledge> aiBotKnowledges = aiBotKnowledgeService.getMapper()
+        queryWrapper.eq(BotDocumentCollection::getBotId, botId);
+        List<BotDocumentCollection> botDocumentCollections = aiBotKnowledgeService.getMapper()
                 .selectListWithRelationsByQuery(queryWrapper);
-        if (aiBotKnowledges != null && !aiBotKnowledges.isEmpty()) {
-            for (AiBotKnowledge aiBotKnowledge : aiBotKnowledges) {
-                Tool function = aiBotKnowledge.getKnowledge().toFunction(needEnglishName);
+        if (botDocumentCollections != null && !botDocumentCollections.isEmpty()) {
+            for (BotDocumentCollection botDocumentCollection : botDocumentCollections) {
+                Tool function = botDocumentCollection.getKnowledge().toFunction(needEnglishName);
                 functionList.add(function);
             }
         }
 
         // 插件 function 集合
         queryWrapper = QueryWrapper.create();
-        queryWrapper.select("plugin_tool_id").eq(AiBotPlugins::getBotId, botId);
+        queryWrapper.select("plugin_tool_id").eq(BotPlugin::getBotId, botId);
         List<BigInteger> pluginToolIds = aiBotPluginsService.getMapper()
                 .selectListWithRelationsByQueryAs(queryWrapper, BigInteger.class);
         if (pluginToolIds != null && !pluginToolIds.isEmpty()) {
             QueryWrapper queryTool = QueryWrapper.create()
                     .select("*")
-                    .from("tb_plugin_tool")
+                    .from("tb_plugin_item")
                     .in("id", pluginToolIds);
-            List<AiPluginTool> aiPluginTools = aiPluginToolService.getMapper().selectListWithRelationsByQuery(queryTool);
-            if (aiPluginTools != null && !aiPluginTools.isEmpty()) {
-                for (AiPluginTool aiPluginTool : aiPluginTools) {
-                    functionList.add(aiPluginTool.toFunction());
+            List<PluginItem> pluginItems = aiPluginToolService.getMapper().selectListWithRelationsByQuery(queryTool);
+            if (pluginItems != null && !pluginItems.isEmpty()) {
+                for (PluginItem pluginItem : pluginItems) {
+                    functionList.add(pluginItem.toFunction());
                 }
             }
         }

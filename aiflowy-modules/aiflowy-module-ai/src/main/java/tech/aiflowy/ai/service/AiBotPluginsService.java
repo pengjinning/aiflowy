@@ -1,9 +1,8 @@
 package tech.aiflowy.ai.service;
 
 import com.mybatisflex.core.service.IService;
-import tech.aiflowy.ai.entity.AiBotPlugins;
-import tech.aiflowy.ai.entity.AiPlugin;
-import tech.aiflowy.common.domain.Result;
+import tech.aiflowy.ai.entity.BotPlugin;
+import tech.aiflowy.ai.entity.Plugin;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -14,9 +13,9 @@ import java.util.List;
  * @author michael
  * @since 2025-04-07
  */
-public interface AiBotPluginsService extends IService<AiBotPlugins> {
+public interface AiBotPluginsService extends IService<BotPlugin> {
 
-    List<AiPlugin> getList(String botId);
+    List<Plugin> getList(String botId);
 
     boolean doRemove(String botId, String pluginId);
 

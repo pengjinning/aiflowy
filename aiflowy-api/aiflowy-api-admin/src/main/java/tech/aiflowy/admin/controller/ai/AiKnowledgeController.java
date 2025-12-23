@@ -3,14 +3,12 @@ package tech.aiflowy.admin.controller.ai;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.agentsflex.core.document.Document;
 import com.mybatisflex.core.query.QueryWrapper;
-import dev.tinyflow.core.knowledge.Knowledge;
 import org.springframework.util.StringUtils;
-import tech.aiflowy.ai.entity.AiKnowledge;
+import tech.aiflowy.ai.entity.DocumentCollection;
 import tech.aiflowy.ai.service.AiBotKnowledgeService;
 import tech.aiflowy.ai.service.AiDocumentChunkService;
 import tech.aiflowy.ai.service.AiKnowledgeService;
 import tech.aiflowy.ai.service.AiLlmService;
-import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.web.controller.BaseCurdController;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,7 +33,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/v1/aiKnowledge")
-public class AiKnowledgeController extends BaseCurdController<AiKnowledgeService, AiKnowledge> {
+public class AiKnowledgeController extends BaseCurdController<AiKnowledgeService, DocumentCollection> {
 
     private final AiDocumentChunkService chunkService;
     private final AiLlmService llmService;
@@ -50,12 +48,12 @@ public class AiKnowledgeController extends BaseCurdController<AiKnowledgeService
     }
 
     @Override
-    protected Result<?> onSaveOrUpdateBefore(AiKnowledge entity, boolean isSave) {
+    protected Result<?> onSaveOrUpdateBefore(DocumentCollection entity, boolean isSave) {
 
         String alias = entity.getAlias();
 
         if (StringUtils.hasLength(alias)){
-            AiKnowledge knowledge = service.getByAlias(alias);
+            DocumentCollection knowledge = service.getByAlias(alias);
 
 
             if (knowledge != null && isSave){
@@ -102,7 +100,7 @@ public class AiKnowledgeController extends BaseCurdController<AiKnowledgeService
     }
 
     @Override
-    public Result<AiKnowledge> detail(String id) {
+    public Result<DocumentCollection> detail(String id) {
         return Result.ok(service.getDetail(id));
     }
 }

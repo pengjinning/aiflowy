@@ -43,7 +43,7 @@ const handleDelete = (row: any) => {
     .then(() => {
       btnLoading.value = true;
       api
-        .post('/api/v1/aiDocumentChunk/removeChunk', { id: row.id })
+        .post('/api/v1/documentChunk/removeChunk', { id: row.id })
         .then((res: any) => {
           btnLoading.value = false;
           if (res.errorCode !== 0) {
@@ -69,7 +69,7 @@ const queryParams = ref({
 });
 const save = () => {
   btnLoading.value = true;
-  api.post('/api/v1/aiDocumentChunk/update', form.value).then((res: any) => {
+  api.post('/api/v1/documentChunk/update', form.value).then((res: any) => {
     btnLoading.value = false;
     if (res.errorCode !== 0) {
       ElMessage.error(res.message);
@@ -91,7 +91,7 @@ const form = ref({
 <template>
   <div>
     <PageData
-      page-url="/api/v1/aiDocumentChunk/page"
+      page-url="/api/v1/documentChunk/page"
       ref="pageDataRef"
       :page-size="10"
       :extra-query-params="queryParams"

@@ -4,7 +4,7 @@ import com.agentsflex.core.model.chat.tool.Tool;
 import com.alibaba.fastjson.JSON;
 import dev.tinyflow.core.chain.Chain;
 import dev.tinyflow.core.node.BaseNode;
-import tech.aiflowy.ai.entity.AiPluginTool;
+import tech.aiflowy.ai.entity.PluginItem;
 import tech.aiflowy.ai.service.AiPluginToolService;
 import tech.aiflowy.common.util.SpringContextUtil;
 
@@ -28,7 +28,7 @@ public class PluginToolNode extends BaseNode {
     public Map<String, Object> execute(Chain chain) {
         Map<String, Object> map = chain.getState().resolveParameters(this);
         AiPluginToolService bean = SpringContextUtil.getBean(AiPluginToolService.class);
-        AiPluginTool tool = bean.getById(pluginId);
+        PluginItem tool = bean.getById(pluginId);
         if (tool == null) {
             return Collections.emptyMap();
         }

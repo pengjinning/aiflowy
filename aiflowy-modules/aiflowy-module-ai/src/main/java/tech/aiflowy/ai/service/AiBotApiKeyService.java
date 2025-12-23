@@ -1,7 +1,7 @@
 package tech.aiflowy.ai.service;
 
 import com.mybatisflex.core.service.IService;
-import tech.aiflowy.ai.entity.AiBotApiKey;
+import tech.aiflowy.ai.entity.BotApiKey;
 
 import java.math.BigInteger;
 
@@ -11,7 +11,7 @@ import java.math.BigInteger;
  * @author ArkLight
  * @since 2025-07-18
  */
-public interface AiBotApiKeyService extends IService<AiBotApiKey> {
+public interface AiBotApiKeyService extends IService<BotApiKey> {
 
     /**
      * 根据 botId 生成 apiKey 并返回

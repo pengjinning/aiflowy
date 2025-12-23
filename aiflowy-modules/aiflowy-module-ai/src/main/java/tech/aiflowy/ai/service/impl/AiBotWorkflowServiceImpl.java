@@ -1,8 +1,6 @@
 package tech.aiflowy.ai.service.impl;
 
-import tech.aiflowy.ai.entity.AiBotKnowledge;
-import tech.aiflowy.ai.entity.AiBotPlugins;
-import tech.aiflowy.ai.entity.AiBotWorkflow;
+import tech.aiflowy.ai.entity.BotWorkflow;
 import tech.aiflowy.ai.mapper.AiBotWorkflowMapper;
 import tech.aiflowy.ai.service.AiBotWorkflowService;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
@@ -20,10 +18,10 @@ import com.mybatisflex.core.query.QueryWrapper;
  * @since 2024-08-28
  */
 @Service
-public class AiBotWorkflowServiceImpl extends ServiceImpl<AiBotWorkflowMapper, AiBotWorkflow> implements AiBotWorkflowService {
+public class AiBotWorkflowServiceImpl extends ServiceImpl<AiBotWorkflowMapper, BotWorkflow> implements AiBotWorkflowService {
 
     @Override
-    public List<AiBotWorkflow> listByBotId(BigInteger botId) {
+    public List<BotWorkflow> listByBotId(BigInteger botId) {
 
         QueryWrapper queryWrapper = QueryWrapper.create();
         queryWrapper.eq("bot_id",botId);
@@ -33,13 +31,13 @@ public class AiBotWorkflowServiceImpl extends ServiceImpl<AiBotWorkflowMapper, A
 
     @Override
     public void saveBotAndWorkflowTool(BigInteger botId, BigInteger[] workflowIds) {
-        this.remove(QueryWrapper.create().eq(AiBotWorkflow::getBotId, botId));
-        List<AiBotWorkflow> list = new ArrayList<>(workflowIds.length);
+        this.remove(QueryWrapper.create().eq(BotWorkflow::getBotId, botId));
+        List<BotWorkflow> list = new ArrayList<>(workflowIds.length);
         for (BigInteger workflowId : workflowIds) {
-            AiBotWorkflow aiBotWorkflow = new AiBotWorkflow();
-            aiBotWorkflow.setBotId(botId);
-            aiBotWorkflow.setWorkflowId(workflowId);
-            list.add(aiBotWorkflow);
+            BotWorkflow botWorkflow = new BotWorkflow();
+            botWorkflow.setBotId(botId);
+            botWorkflow.setWorkflowId(workflowId);
+            list.add(botWorkflow);
         }
         this.saveBatch(list);
     }

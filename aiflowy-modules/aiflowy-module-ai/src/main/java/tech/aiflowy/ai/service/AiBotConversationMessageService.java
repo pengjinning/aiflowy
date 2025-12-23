@@ -1,10 +1,7 @@
 package tech.aiflowy.ai.service;
 
-import com.agentsflex.core.model.chat.ChatModel;
 import com.mybatisflex.core.service.IService;
-import dev.tinyflow.core.llm.Llm;
-import tech.aiflowy.ai.entity.AiBotConversationMessage;
-import tech.aiflowy.common.domain.Result;
+import tech.aiflowy.ai.entity.BotConversation;
 
 import java.math.BigInteger;
 
@@ -14,7 +11,7 @@ import java.math.BigInteger;
  * @author Administrator
  * @since 2025-04-15
  */
-public interface AiBotConversationMessageService extends IService<AiBotConversationMessage> {
+public interface AiBotConversationMessageService extends IService<BotConversation> {
 
     void deleteConversation(String botId, String sessionId, BigInteger accountId);
 

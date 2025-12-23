@@ -2,7 +2,7 @@ package tech.aiflowy.ai.service.impl;
 
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import tech.aiflowy.ai.entity.AiResource;
+import tech.aiflowy.ai.entity.Resource;
 import tech.aiflowy.ai.mapper.AiResourceMapper;
 import tech.aiflowy.ai.service.AiResourceService;
 
@@ -13,6 +13,6 @@ import tech.aiflowy.ai.service.AiResourceService;
  * @since 2025-06-27
  */
 @Service
-public class AiResourceServiceImpl extends ServiceImpl<AiResourceMapper, AiResource>  implements AiResourceService{
+public class AiResourceServiceImpl extends ServiceImpl<AiResourceMapper, Resource>  implements AiResourceService{
 
 }

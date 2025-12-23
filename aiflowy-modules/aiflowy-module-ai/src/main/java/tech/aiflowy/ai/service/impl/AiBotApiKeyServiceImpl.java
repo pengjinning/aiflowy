@@ -1,31 +1,28 @@
 package tech.aiflowy.ai.service.impl;
 
+import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
-import tech.aiflowy.ai.entity.AiBot;
-import tech.aiflowy.ai.entity.AiBotApiKey;
-import tech.aiflowy.ai.service.AiBotApiKeyService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import tech.aiflowy.ai.entity.Bot;
+import tech.aiflowy.ai.entity.BotApiKey;
 import tech.aiflowy.ai.mapper.AiBotApiKeyMapperMapper;
+import tech.aiflowy.ai.service.AiBotApiKeyService;
+import tech.aiflowy.ai.service.AiBotService;
+import tech.aiflowy.common.web.exceptions.BusinessException;
 
+import javax.annotation.Resource;
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.List;
-import javax.annotation.Resource;
-import javax.crypto.Cipher;
-import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 
-import tech.aiflowy.ai.service.AiBotService;
-import tech.aiflowy.common.web.exceptions.BusinessException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.mybatisflex.core.query.QueryWrapper;
-
-import static tech.aiflowy.ai.entity.table.AiBotApiKeyTableDef.AI_BOT_API_KEY;
+//import static tech.aiflowy.ai.entity.table.AiBotApiKeyTableDef.AI_BOT_API_KEY;
 
 /**
  * bot apiKey 表 服务层实现。
@@ -34,7 +31,7 @@ import static tech.aiflowy.ai.entity.table.AiBotApiKeyTableDef.AI_BOT_API_KEY;
  * @since 2025-07-18
  */
 @Service
-public class AiBotApiKeyServiceImpl extends ServiceImpl<AiBotApiKeyMapperMapper, AiBotApiKey>  implements AiBotApiKeyService {
+public class AiBotApiKeyServiceImpl extends ServiceImpl<AiBotApiKeyMapperMapper, BotApiKey>  implements AiBotApiKeyService {
 
     private static final Logger log = LoggerFactory.getLogger(AiBotApiKeyServiceImpl.class);
 
@@ -52,7 +49,7 @@ public class AiBotApiKeyServiceImpl extends ServiceImpl<AiBotApiKeyMapperMapper,
 
 
 
-        AiBot aiBot = aiBotService.getById(botId);
+        Bot aiBot = aiBotService.getById(botId);
 
         if (aiBot == null){
             log.error("bot 不存在！");
@@ -92,12 +89,12 @@ public class AiBotApiKeyServiceImpl extends ServiceImpl<AiBotApiKeyMapperMapper,
             log.info("apiKey:{}",apiKey);
             // 存入数据库
 
-            AiBotApiKey aiBotApiKey = new AiBotApiKey();
-            aiBotApiKey.setApiKey(apiKey);
-            aiBotApiKey.setSalt(saltBase64);
-            aiBotApiKey.setBotId(botId.longValue());
+            BotApiKey botApiKey = new BotApiKey();
+            botApiKey.setApiKey(apiKey);
+            botApiKey.setSalt(saltBase64);
+            botApiKey.setBotId(botId.longValue());
             
-            save(aiBotApiKey);
+            save(botApiKey);
 
             // 返回加密结果
             return apiKey;
@@ -152,8 +149,8 @@ public class AiBotApiKeyServiceImpl extends ServiceImpl<AiBotApiKeyMapperMapper,
 
     private String getSaltByApiKey(String apiKey){
         QueryWrapper queryWrapper = QueryWrapper.create();
-        queryWrapper.where(AI_BOT_API_KEY.API_KEY.eq(apiKey));
-        AiBotApiKey apiKeyFromDB = getOne(queryWrapper);
+        queryWrapper.eq(BotApiKey::getApiKey,apiKey);
+        BotApiKey apiKeyFromDB = getOne(queryWrapper);
         if (apiKeyFromDB == null) {
             return "";
         }

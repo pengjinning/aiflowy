@@ -1,7 +1,7 @@
 package tech.aiflowy.ai.mapper;
 
 import com.mybatisflex.core.BaseMapper;
-import tech.aiflowy.ai.entity.AiBotRecentlyUsed;
+import tech.aiflowy.ai.entity.BotRecentlyUsed;
 
 /**
  * 最近使用 映射层。
@@ -9,6 +9,6 @@ import tech.aiflowy.ai.entity.AiBotRecentlyUsed;
  * @author ArkLight
  * @since 2025-12-18
  */
-public interface AiBotRecentlyUsedMapper extends BaseMapper<AiBotRecentlyUsed> {
+public interface AiBotRecentlyUsedMapper extends BaseMapper<BotRecentlyUsed> {
 
 }

@@ -1,7 +1,7 @@
 package tech.aiflowy.ai.service;
 
 import com.mybatisflex.core.service.IService;
-import tech.aiflowy.ai.entity.AiBotCategory;
+import tech.aiflowy.ai.entity.BotCategory;
 
 /**
  * bot分类 服务层。
@@ -9,6 +9,6 @@ import tech.aiflowy.ai.entity.AiBotCategory;
  * @author ArkLight
  * @since 2025-12-18
  */
-public interface AiBotCategoryService extends IService<AiBotCategory> {
+public interface AiBotCategoryService extends IService<BotCategory> {
 
 }

@@ -2,7 +2,7 @@ package tech.aiflowy.admin.controller.ai;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.alicp.jetcache.Cache;
-import tech.aiflowy.ai.entity.AiLlmBrand;
+import tech.aiflowy.ai.entity.ModelBrand;
 import tech.aiflowy.ai.utils.AiBotChatUtil;
 import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.domain.Result;
@@ -13,8 +13,6 @@ import tech.aiflowy.common.web.exceptions.BusinessException;
 
 import javax.annotation.Resource;
 import java.util.List;
-
-import static tech.aiflowy.ai.utils.AiBotChatUtil.LLM_BRAND_KEY;
 
 /**
  * 控制层。
@@ -33,16 +31,16 @@ public class AiLlmBrandController extends BaseController {
 
     @RequestMapping("list")
     @SaCheckPermission("/api/v1/aiLlm/query")
-    public Result<List<AiLlmBrand>> list(){
+    public Result<List<ModelBrand>> list(){
 
         Object o = cache.get(AiBotChatUtil.LLM_BRAND_KEY);
 
-        List<AiLlmBrand> brandList = null;
+        List<ModelBrand> brandList = null;
 
         if (o != null) {
-            brandList = (List<AiLlmBrand>) o;
+            brandList = (List<ModelBrand>) o;
         } else {
-            brandList = AiLlmBrand.fromJsonConfig();
+            brandList = ModelBrand.fromJsonConfig();
             if (brandList == null || brandList.isEmpty()) {
                 throw new BusinessException("获取解析供应商列表结果为空，请检查配置文件！");
             }

@@ -1,7 +1,7 @@
 package tech.aiflowy.ai.service;
 
 import com.mybatisflex.core.service.IService;
-import tech.aiflowy.ai.entity.AiBotRecentlyUsed;
+import tech.aiflowy.ai.entity.BotRecentlyUsed;
 
 /**
  * 最近使用 服务层。
@@ -9,6 +9,6 @@ import tech.aiflowy.ai.entity.AiBotRecentlyUsed;
  * @author ArkLight
  * @since 2025-12-18
  */
-public interface AiBotRecentlyUsedService extends IService<AiBotRecentlyUsed> {
+public interface AiBotRecentlyUsedService extends IService<BotRecentlyUsed> {
 
 }

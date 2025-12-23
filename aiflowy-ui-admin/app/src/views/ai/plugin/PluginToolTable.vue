@@ -59,7 +59,7 @@ const handleDelete = (row: any) => {
     cancelButtonText: $t('button.cancel'),
     type: 'warning',
   }).then(() => {
-    api.post('/api/v1/aiPluginTool/remove', { id: row.id }).then((res) => {
+    api.post('/api/v1/pluginItem/remove', { id: row.id }).then((res) => {
       if (res.errorCode === 0) {
         ElMessage.success($t('message.deleteOkMessage'));
         pageDataRef.value.setQuery({ pluginId: props.pluginId });
@@ -75,19 +75,19 @@ const pluginToolReload = () => {
 
 <template>
   <PageData
-    page-url="/api/v1/aiPluginTool/page"
+    page-url="/api/v1/pluginItem/page"
     ref="pageDataRef"
     :page-size="10"
     :extra-query-params="{ pluginId: props.pluginId }"
   >
     <template #default="{ pageList }">
       <ElTable :data="pageList" style="width: 100%" size="large">
-        <ElTableColumn prop="name" :label="$t('aiPluginTool.name')" />
+        <ElTableColumn prop="name" :label="$t('pluginItem.name')" />
         <ElTableColumn
           prop="description"
-          :label="$t('aiPluginTool.description')"
+          :label="$t('pluginItem.description')"
         />
-        <ElTableColumn prop="created" :label="$t('aiPluginTool.created')" />
+        <ElTableColumn prop="created" :label="$t('pluginItem.created')" />
         <ElTableColumn
           fixed="right"
           :label="$t('common.handle')"

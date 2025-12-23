@@ -1,7 +1,6 @@
 package tech.aiflowy.ai.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
-import com.agentsflex.core.document.Document;
 import com.agentsflex.core.document.DocumentSplitter;
 import com.agentsflex.core.document.splitter.RegexDocumentSplitter;
 import com.agentsflex.core.document.splitter.SimpleDocumentSplitter;
@@ -23,10 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tech.aiflowy.ai.config.SearcherFactory;
-import tech.aiflowy.ai.entity.AiDocument;
-import tech.aiflowy.ai.entity.AiDocumentChunk;
-import tech.aiflowy.ai.entity.AiKnowledge;
-import tech.aiflowy.ai.entity.AiLlm;
+import tech.aiflowy.ai.entity.Document;
+import tech.aiflowy.ai.entity.DocumentChunk;
+import tech.aiflowy.ai.entity.DocumentCollection;
+import tech.aiflowy.ai.entity.Model;
 import tech.aiflowy.ai.mapper.AiDocumentChunkMapper;
 import tech.aiflowy.ai.mapper.AiDocumentMapper;
 import tech.aiflowy.ai.service.AiDocumentChunkService;
@@ -54,7 +53,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2024-08-23
  */
 @Service("AiService")
-public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocument> implements AiDocumentService {
+public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, Document> implements AiDocumentService {
     protected Logger Log = LoggerFactory.getLogger(AiDocumentServiceImpl.class);
 
     @Resource
@@ -79,7 +78,7 @@ public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocum
     private SearcherFactory searcherFactory;
 
     @Override
-    public Page<AiDocument> getDocumentList(String knowledgeId, int pageSize, int pageNum, String fileName) {
+    public Page<Document> getDocumentList(String knowledgeId, int pageSize, int pageNum, String fileName) {
         // 构建 QueryWrapper
         QueryWrapper queryWrapper = QueryWrapper.create()
                 .select("dt.*", "COUNT(ck.document_id) AS chunk_count") // 选择字段
@@ -94,7 +93,7 @@ public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocum
         }
         // 分组
         queryWrapper.groupBy("dt.id");
-        Page<AiDocument> documentVoPage = aiDocumentMapper.paginateAs(pageNum, pageSize, queryWrapper, AiDocument.class);
+        Page<Document> documentVoPage = aiDocumentMapper.paginateAs(pageNum, pageSize, queryWrapper, Document.class);
         return documentVoPage;
     }
 
@@ -109,8 +108,8 @@ public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocum
 //        // 查询该文档对应哪些分割的字段，先删除
         QueryWrapper where = QueryWrapper.create().where("document_id = ? ", id);
         QueryWrapper aiDocumentWapper = QueryWrapper.create().where("id = ? ", id);
-        AiDocument oneByQuery = aiDocumentMapper.selectOneByQuery(aiDocumentWapper);
-        AiKnowledge knowledge = knowledgeService.getById(oneByQuery.getKnowledgeId());
+        Document oneByQuery = aiDocumentMapper.selectOneByQuery(aiDocumentWapper);
+        DocumentCollection knowledge = knowledgeService.getById(oneByQuery.getKnowledgeId());
         if (knowledge == null) {
             return false;
         }
@@ -121,8 +120,8 @@ public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocum
             return false;
         }
 
-        AiLlm aiLlm = aiLlmService.getById(knowledge.getVectorEmbedLlmId());
-        if (aiLlm == null) {
+        Model model = aiLlmService.getById(knowledge.getVectorEmbedLlmId());
+        if (model == null) {
             return false;
         }
         // 设置向量模型
@@ -130,7 +129,7 @@ public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocum
 //        documentStore.setEmbeddingModel(embeddingModel);
         StoreOptions options = StoreOptions.ofCollectionName(knowledge.getVectorStoreCollection());
         EmbeddingOptions embeddingOptions = new EmbeddingOptions();
-        embeddingOptions.setModel(aiLlm.getLlmModel());
+        embeddingOptions.setModel(model.getLlmModel());
         options.setEmbeddingOptions(embeddingOptions);
         options.setCollectionName(knowledge.getVectorStoreCollection());
         // 查询文本分割表tb_document_chunk中对应的有哪些数据，找出来删除
@@ -149,8 +148,8 @@ public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocum
         }
         // 再删除指定路径下的文件
         QueryWrapper wrapper = QueryWrapper.create().where("id = ?", id);
-        AiDocument aiDocument = aiDocumentMapper.selectOneByQuery(wrapper);
-        storageService.delete(aiDocument.getDocumentPath());
+        Document document = aiDocumentMapper.selectOneByQuery(wrapper);
+        storageService.delete(document.getDocumentPath());
         return true;
     }
 
@@ -165,23 +164,23 @@ public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocum
 //                throw new BusinessException("获取文件后缀失败");
 //            }
 //            FileExtractor documentParser = DocumentParserFactory.getDocumentParser(filePath);
-            AiDocument aiDocument = new AiDocument();
-            List<AiDocumentChunk> previewList = new ArrayList<>();
+            Document aiDocument = new Document();
+            List<DocumentChunk> previewList = new ArrayList<>();
             DocumentSplitter documentSplitter = getDocumentSplitter(splitterName, chunkSize, overlapSize, regex, rowsPerChunk);
 
             String content = File2TextUtil.readFromStream(inputStream, originalFilename, null);
-            Document document = new Document(content);;
+            com.agentsflex.core.document.Document document = new com.agentsflex.core.document.Document(content);;
 //            if (documentParser != null) {
 //                TemporaryFileStreamDocumentSource fileDocumentSource = new TemporaryFileStreamDocumentSource(inputStream, originalFilename, null);
 //                String  content = documentParser.extractText(fileDocumentSource);
 //                document = new Document(content);
 //            }
             inputStream.close();
-            List<Document> documents = documentSplitter.split(document);
+            List<com.agentsflex.core.document.Document> documents = documentSplitter.split(document);
             FlexIDKeyGenerator flexIDKeyGenerator = new FlexIDKeyGenerator();
             int sort = 1;
-            for (Document value : documents) {
-                AiDocumentChunk chunk = new AiDocumentChunk();
+            for (com.agentsflex.core.document.Document value : documents) {
+                DocumentChunk chunk = new DocumentChunk();
                 chunk.setId(new BigInteger(String.valueOf(flexIDKeyGenerator.generate(chunk, null))));
                 chunk.setContent(value.getContent());
                 chunk.setSorting(sort);
@@ -203,26 +202,26 @@ public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocum
             aiDocument.setTitle(originalFilename);
             Map<String, Object> res = new HashMap<>();
 
-            List<AiDocumentChunk> aiDocumentChunks = null;
+            List<DocumentChunk> documentChunks = null;
             // 如果是预览拆分，则返回指定页的数据
             if ("textSplit".equals(operation)){
                 int startIndex = (pageNumber - 1) * pageSize;
                 int endIndex = Math.min(startIndex + pageSize, previewList.size());
 
                 if (startIndex >= previewList.size()) {
-                    aiDocumentChunks = new ArrayList<>();
+                    documentChunks = new ArrayList<>();
                 } else {
-                    aiDocumentChunks = new ArrayList<>(previewList.subList(startIndex, endIndex));
+                    documentChunks = new ArrayList<>(previewList.subList(startIndex, endIndex));
                 }
 
                 res.put("total", previewList.size());
                 // 保存文件到知识库
             } else if ("saveText".equals(operation)){
-                aiDocumentChunks = previewList;
-                return this.saveTextResult(aiDocumentChunks, aiDocument);
+                documentChunks = previewList;
+                return this.saveTextResult(documentChunks, aiDocument);
             }
 
-            res.put("previewData", aiDocumentChunks);
+            res.put("previewData", documentChunks);
             res.put("aiDocumentData", aiDocument);
             // 返回分割效果给用户
             return Result.ok(res);
@@ -234,15 +233,15 @@ public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocum
     }
 
     @Override
-    public Result<?> saveTextResult(List<AiDocumentChunk> aiDocumentChunks, AiDocument aiDocument) {
-        Boolean result = storeDocument(aiDocument, aiDocumentChunks);
+    public Result<?> saveTextResult(List<DocumentChunk> documentChunks, Document document) {
+        Boolean result = storeDocument(document, documentChunks);
         if (result) {
-            this.getMapper().insert(aiDocument);
+            this.getMapper().insert(document);
             AtomicInteger sort = new AtomicInteger(1);
-            aiDocumentChunks.forEach(item -> {
-                item.setKnowledgeId(aiDocument.getKnowledgeId());
+            documentChunks.forEach(item -> {
+                item.setKnowledgeId(document.getKnowledgeId());
                 item.setSorting(sort.get());
-                item.setDocumentId(aiDocument.getId());
+                item.setDocumentId(document.getId());
                 sort.getAndIncrement();
                 documentChunkService.save(item);
             });
@@ -251,8 +250,8 @@ public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocum
         return Result.fail(1, "保存失败");
     }
 
-    protected Boolean storeDocument(AiDocument entity, List<AiDocumentChunk> aiDocumentChunks) {
-        AiKnowledge knowledge = knowledgeService.getById(entity.getKnowledgeId());
+    protected Boolean storeDocument(Document entity, List<DocumentChunk> documentChunks) {
+        DocumentCollection knowledge = knowledgeService.getById(entity.getKnowledgeId());
         if (knowledge == null) {
             throw new BusinessException("知识库不存在");
         }
@@ -261,22 +260,22 @@ public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocum
             throw new BusinessException("向量数据库类型未设置");
         }
         // 设置向量模型
-        AiLlm aiLlm = aiLlmService.getById(knowledge.getVectorEmbedLlmId());
-        if (aiLlm == null) {
+        Model model = aiLlmService.getById(knowledge.getVectorEmbedLlmId());
+        if (model == null) {
             throw new BusinessException("该知识库未配置大模型");
         }
         // 设置向量模型
-        EmbeddingModel embeddingModel = aiLlm.toEmbeddingModel();
+        EmbeddingModel embeddingModel = model.toEmbeddingModel();
         documentStore.setEmbeddingModel(embeddingModel);
 
         StoreOptions options = StoreOptions.ofCollectionName(knowledge.getVectorStoreCollection());
         EmbeddingOptions embeddingOptions = new EmbeddingOptions();
-        embeddingOptions.setModel(aiLlm.getLlmModel());
+        embeddingOptions.setModel(model.getLlmModel());
         options.setEmbeddingOptions(embeddingOptions);
         options.setIndexName(options.getCollectionName());
-        List<Document> documents = new ArrayList<>();
-        aiDocumentChunks.forEach(item -> {
-                    Document document = new Document();
+        List<com.agentsflex.core.document.Document> documents = new ArrayList<>();
+        documentChunks.forEach(item -> {
+                    com.agentsflex.core.document.Document document = new com.agentsflex.core.document.Document();
                     document.setId(item.getId());
                     document.setContent(item.getContent());
                     documents.add(document);
@@ -295,10 +294,10 @@ public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocum
             documents.forEach(searcher::addDocument);
         }
 
-        AiKnowledge aiKnowledge = new AiKnowledge();
-        aiKnowledge.setId(entity.getKnowledgeId());
+        DocumentCollection documentCollection = new DocumentCollection();
+        documentCollection.setId(entity.getKnowledgeId());
         // CanUpdateEmbedLlm false: 不能修改知识库的大模型 true: 可以修改
-        AiKnowledge knowledge1 = knowledgeService.getById(entity.getKnowledgeId());
+        DocumentCollection knowledge1 = knowledgeService.getById(entity.getKnowledgeId());
         Map<String, Object> knowledgeoptions = new HashMap<>();
         if (knowledge1.getOptions() == null) {
             knowledgeoptions.put("canUpdateEmbedding", false);
@@ -306,8 +305,8 @@ public class AiDocumentServiceImpl extends ServiceImpl<AiDocumentMapper, AiDocum
             knowledgeoptions = knowledge.getOptions();
             knowledgeoptions.put("canUpdateEmbedding", false);
         }
-        aiKnowledge.setOptions(knowledgeoptions);
-        knowledgeService.updateById(aiKnowledge);
+        documentCollection.setOptions(knowledgeoptions);
+        knowledgeService.updateById(documentCollection);
         return true;
     }
 

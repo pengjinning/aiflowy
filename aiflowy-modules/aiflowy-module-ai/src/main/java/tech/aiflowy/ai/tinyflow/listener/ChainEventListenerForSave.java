@@ -1,7 +1,6 @@
 package tech.aiflowy.ai.tinyflow.listener;
 
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import dev.tinyflow.core.chain.*;
 import dev.tinyflow.core.chain.event.*;
@@ -10,9 +9,9 @@ import dev.tinyflow.core.chain.repository.NodeStateField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import tech.aiflowy.ai.entity.AiWorkflow;
-import tech.aiflowy.ai.entity.AiWorkflowExecRecord;
-import tech.aiflowy.ai.entity.AiWorkflowRecordStep;
+import tech.aiflowy.ai.entity.Workflow;
+import tech.aiflowy.ai.entity.WorkflowExecResult;
+import tech.aiflowy.ai.entity.WorkflowExecStep;
 import tech.aiflowy.ai.service.AiWorkflowExecRecordService;
 import tech.aiflowy.ai.service.AiWorkflowRecordStepService;
 import tech.aiflowy.ai.service.AiWorkflowService;
@@ -61,9 +60,9 @@ public class ChainEventListenerForSave implements ChainEventListener {
         log.info("ChainStartEvent: {}", event);
         ChainDefinition definition = chain.getDefinition();
         ChainState state = chain.getState();
-        AiWorkflow workflow = aiWorkflowService.getById(definition.getId());
+        Workflow workflow = aiWorkflowService.getById(definition.getId());
         String instanceId = state.getInstanceId();
-        AiWorkflowExecRecord record = new AiWorkflowExecRecord();
+        WorkflowExecResult record = new WorkflowExecResult();
         record.setExecKey(instanceId);
         record.setWorkflowId(workflow.getId());
         record.setTitle(workflow.getTitle());
@@ -81,7 +80,7 @@ public class ChainEventListenerForSave implements ChainEventListener {
         log.info("ChainEndEvent: {}", event);
         ChainState state = chain.getState();
         String instanceId = state.getInstanceId();
-        AiWorkflowExecRecord record = aiWorkflowExecRecordService.getByExecKey(instanceId);
+        WorkflowExecResult record = aiWorkflowExecRecordService.getByExecKey(instanceId);
         if (record == null) {
             log.error("ChainEndEvent: record not found: {}", instanceId);
         } else {
@@ -110,11 +109,11 @@ public class ChainEventListenerForSave implements ChainEventListener {
             return EnumSet.of(NodeStateField.MEMORY);
         });
 
-        AiWorkflowExecRecord record = aiWorkflowExecRecordService.getByExecKey(instanceId);
+        WorkflowExecResult record = aiWorkflowExecRecordService.getByExecKey(instanceId);
         if (record == null) {
             log.error("NodeStartEvent: record not found: {}", instanceId);
         } else {
-            AiWorkflowRecordStep step = new AiWorkflowRecordStep();
+            WorkflowExecStep step = new WorkflowExecStep();
             step.setRecordId(record.getId());
             step.setExecKey(execKey);
             step.setNodeId(node.getId());
@@ -132,7 +131,7 @@ public class ChainEventListenerForSave implements ChainEventListener {
         Node node = event.getNode();
         NodeState nodeState = chain.getNodeState(node.getId());
         String execKey = nodeState.getMemory().get("executeId").toString();
-        AiWorkflowRecordStep step = aiWorkflowRecordStepService.getByExecKey(execKey);
+        WorkflowExecStep step = aiWorkflowRecordStepService.getByExecKey(execKey);
         if (step == null) {
             log.error("NodeEndEvent: step not found: {}", execKey);
         } else {

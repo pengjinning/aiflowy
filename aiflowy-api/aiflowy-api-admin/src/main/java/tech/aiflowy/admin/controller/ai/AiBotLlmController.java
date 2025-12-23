@@ -1,6 +1,6 @@
 package tech.aiflowy.admin.controller.ai;
 
-import tech.aiflowy.ai.entity.AiBotLlm;
+import tech.aiflowy.ai.entity.BotModel;
 import tech.aiflowy.ai.service.AiBotLlmService;
 import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.web.controller.BaseCurdController;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/aiBotLlm")
 @UsePermission(moduleName = "/api/v1/aiBot")
-public class AiBotLlmController extends BaseCurdController<AiBotLlmService, AiBotLlm> {
+public class AiBotLlmController extends BaseCurdController<AiBotLlmService, BotModel> {
     public AiBotLlmController(AiBotLlmService service) {
         super(service);
     }

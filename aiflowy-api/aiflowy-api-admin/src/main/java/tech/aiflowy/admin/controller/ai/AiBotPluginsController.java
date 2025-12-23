@@ -1,12 +1,12 @@
 package tech.aiflowy.admin.controller.ai;
 
 import org.springframework.web.bind.annotation.PostMapping;
-import tech.aiflowy.ai.entity.AiPlugin;
+import tech.aiflowy.ai.entity.Plugin;
+import tech.aiflowy.ai.entity.BotPlugin;
 import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.tree.Tree;
 import tech.aiflowy.common.web.controller.BaseCurdController;
-import tech.aiflowy.ai.entity.AiBotPlugins;
 import tech.aiflowy.ai.service.AiBotPluginsService;
 import com.mybatisflex.core.query.QueryWrapper;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/aiBotPlugins")
 @UsePermission(moduleName = "/api/v1/aiBot")
-public class AiBotPluginsController extends BaseCurdController<AiBotPluginsService, AiBotPlugins> {
+public class AiBotPluginsController extends BaseCurdController<AiBotPluginsService, BotPlugin> {
 
     public AiBotPluginsController(AiBotPluginsService service) {
         super(service);
@@ -37,20 +37,20 @@ public class AiBotPluginsController extends BaseCurdController<AiBotPluginsServi
     private AiBotPluginsService aiBotPluginsService;
 
     @GetMapping("list")
-    public Result<List<AiBotPlugins>> list(AiBotPlugins entity, Boolean asTree, String sortKey, String sortType){
+    public Result<List<BotPlugin>> list(BotPlugin entity, Boolean asTree, String sortKey, String sortType){
 
         QueryWrapper queryWrapper = QueryWrapper.create(entity, buildOperators(entity));
         queryWrapper.orderBy(buildOrderBy(sortKey, sortType, getDefaultOrderBy()));
 
-        List<AiBotPlugins> aiBotPlugins = service.getMapper().selectListWithRelationsByQuery(queryWrapper);
+        List<BotPlugin> botPlugins = service.getMapper().selectListWithRelationsByQuery(queryWrapper);
 
-        List<AiBotPlugins> list = Tree.tryToTree(aiBotPlugins, asTree);
+        List<BotPlugin> list = Tree.tryToTree(botPlugins, asTree);
 
          return Result.ok(list);
     }
 
     @PostMapping("/getList")
-    public Result<List<AiPlugin>> getList(@JsonBody(value = "botId", required = true) String botId){
+    public Result<List<Plugin>> getList(@JsonBody(value = "botId", required = true) String botId){
         return Result.ok(aiBotPluginsService.getList(botId));
     }
 

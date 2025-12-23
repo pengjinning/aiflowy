@@ -1,6 +1,6 @@
 package tech.aiflowy.ai.service;
 
-import tech.aiflowy.ai.entity.AiDocumentHistory;
+import tech.aiflowy.ai.entity.DocumentHistory;
 import com.mybatisflex.core.service.IService;
 
 /**
@@ -9,6 +9,6 @@ import com.mybatisflex.core.service.IService;
  * @author michael
  * @since 2024-08-23
  */
-public interface AiDocumentHistoryService extends IService<AiDocumentHistory> {
+public interface AiDocumentHistoryService extends IService<DocumentHistory> {
 
 }

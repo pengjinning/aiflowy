@@ -84,19 +84,19 @@ function saveDoc(
     <ElTable :data="localFilesList" size="large" style="width: 100%">
       <ElTableColumn
         prop="fileName"
-        :label="$t('aiKnowledge.importDoc.fileName')"
+        :label="$t('documentCollection.importDoc.fileName')"
         width="250"
       />
       <ElTableColumn
         prop="progressUpload"
-        :label="$t('aiKnowledge.splitterDoc.uploadStatus')"
+        :label="$t('documentCollection.splitterDoc.uploadStatus')"
       >
         <template #default="{ row }">
           <ElTag type="success" v-if="row.progressUpload === 'success'">
-            {{ $t('aiKnowledge.splitterDoc.completed') }}
+            {{ $t('documentCollection.splitterDoc.completed') }}
           </ElTag>
           <ElTag type="primary" v-else>
-            {{ $t('aiKnowledge.splitterDoc.pendingUpload') }}
+            {{ $t('documentCollection.splitterDoc.pendingUpload') }}
           </ElTag>
         </template>
       </ElTableColumn>

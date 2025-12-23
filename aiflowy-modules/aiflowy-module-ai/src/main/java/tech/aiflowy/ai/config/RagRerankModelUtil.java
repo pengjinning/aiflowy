@@ -2,7 +2,7 @@ package tech.aiflowy.ai.config;
 
 import com.agentsflex.rerank.DefaultRerankModel;
 import com.agentsflex.rerank.DefaultRerankModelConfig;
-import tech.aiflowy.ai.entity.AiLlm;
+import tech.aiflowy.ai.entity.Model;
 import tech.aiflowy.common.util.PropertiesUtil;
 
 import java.util.Properties;
@@ -11,27 +11,27 @@ import org.springframework.util.StringUtils;
 
 public class RagRerankModelUtil {
 
-    public static DefaultRerankModel getRerankModel(AiLlm aiLlmRerank) {
-        if (aiLlmRerank == null){
+    public static DefaultRerankModel getRerankModel(Model modelRerank) {
+        if (modelRerank == null){
             return null;
         }
         DefaultRerankModelConfig defaultRerankModelConfig = new DefaultRerankModelConfig();
-        if (aiLlmRerank.getLlmModel() != null && !aiLlmRerank.getLlmModel().isEmpty()){
-            defaultRerankModelConfig.setModel(aiLlmRerank.getLlmModel());
+        if (modelRerank.getLlmModel() != null && !modelRerank.getLlmModel().isEmpty()){
+            defaultRerankModelConfig.setModel(modelRerank.getLlmModel());
         }
-        if (aiLlmRerank.getLlmApiKey() != null && !aiLlmRerank.getLlmApiKey().isEmpty()){
-            defaultRerankModelConfig.setApiKey(aiLlmRerank.getLlmApiKey());
+        if (modelRerank.getLlmApiKey() != null && !modelRerank.getLlmApiKey().isEmpty()){
+            defaultRerankModelConfig.setApiKey(modelRerank.getLlmApiKey());
         }
-        if (aiLlmRerank.getLlmEndpoint() != null && !aiLlmRerank.getLlmEndpoint().isEmpty()){
-            defaultRerankModelConfig.setEndpoint(aiLlmRerank.getLlmEndpoint());
+        if (modelRerank.getLlmEndpoint() != null && !modelRerank.getLlmEndpoint().isEmpty()){
+            defaultRerankModelConfig.setEndpoint(modelRerank.getLlmEndpoint());
         }
-        String llmExtraConfig = aiLlmRerank.getLlmExtraConfig();
+        String llmExtraConfig = modelRerank.getLlmExtraConfig();
         if (llmExtraConfig != null && !llmExtraConfig.isEmpty()){
             Properties prop = PropertiesUtil.textToProperties(llmExtraConfig);
             String basePath = prop.getProperty("basePath");
             defaultRerankModelConfig.setEndpoint(basePath);
         }else{
-            Map<String, Object> options = aiLlmRerank.getOptions();
+            Map<String, Object> options = modelRerank.getOptions();
             if (options != null) {
                 String rerankPath = (String)options.get("rerankPath");
                 if (StringUtils.hasLength(rerankPath)){

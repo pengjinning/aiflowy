@@ -43,14 +43,14 @@ const handleEditLlm = (id: string) => {
     <div class="llm-item">
       <div class="start">
         <ElImage
-          v-if="llm.aiLlmProvider.icon"
-          :src="llm.aiLlmProvider.icon"
+          v-if="llm.modelProvider.icon"
+          :src="llm.modelProvider.icon"
           style="width: 21px; height: 21px"
         />
 
         <div
           v-else
-          v-html="getIconByValue(llm.aiLlmProvider.provider)"
+          v-html="getIconByValue(llm.modelProvider.provider)"
           :style="{
             width: '21px',
             height: '21px',
@@ -62,7 +62,7 @@ const handleEditLlm = (id: string) => {
           class="svg-container"
         ></div>
 
-        <div>{{ llm?.aiLlmProvider?.providerName }}/{{ llm.title }}</div>
+        <div>{{ llm?.modelProvider?.providerName }}/{{ llm.title }}</div>
       </div>
       <div class="end">
         <ElIcon

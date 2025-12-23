@@ -1,6 +1,6 @@
 package tech.aiflowy.admin.controller.ai;
 
-import tech.aiflowy.ai.entity.AiBotRecentlyUsed;
+import tech.aiflowy.ai.entity.BotRecentlyUsed;
 import tech.aiflowy.ai.service.AiBotRecentlyUsedService;
 import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.web.controller.BaseCurdController;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/aiBotRecentlyUsed")
 @UsePermission(moduleName = "/api/v1/aiBot")
-public class AiBotRecentlyUsedController extends BaseCurdController<AiBotRecentlyUsedService, AiBotRecentlyUsed> {
+public class AiBotRecentlyUsedController extends BaseCurdController<AiBotRecentlyUsedService, BotRecentlyUsed> {
     public AiBotRecentlyUsedController(AiBotRecentlyUsedService service) {
         super(service);
     }

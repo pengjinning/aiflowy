@@ -2,10 +2,9 @@ package tech.aiflowy.admin.controller.ai;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.agentsflex.core.model.embedding.EmbeddingModel;
-import dev.tinyflow.core.llm.Llm;
-import tech.aiflowy.ai.entity.AiDocumentChunk;
-import tech.aiflowy.ai.entity.AiKnowledge;
-import tech.aiflowy.ai.entity.AiLlm;
+import tech.aiflowy.ai.entity.DocumentChunk;
+import tech.aiflowy.ai.entity.DocumentCollection;
+import tech.aiflowy.ai.entity.Model;
 import tech.aiflowy.ai.service.AiDocumentChunkService;
 import tech.aiflowy.ai.service.AiKnowledgeService;
 import tech.aiflowy.ai.service.AiLlmService;
@@ -37,7 +36,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/aiDocumentChunk")
 @UsePermission(moduleName = "/api/v1/aiKnowledge")
-public class AiDocumentChunkController extends BaseCurdController<AiDocumentChunkService, AiDocumentChunk> {
+public class AiDocumentChunkController extends BaseCurdController<AiDocumentChunkService, DocumentChunk> {
 
     @Resource
     AiKnowledgeService aiKnowledgeService;
@@ -54,11 +53,11 @@ public class AiDocumentChunkController extends BaseCurdController<AiDocumentChun
 
     @PostMapping("update")
     @SaCheckPermission("/api/v1/aiKnowledge/save")
-    public Result<?> update(@JsonBody AiDocumentChunk aiDocumentChunk) {
-        boolean success = service.updateById(aiDocumentChunk);
+    public Result<?> update(@JsonBody DocumentChunk documentChunk) {
+        boolean success = service.updateById(documentChunk);
         if (success){
-            AiDocumentChunk aiDocumentChunk1 = aiDocumentChunkService.getById(aiDocumentChunk.getId());
-            AiKnowledge knowledge = aiKnowledgeService.getById(aiDocumentChunk1.getKnowledgeId());
+            DocumentChunk documentChunk1 = aiDocumentChunkService.getById(documentChunk.getId());
+            DocumentCollection knowledge = aiKnowledgeService.getById(documentChunk1.getKnowledgeId());
             if (knowledge == null) {
                 return Result.fail(1, "知识库不存在");
             }
@@ -67,18 +66,18 @@ public class AiDocumentChunkController extends BaseCurdController<AiDocumentChun
                 return Result.fail(2, "知识库没有配置向量库");
             }
             // 设置向量模型
-            AiLlm aiLlm = aiLlmService.getById(knowledge.getVectorEmbedLlmId());
-            if (aiLlm == null) {
+            Model model = aiLlmService.getById(knowledge.getVectorEmbedLlmId());
+            if (model == null) {
                 return Result.fail(3, "知识库没有配置向量模型");
             }
-            EmbeddingModel embeddingModel = aiLlm.toEmbeddingModel();
+            EmbeddingModel embeddingModel = model.toEmbeddingModel();
             documentStore.setEmbeddingModel(embeddingModel);
             StoreOptions options = StoreOptions.ofCollectionName(knowledge.getVectorStoreCollection());
-            Document document = Document.of(aiDocumentChunk.getContent());
-            document.setId(aiDocumentChunk.getId());
+            Document document = Document.of(documentChunk.getContent());
+            document.setId(documentChunk.getId());
             Map<String, Object> metadata = new HashMap<>();
-            metadata.put("keywords", aiDocumentChunk.getMetadataKeyWords());
-            metadata.put("questions", aiDocumentChunk.getMetadataQuestions());
+            metadata.put("keywords", documentChunk.getMetadataKeyWords());
+            metadata.put("questions", documentChunk.getMetadataQuestions());
             document.setMetadataMap(metadata);
             StoreResult result = documentStore.update(document, options); // 更新已有记录
             return Result.ok(result);
@@ -89,11 +88,11 @@ public class AiDocumentChunkController extends BaseCurdController<AiDocumentChun
     @PostMapping("removeChunk")
     @SaCheckPermission("/api/v1/aiKnowledge/remove")
     public Result<?> remove(@JsonBody(value = "id", required = true) BigInteger chunkId) {
-        AiDocumentChunk docChunk =  aiDocumentChunkService.getById(chunkId);
+        DocumentChunk docChunk =  aiDocumentChunkService.getById(chunkId);
         if (docChunk == null) {
             return Result.fail(1, "记录不存在");
         }
-        AiKnowledge knowledge = aiKnowledgeService.getById(docChunk.getKnowledgeId());
+        DocumentCollection knowledge = aiKnowledgeService.getById(docChunk.getKnowledgeId());
         if (knowledge == null) {
             return Result.fail(2, "知识库不存在");
         }
@@ -102,11 +101,11 @@ public class AiDocumentChunkController extends BaseCurdController<AiDocumentChun
             return Result.fail(3, "知识库没有配置向量库");
         }
         // 设置向量模型
-        AiLlm aiLlm = aiLlmService.getById(knowledge.getVectorEmbedLlmId());
-        if (aiLlm == null) {
+        Model model = aiLlmService.getById(knowledge.getVectorEmbedLlmId());
+        if (model == null) {
             return Result.fail(4, "知识库没有配置向量模型");
         }
-        EmbeddingModel embeddingModel = aiLlm.toEmbeddingModel();
+        EmbeddingModel embeddingModel = model.toEmbeddingModel();
         documentStore.setEmbeddingModel(embeddingModel);
         StoreOptions options = StoreOptions.ofCollectionName(knowledge.getVectorStoreCollection());
         List<BigInteger> deleteList = new ArrayList<>();

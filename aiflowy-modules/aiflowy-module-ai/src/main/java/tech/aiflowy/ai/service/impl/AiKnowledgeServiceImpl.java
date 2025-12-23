@@ -6,16 +6,15 @@ import com.agentsflex.core.model.rerank.RerankModel;
 import com.agentsflex.core.store.DocumentStore;
 import com.agentsflex.core.store.SearchWrapper;
 import com.agentsflex.core.store.StoreOptions;
-import com.agentsflex.rerank.DefaultRerankModel;
 import com.agentsflex.search.engine.service.DocumentSearcher;
 import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.aiflowy.ai.config.SearcherFactory;
-import tech.aiflowy.ai.entity.AiDocumentChunk;
-import tech.aiflowy.ai.entity.AiKnowledge;
-import tech.aiflowy.ai.entity.AiLlm;
+import tech.aiflowy.ai.entity.DocumentChunk;
+import tech.aiflowy.ai.entity.DocumentCollection;
+import tech.aiflowy.ai.entity.Model;
 import tech.aiflowy.ai.mapper.AiDocumentChunkMapper;
 import tech.aiflowy.ai.mapper.AiKnowledgeMapper;
 import tech.aiflowy.ai.service.AiDocumentChunkService;
@@ -36,8 +35,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-import static tech.aiflowy.ai.config.RagRerankModelUtil.getRerankModel;
-
 /**
  * 服务层实现。
  *
@@ -45,7 +42,7 @@ import static tech.aiflowy.ai.config.RagRerankModelUtil.getRerankModel;
  * @since 2024-08-23
  */
 @Service
-public class AiKnowledgeServiceImpl extends ServiceImpl<AiKnowledgeMapper, AiKnowledge> implements AiKnowledgeService {
+public class AiKnowledgeServiceImpl extends ServiceImpl<AiKnowledgeMapper, DocumentCollection> implements AiKnowledgeService {
 
     @Resource
     private AiLlmService llmService;
@@ -62,7 +59,7 @@ public class AiKnowledgeServiceImpl extends ServiceImpl<AiKnowledgeMapper, AiKno
 
     @Override
     public List<Document> search(BigInteger id, String keyword) {
-        AiKnowledge knowledge = getById(id);
+        DocumentCollection knowledge = getById(id);
         if (knowledge == null) {
             throw new BusinessException("知识库不存在");
         }
@@ -72,12 +69,12 @@ public class AiKnowledgeServiceImpl extends ServiceImpl<AiKnowledgeMapper, AiKno
             throw new BusinessException("知识库没有配置向量库");
         }
 
-        AiLlm aiLlm = llmService.getLlmInstance(knowledge.getVectorEmbedLlmId());
-        if (aiLlm == null) {
+        Model model = llmService.getLlmInstance(knowledge.getVectorEmbedLlmId());
+        if (model == null) {
             throw new BusinessException("知识库没有配置向量模型");
         }
 
-        documentStore.setEmbeddingModel(aiLlm.toEmbeddingModel());
+        documentStore.setEmbeddingModel(model.toEmbeddingModel());
 
         SearchWrapper wrapper = new SearchWrapper();
         wrapper.setMaxResults(5);
@@ -116,9 +113,9 @@ public class AiKnowledgeServiceImpl extends ServiceImpl<AiKnowledgeMapper, AiKno
             List<Document> needRerankDocuments = new ArrayList<>(uniqueDocs.values());
             needRerankDocuments.sort((doc1, doc2) -> Double.compare(doc2.getScore(), doc1.getScore()));
             needRerankDocuments.forEach(item ->{
-                AiDocumentChunk aiDocumentChunk = aiDocumentChunkMapper.selectOneById((Serializable) item.getId());
-                if (aiDocumentChunk != null && !StringUtil.noText(aiDocumentChunk.getContent())){
-                    item.setContent(aiDocumentChunk.getContent());
+                DocumentChunk documentChunk = aiDocumentChunkMapper.selectOneById((Serializable) item.getId());
+                if (documentChunk != null && !StringUtil.noText(documentChunk.getContent())){
+                    item.setContent(documentChunk.getContent());
                 }
 
             });
@@ -131,7 +128,7 @@ public class AiKnowledgeServiceImpl extends ServiceImpl<AiKnowledgeMapper, AiKno
                 return formatDocuments(needRerankDocuments);
             }
 
-            RerankModel rerankModel = aiLlm.toRerankModel();
+            RerankModel rerankModel = model.toRerankModel();
             if (rerankModel == null) {
                 return formatDocuments(needRerankDocuments);
             }
@@ -150,9 +147,9 @@ public class AiKnowledgeServiceImpl extends ServiceImpl<AiKnowledgeMapper, AiKno
     }
 
     @Override
-    public AiKnowledge getDetail(String idOrAlias) {
+    public DocumentCollection getDetail(String idOrAlias) {
 
-        AiKnowledge knowledge = null;
+        DocumentCollection knowledge = null;
 
         if (idOrAlias.matches(RegexUtils.ALL_NUMBER)) {
             knowledge = getById(idOrAlias);
@@ -169,7 +166,7 @@ public class AiKnowledgeServiceImpl extends ServiceImpl<AiKnowledgeMapper, AiKno
     }
 
     @Override
-    public AiKnowledge getByAlias(String idOrAlias) {
+    public DocumentCollection getByAlias(String idOrAlias) {
 
         QueryWrapper queryWrapper = QueryWrapper.create();
         queryWrapper.eq("alias", idOrAlias);
@@ -180,20 +177,20 @@ public class AiKnowledgeServiceImpl extends ServiceImpl<AiKnowledgeMapper, AiKno
 
 
     @Override
-    public boolean updateById(AiKnowledge entity) {
-        AiKnowledge aiKnowledge = getById(entity.getId());
-        if (aiKnowledge == null) {
+    public boolean updateById(DocumentCollection entity) {
+        DocumentCollection documentCollection = getById(entity.getId());
+        if (documentCollection == null) {
             throw new BusinessException("bot 不存在");
         }
 
-        CustomBeanUtils.copyPropertiesIgnoreNull(entity, aiKnowledge);
+        CustomBeanUtils.copyPropertiesIgnoreNull(entity, documentCollection);
 
-        if ("".equals(aiKnowledge.getAlias())) {
-            aiKnowledge.setAlias(null);
+        if ("".equals(documentCollection.getAlias())) {
+            documentCollection.setAlias(null);
         }
 
 
-        return super.updateById(aiKnowledge, false);
+        return super.updateById(documentCollection, false);
     }
 
     public List<Document> formatDocuments(List<Document> documents) {

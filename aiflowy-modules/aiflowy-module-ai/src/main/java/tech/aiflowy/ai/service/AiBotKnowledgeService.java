@@ -1,6 +1,6 @@
 package tech.aiflowy.ai.service;
 
-import tech.aiflowy.ai.entity.AiBotKnowledge;
+import tech.aiflowy.ai.entity.BotDocumentCollection;
 import com.mybatisflex.core.service.IService;
 
 import java.math.BigInteger;
@@ -12,9 +12,9 @@ import java.util.List;
  * @author michael
  * @since 2024-08-28
  */
-public interface AiBotKnowledgeService extends IService<AiBotKnowledge> {
+public interface AiBotKnowledgeService extends IService<BotDocumentCollection> {
 
-    List<AiBotKnowledge> listByBotId(BigInteger botId);
+    List<BotDocumentCollection> listByBotId(BigInteger botId);
 
     void saveBotAndKnowledge(BigInteger botId, BigInteger[] knowledgeIds);
 }

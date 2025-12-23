@@ -1,6 +1,6 @@
 package tech.aiflowy.ai.service;
 
-import tech.aiflowy.ai.entity.AiBotLlm;
+import tech.aiflowy.ai.entity.BotModel;
 import com.mybatisflex.core.service.IService;
 
 /**
@@ -9,6 +9,6 @@ import com.mybatisflex.core.service.IService;
  * @author michael
  * @since 2024-08-28
  */
-public interface AiBotLlmService extends IService<AiBotLlm> {
+public interface AiBotLlmService extends IService<BotModel> {
 
 }

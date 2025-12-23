@@ -108,7 +108,7 @@ async function runWorkflow() {
 async function handleSave(showMsg: boolean = false) {
   saveLoading.value = true;
   await api
-    .post('/api/v1/aiWorkflow/update', {
+    .post('/api/v1/workflow/update', {
       id: workflowId.value,
       content: tinyflowRef.value?.getData(),
     })
@@ -120,7 +120,7 @@ async function handleSave(showMsg: boolean = false) {
     });
 }
 async function getWorkflowInfo(workflowId: any) {
-  api.get(`/api/v1/aiWorkflow/detail?id=${workflowId}`).then((res) => {
+  api.get(`/api/v1/workflow/detail?id=${workflowId}`).then((res) => {
     workflowInfo.value = res.data;
     tinyFlowData.value = workflowInfo.value.content
       ? JSON.parse(workflowInfo.value.content)
@@ -139,7 +139,7 @@ async function getKnowledgeList() {
 }
 function getRunningParams() {
   api
-    .get(`/api/v1/aiWorkflow/getRunningParameters?id=${workflowId.value}`)
+    .get(`/api/v1/workflow/getRunningParameters?id=${workflowId.value}`)
     .then((res) => {
       runParams.value = res.data;
       drawerVisible.value = true;
@@ -204,12 +204,12 @@ function onAsyncExecute(info: any) {
   <div class="head-div h-full w-full" v-loading="pageLoading">
     <CommonSelectDataModal
       ref="workflowSelectRef"
-      page-url="/api/v1/aiWorkflow/page"
+      page-url="/api/v1/workflow/page"
       @get-data="(v) => handleChoose(nodeNames.workflowNode, v)"
     />
     <CommonSelectDataModal
       ref="pluginSelectRef"
-      page-url="/api/v1/aiPlugin/page"
+      page-url="/api/v1/plugin/page"
       is-select-plugin
       @get-data="(v) => handleChoose(nodeNames.pluginNode, v)"
     />
@@ -222,7 +222,7 @@ function onAsyncExecute(info: any) {
       <SingleRun :node="singleNode" :workflow-id="workflowId" />
     </ElDrawer>
     <ElDrawer v-model="drawerVisible" :title="$t('button.run')" size="600px">
-      <div class="mb-2.5 font-semibold">{{ $t('aiWorkflow.params') }}：</div>
+      <div class="mb-2.5 font-semibold">{{ $t('workflow.params') }}：</div>
       <WorkflowForm
         ref="workflowForm"
         :workflow-id="workflowId"
@@ -231,7 +231,7 @@ function onAsyncExecute(info: any) {
         :on-async-execute="onAsyncExecute"
         :tiny-flow-data="tinyFlowData"
       />
-      <div class="mb-2.5 font-semibold">{{ $t('aiWorkflow.steps') }}：</div>
+      <div class="mb-2.5 font-semibold">{{ $t('workflow.steps') }}：</div>
       <WorkflowSteps
         :workflow-id="workflowId"
         :node-json="sortNodes(tinyFlowData)"
@@ -240,7 +240,7 @@ function onAsyncExecute(info: any) {
         @resume="resumeChain"
       />
       <div class="mb-2.5 mt-2.5 font-semibold">
-        {{ $t('aiWorkflow.result') }}：
+        {{ $t('workflow.result') }}：
       </div>
       <ExecResult
         :workflow-id="workflowId"

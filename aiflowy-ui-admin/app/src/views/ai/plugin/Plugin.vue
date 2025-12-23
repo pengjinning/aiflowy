@@ -32,7 +32,7 @@ const actions = ref([
     icon: Edit,
     text: $t('button.edit'),
     className: '',
-    permission: '/api/v1/aiPlugin/save',
+    permission: '/api/v1/plugin/save',
     onClick(item) {
       aiPluginModalRef.value.openDialog(item);
     },
@@ -41,7 +41,7 @@ const actions = ref([
     icon: PluginToolIcon,
     text: $t('plugin.button.tools'),
     className: '',
-    permission: '/api/v1/aiPlugin/save',
+    permission: '/api/v1/plugin/save',
     onClick(item) {
       router.push({
         path: '/ai/plugin/tools',
@@ -56,7 +56,7 @@ const actions = ref([
     icon: CategorizeIcon,
     text: $t('plugin.button.categorize'),
     className: '',
-    permission: '/api/v1/aiPlugin/save',
+    permission: '/api/v1/plugin/save',
     onClick(item) {
       categoryCategoryModal.value.openDialog(item);
     },
@@ -65,7 +65,7 @@ const actions = ref([
     icon: Delete,
     text: $t('button.delete'),
     className: 'item-danger',
-    permission: '/api/v1/aiPlugin/remove',
+    permission: '/api/v1/plugin/remove',
     onClick(item) {
       handleDelete(item);
     },
@@ -121,7 +121,7 @@ const handleDelete = (item) => {
   })
     .then(() => {
       api
-        .post('/api/v1/aiPlugin/plugin/remove', { id: item.id })
+        .post('/api/v1/plugin/plugin/remove', { id: item.id })
         .then((res) => {
           if (res.errorCode === 0) {
             ElMessage.success($t('message.deleteOkMessage'));
@@ -234,7 +234,7 @@ const handleClickCategory = (item) => {
       <div class="plugin-content-data-container h-full overflow-auto">
         <PageData
           ref="pageDataRef"
-          page-url="/api/v1/aiPlugin/pageByCategory"
+          page-url="/api/v1/plugin/pageByCategory"
           :page-size="12"
           :page-sizes="[12, 24, 36, 48]"
           :extra-query-params="{ category: pluginCategoryId }"

@@ -1,7 +1,7 @@
 package tech.aiflowy.ai.mapper;
 
 import com.mybatisflex.core.BaseMapper;
-import tech.aiflowy.ai.entity.AiWorkflowRecordStep;
+import tech.aiflowy.ai.entity.WorkflowExecStep;
 
 /**
  * 执行记录步骤 映射层。
@@ -9,6 +9,6 @@ import tech.aiflowy.ai.entity.AiWorkflowRecordStep;
  * @author ArkLight
  * @since 2025-05-28
  */
-public interface AiWorkflowRecordStepMapper extends BaseMapper<AiWorkflowRecordStep> {
+public interface AiWorkflowRecordStepMapper extends BaseMapper<WorkflowExecStep> {
 
 }

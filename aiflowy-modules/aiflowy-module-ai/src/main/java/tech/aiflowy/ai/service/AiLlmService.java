@@ -1,7 +1,6 @@
 package tech.aiflowy.ai.service;
 
-import tech.aiflowy.ai.entity.AiLlm;
-import tech.aiflowy.common.domain.Result;
+import tech.aiflowy.ai.entity.Model;
 import com.mybatisflex.core.service.IService;
 
 import java.math.BigInteger;
@@ -14,15 +13,15 @@ import java.util.Map;
  * @author michael
  * @since 2024-08-23
  */
-public interface AiLlmService extends IService<AiLlm> {
+public interface AiLlmService extends IService<Model> {
 
-    boolean addAiLlm(AiLlm entity);
+    boolean addAiLlm(Model entity);
 
-    void verifyLlmConfig(AiLlm llm);
+    void verifyLlmConfig(Model llm);
 
-    Map<String, Map<String, List<AiLlm>>> getList(AiLlm  entity);
+    Map<String, Map<String, List<Model>>> getList(Model entity);
 
-    void removeByEntity(AiLlm entity);
+    void removeByEntity(Model entity);
 
-    AiLlm getLlmInstance(BigInteger llmId);
+    Model getLlmInstance(BigInteger llmId);
 }

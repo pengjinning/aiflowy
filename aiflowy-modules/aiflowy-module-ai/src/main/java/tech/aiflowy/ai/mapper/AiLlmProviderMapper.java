@@ -1,7 +1,7 @@
 package tech.aiflowy.ai.mapper;
 
 import com.mybatisflex.core.BaseMapper;
-import tech.aiflowy.ai.entity.AiLlmProvider;
+import tech.aiflowy.ai.entity.ModelProvider;
 
 /**
  *  映射层。
@@ -9,6 +9,6 @@ import tech.aiflowy.ai.entity.AiLlmProvider;
  * @author 12076
  * @since 2025-12-16
  */
-public interface AiLlmProviderMapper extends BaseMapper<AiLlmProvider> {
+public interface AiLlmProviderMapper extends BaseMapper<ModelProvider> {
 
 }

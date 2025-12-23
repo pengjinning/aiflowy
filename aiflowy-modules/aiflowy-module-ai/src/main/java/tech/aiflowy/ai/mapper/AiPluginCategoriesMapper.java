@@ -1,7 +1,7 @@
 package tech.aiflowy.ai.mapper;
 
 import com.mybatisflex.core.BaseMapper;
-import tech.aiflowy.ai.entity.AiPluginCategories;
+import tech.aiflowy.ai.entity.PluginCategory;
 
 /**
  *  映射层。
@@ -9,6 +9,6 @@ import tech.aiflowy.ai.entity.AiPluginCategories;
  * @author Administrator
  * @since 2025-05-21
  */
-public interface AiPluginCategoriesMapper extends BaseMapper<AiPluginCategories> {
+public interface AiPluginCategoriesMapper extends BaseMapper<PluginCategory> {
 
 }

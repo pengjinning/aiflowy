@@ -1,7 +1,7 @@
 package tech.aiflowy.ai.mapper;
 
 import com.mybatisflex.core.BaseMapper;
-import tech.aiflowy.ai.entity.AiWorkflowExecRecord;
+import tech.aiflowy.ai.entity.WorkflowExecResult;
 
 /**
  * 工作流执行记录 映射层。
@@ -9,6 +9,6 @@ import tech.aiflowy.ai.entity.AiWorkflowExecRecord;
  * @author ArkLight
  * @since 2025-05-28
  */
-public interface AiWorkflowExecRecordMapper extends BaseMapper<AiWorkflowExecRecord> {
+public interface AiWorkflowExecRecordMapper extends BaseMapper<WorkflowExecResult> {
 
 }

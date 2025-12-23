@@ -1,6 +1,6 @@
 package tech.aiflowy.ai.service;
 
-import tech.aiflowy.ai.entity.AiBotWorkflow;
+import tech.aiflowy.ai.entity.BotWorkflow;
 import com.mybatisflex.core.service.IService;
 
 import java.math.BigInteger;
@@ -12,9 +12,9 @@ import java.util.List;
  * @author michael
  * @since 2024-08-28
  */
-public interface AiBotWorkflowService extends IService<AiBotWorkflow> {
+public interface AiBotWorkflowService extends IService<BotWorkflow> {
 
-    List<AiBotWorkflow> listByBotId(BigInteger botId);
+    List<BotWorkflow> listByBotId(BigInteger botId);
 
     void saveBotAndWorkflowTool(BigInteger botId, BigInteger[] workflowIds);
 }

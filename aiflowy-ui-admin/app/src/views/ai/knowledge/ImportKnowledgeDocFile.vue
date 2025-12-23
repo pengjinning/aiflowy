@@ -64,7 +64,7 @@ const confirmImport = () => {
 };
 const finishImport = () => {
   loadingSave.value = false;
-  ElMessage.success($t('aiKnowledge.splitterDoc.importSuccess'));
+  ElMessage.success($t('documentCollection.splitterDoc.importSuccess'));
   emits('importBack');
 };
 </script>
@@ -86,7 +86,7 @@ const finishImport = () => {
                   <span class="text-accent-foreground text-sm/8">1</span>
                 </div>
                 <span class="text-base">{{
-                  $t('aiKnowledge.importDoc.fileUpload')
+                  $t('documentCollection.importDoc.fileUpload')
                 }}</span>
               </div>
             </template>
@@ -98,7 +98,7 @@ const finishImport = () => {
                   <span class="text-accent-foreground text-sm/8">2</span>
                 </div>
                 <span class="text-base">{{
-                  $t('aiKnowledge.importDoc.parameterSettings')
+                  $t('documentCollection.importDoc.parameterSettings')
                 }}</span>
               </div>
             </template>
@@ -110,7 +110,7 @@ const finishImport = () => {
                   <span class="text-accent-foreground text-sm/8">3</span>
                 </div>
                 <span class="text-base">{{
-                  $t('aiKnowledge.importDoc.segmentedPreview')
+                  $t('documentCollection.importDoc.segmentedPreview')
                 }}</span>
               </div>
             </template>
@@ -122,7 +122,7 @@ const finishImport = () => {
                   <span class="text-accent-foreground text-sm/8">4</span>
                 </div>
                 <span class="text-base">{{
-                  $t('aiKnowledge.importDoc.confirmImport')
+                  $t('documentCollection.importDoc.confirmImport')
                 }}</span>
               </div>
             </template>

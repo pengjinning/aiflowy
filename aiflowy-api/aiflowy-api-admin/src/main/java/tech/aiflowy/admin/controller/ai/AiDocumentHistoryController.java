@@ -1,6 +1,6 @@
 package tech.aiflowy.admin.controller.ai;
 
-import tech.aiflowy.ai.entity.AiDocumentHistory;
+import tech.aiflowy.ai.entity.DocumentHistory;
 import tech.aiflowy.ai.service.AiDocumentHistoryService;
 import tech.aiflowy.common.web.controller.BaseCurdController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/v1/aiDocumentHistory")
-public class AiDocumentHistoryController extends BaseCurdController<AiDocumentHistoryService, AiDocumentHistory> {
+public class AiDocumentHistoryController extends BaseCurdController<AiDocumentHistoryService, DocumentHistory> {
     public AiDocumentHistoryController(AiDocumentHistoryService service) {
         super(service);
     }

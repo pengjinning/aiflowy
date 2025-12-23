@@ -7,7 +7,7 @@ import com.mybatisflex.core.tenant.TenantManager;
 import dev.tinyflow.core.chain.Chain;
 import dev.tinyflow.core.chain.Parameter;
 import dev.tinyflow.core.node.BaseNode;
-import tech.aiflowy.ai.entity.AiResource;
+import tech.aiflowy.ai.entity.Resource;
 import tech.aiflowy.ai.service.AiResourceService;
 import tech.aiflowy.ai.utils.DocUtil;
 import tech.aiflowy.ai.utils.WorkFlowUtil;
@@ -55,7 +55,7 @@ public class DownloadNode extends BaseNode {
 
         String resourceUrl = manager.save(new CustomFile(fileName, bytes));
 
-        AiResource resource = new AiResource();
+        Resource resource = new Resource();
 
         LoginAccount account = WorkFlowUtil.getOperator(chain);
 

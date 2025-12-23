@@ -1,6 +1,6 @@
 package tech.aiflowy.admin.controller.ai;
 
-import tech.aiflowy.ai.entity.AiLlmProvider;
+import tech.aiflowy.ai.entity.ModelProvider;
 import tech.aiflowy.ai.service.AiLlmProviderService;
 import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.web.controller.BaseCurdController;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/aiLlmProvider")
 @UsePermission(moduleName = "/api/v1/aiLlm")
-public class AiLlmProviderController extends BaseCurdController<AiLlmProviderService, AiLlmProvider> {
+public class AiLlmProviderController extends BaseCurdController<AiLlmProviderService, ModelProvider> {
     public AiLlmProviderController(AiLlmProviderService service) {
         super(service);
     }

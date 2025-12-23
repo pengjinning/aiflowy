@@ -13,7 +13,7 @@ import dev.tinyflow.core.parser.ChainParser;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tech.aiflowy.ai.entity.AiWorkflow;
+import tech.aiflowy.ai.entity.Workflow;
 import tech.aiflowy.ai.service.AiWorkflowService;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.web.exceptions.BusinessException;
@@ -36,7 +36,7 @@ public class WorkFlowNodeController {
             throw new BusinessException("工作流不能作为自身子节点");
         }
         JSONObject nodeData = new JSONObject();
-        AiWorkflow workflow = aiWorkflowService.getById(workflowId);
+        Workflow workflow = aiWorkflowService.getById(workflowId);
         if (workflow == null) {
             throw new BusinessException("工作流不存在: " + workflowId);
         }

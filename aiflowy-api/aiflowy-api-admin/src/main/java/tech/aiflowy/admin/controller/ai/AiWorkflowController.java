@@ -6,14 +6,12 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.IdUtil;
 import com.mybatisflex.core.query.QueryWrapper;
 import dev.tinyflow.core.chain.*;
-import dev.tinyflow.core.chain.repository.ChainStateRepository;
-import dev.tinyflow.core.chain.repository.NodeStateRepository;
 import dev.tinyflow.core.chain.runtime.ChainExecutor;
 import dev.tinyflow.core.parser.ChainParser;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import tech.aiflowy.ai.entity.AiWorkflow;
+import tech.aiflowy.ai.entity.Workflow;
 import tech.aiflowy.ai.service.AiBotWorkflowService;
 import tech.aiflowy.ai.service.AiLlmService;
 import tech.aiflowy.ai.service.AiWorkflowService;
@@ -44,7 +42,7 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/api/v1/aiWorkflow")
-public class AiWorkflowController extends BaseCurdController<AiWorkflowService, AiWorkflow> {
+public class AiWorkflowController extends BaseCurdController<AiWorkflowService, Workflow> {
     private final AiLlmService aiLlmService;
 
     @Resource
@@ -73,7 +71,7 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
             @JsonBody(value = "nodeId", required = true) String nodeId,
             @JsonBody("variables") Map<String, Object> variables) {
 
-        AiWorkflow workflow = service.getById(workflowId);
+        Workflow workflow = service.getById(workflowId);
         if (workflow == null) {
             return Result.fail(1, "工作流不存在");
         }
@@ -91,7 +89,7 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
         if (variables == null) {
             variables = new HashMap<>();
         }
-        AiWorkflow workflow = service.getById(id);
+        Workflow workflow = service.getById(id);
         if (workflow == null) {
             throw new RuntimeException("工作流不存在");
         }
@@ -125,7 +123,7 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
 
     @PostMapping("/importWorkFlow")
     @SaCheckPermission("/api/v1/aiWorkflow/save")
-    public Result<Void> importWorkFlow(AiWorkflow workflow, MultipartFile jsonFile) throws Exception {
+    public Result<Void> importWorkFlow(Workflow workflow, MultipartFile jsonFile) throws Exception {
         InputStream is = jsonFile.getInputStream();
         String content = IoUtil.read(is, StandardCharsets.UTF_8);
         workflow.setContent(content);
@@ -136,14 +134,14 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
     @GetMapping("/exportWorkFlow")
     @SaCheckPermission("/api/v1/aiWorkflow/save")
     public Result<String> exportWorkFlow(BigInteger id) {
-        AiWorkflow workflow = service.getById(id);
+        Workflow workflow = service.getById(id);
         return Result.ok("", workflow.getContent());
     }
 
     @GetMapping("getRunningParameters")
     @SaCheckPermission("/api/v1/aiWorkflow/query")
     public Result<?> getRunningParameters(@RequestParam BigInteger id) {
-        AiWorkflow workflow = service.getById(id);
+        Workflow workflow = service.getById(id);
 
         if (workflow == null) {
             return Result.fail(1, "can not find the workflow by id: " + id);
@@ -163,8 +161,8 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
     }
 
     @Override
-    public Result<AiWorkflow> detail(String id) {
-        AiWorkflow workflow = service.getDetail(id);
+    public Result<Workflow> detail(String id) {
+        Workflow workflow = service.getDetail(id);
         return Result.ok(workflow);
     }
 
@@ -172,7 +170,7 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
     @SaCheckPermission("/api/v1/aiWorkflow/save")
     public Result<Void> copy(BigInteger id) {
         LoginAccount account = SaTokenUtil.getLoginAccount();
-        AiWorkflow workflow = service.getById(id);
+        Workflow workflow = service.getById(id);
         workflow.setId(null);
         workflow.setAlias(IdUtil.fastSimpleUUID());
         commonFiled(workflow, account.getId(), account.getTenantId(), account.getDeptId());
@@ -181,11 +179,11 @@ public class AiWorkflowController extends BaseCurdController<AiWorkflowService, 
     }
 
     @Override
-    protected Result onSaveOrUpdateBefore(AiWorkflow entity, boolean isSave) {
+    protected Result onSaveOrUpdateBefore(Workflow entity, boolean isSave) {
 
         String alias = entity.getAlias();
         if (StringUtils.hasLength(alias)) {
-            AiWorkflow workflow = service.getByAlias(alias);
+            Workflow workflow = service.getByAlias(alias);
             if (workflow == null) {
                 return null;
             }

@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Map;
 //import com.agentsflex.core.llm.ChatOptions;
-import tech.aiflowy.ai.entity.AiLlm;
 
-import java.util.HashMap;
 
 /**
  * OpenAI Chat API 请求参数类

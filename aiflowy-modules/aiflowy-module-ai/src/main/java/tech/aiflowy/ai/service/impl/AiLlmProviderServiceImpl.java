@@ -2,7 +2,7 @@ package tech.aiflowy.ai.service.impl;
 
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import tech.aiflowy.ai.entity.AiLlmProvider;
+import tech.aiflowy.ai.entity.ModelProvider;
 import tech.aiflowy.ai.mapper.AiLlmProviderMapper;
 import tech.aiflowy.ai.service.AiLlmProviderService;
 
@@ -13,6 +13,6 @@ import tech.aiflowy.ai.service.AiLlmProviderService;
  * @since 2025-12-16
  */
 @Service
-public class AiLlmProviderServiceImpl extends ServiceImpl<AiLlmProviderMapper, AiLlmProvider>  implements AiLlmProviderService {
+public class AiLlmProviderServiceImpl extends ServiceImpl<AiLlmProviderMapper, ModelProvider>  implements AiLlmProviderService {
 
 }

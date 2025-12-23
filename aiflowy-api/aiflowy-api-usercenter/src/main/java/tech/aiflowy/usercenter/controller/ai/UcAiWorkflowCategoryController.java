@@ -2,7 +2,7 @@ package tech.aiflowy.usercenter.controller.ai;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import tech.aiflowy.ai.entity.AiWorkflowCategory;
+import tech.aiflowy.ai.entity.WorkflowCategory;
 import tech.aiflowy.ai.service.AiWorkflowCategoryService;
 import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.domain.Result;
@@ -20,14 +20,14 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/userCenter/aiWorkflowCategory")
 @UsePermission(moduleName = "/api/v1/aiWorkflow")
-public class UcAiWorkflowCategoryController extends BaseCurdController<AiWorkflowCategoryService, AiWorkflowCategory> {
+public class UcAiWorkflowCategoryController extends BaseCurdController<AiWorkflowCategoryService, WorkflowCategory> {
 
     public UcAiWorkflowCategoryController(AiWorkflowCategoryService service) {
         super(service);
     }
 
     @Override
-    protected Result<?> onSaveOrUpdateBefore(AiWorkflowCategory entity, boolean isSave) {
+    protected Result<?> onSaveOrUpdateBefore(WorkflowCategory entity, boolean isSave) {
         return Result.fail("-");
     }
 

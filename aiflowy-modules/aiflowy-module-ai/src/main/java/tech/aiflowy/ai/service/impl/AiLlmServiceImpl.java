@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import tech.aiflowy.ai.entity.AiLlm;
-import tech.aiflowy.ai.entity.AiLlmProvider;
+import tech.aiflowy.ai.entity.Model;
+import tech.aiflowy.ai.entity.ModelProvider;
 import tech.aiflowy.ai.mapper.AiLlmMapper;
 import tech.aiflowy.ai.service.AiLlmProviderService;
 import tech.aiflowy.ai.service.AiLlmService;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * @since 2024-08-23
  */
 @Service
-public class AiLlmServiceImpl extends ServiceImpl<AiLlmMapper, AiLlm> implements AiLlmService {
+public class AiLlmServiceImpl extends ServiceImpl<AiLlmMapper, Model> implements AiLlmService {
 
     @Autowired
     AiLlmMapper aiLlmMapper;
@@ -47,7 +47,7 @@ public class AiLlmServiceImpl extends ServiceImpl<AiLlmMapper, AiLlm> implements
 
 
     @Override
-    public boolean addAiLlm(AiLlm entity) {
+    public boolean addAiLlm(Model entity) {
         int insert = aiLlmMapper.insert(entity);
         if (insert <= 0) {
             return false;
@@ -58,7 +58,7 @@ public class AiLlmServiceImpl extends ServiceImpl<AiLlmMapper, AiLlm> implements
     private static final Logger log = LoggerFactory.getLogger(AiLlmServiceImpl.class);
 
     @Override
-    public void verifyLlmConfig(AiLlm llm) {
+    public void verifyLlmConfig(Model llm) {
         String modelType = llm.getModelType();
         if ("chatModel".equals(modelType)) {
             // 走聊天验证逻辑
@@ -86,16 +86,16 @@ public class AiLlmServiceImpl extends ServiceImpl<AiLlmMapper, AiLlm> implements
     }
 
     @Override
-    public Map<String, Map<String, List<AiLlm>>> getList(AiLlm entity) {
+    public Map<String, Map<String, List<Model>>> getList(Model entity) {
         String[] llmModelTypes = {"chatModel", "embeddingModel", "rerankModel"};
-        Map<String, Map<String, List<AiLlm>>> result = new HashMap<>();
+        Map<String, Map<String, List<Model>>> result = new HashMap<>();
 
         QueryWrapper queryWrapper = new QueryWrapper()
-                .eq(AiLlm::getProviderId, entity.getProviderId());
-        queryWrapper.eq(AiLlm::getAdded, entity.getAdded());
-        List<AiLlm> totalList = aiLlmMapper.selectListWithRelationsByQuery(queryWrapper);
+                .eq(Model::getProviderId, entity.getProviderId());
+        queryWrapper.eq(Model::getAdded, entity.getAdded());
+        List<Model> totalList = aiLlmMapper.selectListWithRelationsByQuery(queryWrapper);
         for (String modelType : llmModelTypes) {
-            Map<String, List<AiLlm>> groupMap = groupLlmByGroupName(totalList, modelType);
+            Map<String, List<Model>> groupMap = groupLlmByGroupName(totalList, modelType);
             if (!CollectionUtils.isEmpty(groupMap)) {
                 result.put(modelType, groupMap);
             }
@@ -104,7 +104,7 @@ public class AiLlmServiceImpl extends ServiceImpl<AiLlmMapper, AiLlm> implements
         return result;
     }
 
-    private Map<String, List<AiLlm>> groupLlmByGroupName(List<AiLlm> totalList, String targetModelType) {
+    private Map<String, List<Model>> groupLlmByGroupName(List<Model> totalList, String targetModelType) {
         if (CollectionUtils.isEmpty(totalList)) {
             return Collections.emptyMap();
         }
@@ -112,11 +112,11 @@ public class AiLlmServiceImpl extends ServiceImpl<AiLlmMapper, AiLlm> implements
         return totalList.stream()
                 .filter(aiLlm -> targetModelType.equals(aiLlm.getModelType())
                         && aiLlm.getGroupName() != null)
-                .collect(Collectors.groupingBy(AiLlm::getGroupName));
+                .collect(Collectors.groupingBy(Model::getGroupName));
     }
 
 
-    private void verifyRerankLlm(AiLlm llm) {
+    private void verifyRerankLlm(Model llm) {
         RerankModel rerankModel = llm.toRerankModel();
         List<Document> documents = new ArrayList<>();
         documents.add(Document.of("Paris is the capital of France."));
@@ -136,7 +136,7 @@ public class AiLlmServiceImpl extends ServiceImpl<AiLlmMapper, AiLlm> implements
         }
     }
 
-    private void verifyEmbedLlm(AiLlm llm) {
+    private void verifyEmbedLlm(Model llm) {
         try {
             EmbeddingModel transLlm = llm.toEmbeddingModel();
             VectorData vectorData = transLlm.embed("这是一条校验模型配置的文本");
@@ -150,7 +150,7 @@ public class AiLlmServiceImpl extends ServiceImpl<AiLlmMapper, AiLlm> implements
         }
     }
 
-    private void verifyChatLlm(AiLlm llm) {
+    private void verifyChatLlm(Model llm) {
 
         ChatModel chatModel = llm.toChatModel();
         if (chatModel == null) {
@@ -182,18 +182,18 @@ public class AiLlmServiceImpl extends ServiceImpl<AiLlmMapper, AiLlm> implements
     }
 
     @Override
-    public void removeByEntity(AiLlm entity) {
-        QueryWrapper queryWrapper = QueryWrapper.create().eq(AiLlm::getProviderId, entity.getProviderId()).eq(AiLlm::getGroupName, entity.getGroupName());
+    public void removeByEntity(Model entity) {
+        QueryWrapper queryWrapper = QueryWrapper.create().eq(Model::getProviderId, entity.getProviderId()).eq(Model::getGroupName, entity.getGroupName());
         aiLlmMapper.deleteByQuery(queryWrapper);
     }
 
     @Override
-    public AiLlm getLlmInstance(BigInteger llmId) {
-        AiLlm aillm = getById(llmId);
+    public Model getLlmInstance(BigInteger llmId) {
+        Model aillm = getById(llmId);
         if (aillm == null) {
             return null;
         }
-        AiLlmProvider provider = llmProviderService.getById(aillm.getProviderId());
+        ModelProvider provider = llmProviderService.getById(aillm.getProviderId());
         if (provider == null) {
             return aillm;
         }

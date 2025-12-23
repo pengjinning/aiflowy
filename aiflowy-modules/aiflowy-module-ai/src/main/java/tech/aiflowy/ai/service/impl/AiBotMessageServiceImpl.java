@@ -6,8 +6,8 @@ import com.alicp.jetcache.Cache;
 import com.mybatisflex.core.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import tech.aiflowy.ai.entity.AiBotConversationMessage;
-import tech.aiflowy.ai.entity.AiBotMessage;
+import tech.aiflowy.ai.entity.BotConversation;
+import tech.aiflowy.ai.entity.BotMessage;
 import tech.aiflowy.ai.enums.BotMessageTypeEnum;
 import tech.aiflowy.ai.mapper.AiBotMessageMapper;
 import tech.aiflowy.ai.service.AiBotMessageService;
@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 2024-11-04
  */
 @Service
-public class AiBotMessageServiceImpl extends ServiceImpl<AiBotMessageMapper, AiBotMessage> implements AiBotMessageService {
+public class AiBotMessageServiceImpl extends ServiceImpl<AiBotMessageMapper, BotMessage> implements AiBotMessageService {
 
     @Resource
     private AiBotMessageMapper aiBotMessageMapper;
@@ -54,9 +54,9 @@ public class AiBotMessageServiceImpl extends ServiceImpl<AiBotMessageMapper, AiB
                     .where("bot_id = ? ", botId)
                     .where("session_id = ? ", sessionId)
                     .where("account_id = ? ", SaTokenUtil.getLoginAccount().getId());
-            List<AiBotMessage> messages = aiBotMessageMapper.selectListByQueryAs(queryConversation, AiBotMessage.class);
+            List<BotMessage> messages = aiBotMessageMapper.selectListByQueryAs(queryConversation, BotMessage.class);
             List<Maps> finalMessages = new ArrayList<>();
-            for (AiBotMessage message : messages){
+            for (BotMessage message : messages){
                 Map<String, Object> options = message.getOptions();
                 if (options != null && "user".equalsIgnoreCase(message.getRole()) && (Integer) options.get("type") == BotMessageTypeEnum.TOOL_RESULT.getValue()) {
                     continue;
@@ -85,30 +85,30 @@ public class AiBotMessageServiceImpl extends ServiceImpl<AiBotMessageMapper, AiB
             return Result.ok(finalMessages);
         } else {
             AtomicReference<List<Maps>> messages = new AtomicReference<>(new ArrayList<>());
-            List<AiBotConversationMessage> result = (List<AiBotConversationMessage>)cache.get(tempUserId + ":" + botId);
+            List<BotConversation> result = (List<BotConversation>)cache.get(tempUserId + ":" + botId);
             if (result == null || result.isEmpty()) {
                 return Result.ok(new ArrayList<>());
             }
             result.forEach(conversationMessage -> {
                 if (conversationMessage.getSessionId().equals(sessionId)) {
-                    List<AiBotMessage> aiBotMessageList = conversationMessage.getAiBotMessageList();
+                    List<BotMessage> botMessageList = conversationMessage.getAiBotMessageList();
                     List<Maps> finalMessageList = new ArrayList<>();
-                    for (AiBotMessage aiBotMessage : aiBotMessageList) {
-                        Map<String, Object> options = aiBotMessage.getOptions();
-                        if (options != null && "user".equalsIgnoreCase(aiBotMessage.getRole()) && (Integer) options.get("type") == BotMessageTypeEnum.TOOL_RESULT.getValue()) {
+                    for (BotMessage botMessage : botMessageList) {
+                        Map<String, Object> options = botMessage.getOptions();
+                        if (options != null && "user".equalsIgnoreCase(botMessage.getRole()) && (Integer) options.get("type") == BotMessageTypeEnum.TOOL_RESULT.getValue()) {
                             continue;
                         }
 
                         if (options != null && (Integer) options.get("type") == BotMessageTypeEnum.USER_INPUT.getValue()){
-                            aiBotMessage.setContent((String) options.get("user_input"));
+                            botMessage.setContent((String) options.get("user_input"));
                         }
 
-                        Maps maps = Maps.of("id", aiBotMessage.getId())
-                                .set("content", aiBotMessage.getContent())
-                                .set("role", aiBotMessage.getRole())
-                                .set("options", aiBotMessage.getOptions())
-                                .set("created", aiBotMessage.getCreated().getTime())
-                                .set("updateAt", aiBotMessage.getCreated().getTime());
+                        Maps maps = Maps.of("id", botMessage.getId())
+                                .set("content", botMessage.getContent())
+                                .set("role", botMessage.getRole())
+                                .set("options", botMessage.getOptions())
+                                .set("created", botMessage.getCreated().getTime())
+                                .set("updateAt", botMessage.getCreated().getTime());
 
                         if (options != null && options.get("fileList") != null){
                             maps.set("files", options.get("fileList"));

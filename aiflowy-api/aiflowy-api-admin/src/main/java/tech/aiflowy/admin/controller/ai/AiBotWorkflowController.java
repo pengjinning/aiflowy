@@ -1,7 +1,7 @@
 package tech.aiflowy.admin.controller.ai;
 
 import org.springframework.web.bind.annotation.PostMapping;
-import tech.aiflowy.ai.entity.AiBotWorkflow;
+import tech.aiflowy.ai.entity.BotWorkflow;
 import tech.aiflowy.ai.service.AiBotWorkflowService;
 import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.domain.Result;
@@ -25,18 +25,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/aiBotWorkflow")
 @UsePermission(moduleName = "/api/v1/aiBot")
-public class AiBotWorkflowController extends BaseCurdController<AiBotWorkflowService, AiBotWorkflow> {
+public class AiBotWorkflowController extends BaseCurdController<AiBotWorkflowService, BotWorkflow> {
     public AiBotWorkflowController(AiBotWorkflowService service) {
         super(service);
     }
 
     @GetMapping("list")
     @Override
-    public Result<List<AiBotWorkflow>> list(AiBotWorkflow entity, Boolean asTree, String sortKey, String sortType) {
+    public Result<List<BotWorkflow>> list(BotWorkflow entity, Boolean asTree, String sortKey, String sortType) {
         QueryWrapper queryWrapper = QueryWrapper.create(entity, buildOperators(entity));
         queryWrapper.orderBy(buildOrderBy(sortKey, sortType, getDefaultOrderBy()));
-        List<AiBotWorkflow> aiBotWorkflows = service.getMapper().selectListWithRelationsByQuery(queryWrapper);
-        List<AiBotWorkflow> list = Tree.tryToTree(aiBotWorkflows, asTree);
+        List<BotWorkflow> botWorkflows = service.getMapper().selectListWithRelationsByQuery(queryWrapper);
+        List<BotWorkflow> list = Tree.tryToTree(botWorkflows, asTree);
         return Result.ok(list);
     }
 

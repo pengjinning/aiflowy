@@ -47,7 +47,7 @@ const handleDelete = (row: any) => {
     cancelButtonText: $t('button.cancel'),
     type: 'warning',
   }).then(() => {
-    api.post('/api/v1/aiDocument/removeDoc', { id: row.id }).then((res) => {
+    api.post('/api/v1/document/removeDoc', { id: row.id }).then((res) => {
       if (res.errorCode === 0) {
         ElMessage.success($t('message.deleteOkMessage'));
         pageDataRef.value.setQuery({ id: props.knowledgeId });
@@ -60,7 +60,7 @@ const handleDelete = (row: any) => {
 
 <template>
   <PageData
-    page-url="/api/v1/aiDocument/documentList"
+    page-url="/api/v1/document/documentList"
     ref="pageDataRef"
     :page-size="10"
     :extra-query-params="{ id: props.knowledgeId }"

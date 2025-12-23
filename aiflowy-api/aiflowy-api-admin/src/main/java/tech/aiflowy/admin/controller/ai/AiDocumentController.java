@@ -12,9 +12,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import tech.aiflowy.ai.entity.AiDocument;
-import tech.aiflowy.ai.entity.AiKnowledge;
+import tech.aiflowy.ai.entity.Document;
+import tech.aiflowy.ai.entity.DocumentCollection;
 import tech.aiflowy.ai.service.AiDocumentChunkService;
 import tech.aiflowy.ai.service.AiDocumentService;
 import tech.aiflowy.ai.service.AiKnowledgeService;
@@ -44,7 +43,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/v1/aiDocument")
 @UsePermission(moduleName = "/api/v1/aiKnowledge")
-public class AiDocumentController extends BaseCurdController<AiDocumentService, AiDocument> {
+public class AiDocumentController extends BaseCurdController<AiDocumentService, Document> {
 
     private final AiKnowledgeService knowledgeService;
 
@@ -92,36 +91,36 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
     @GetMapping("list")
     @Override
     @SaCheckPermission("/api/v1/aiKnowledge/query")
-    public Result<List<AiDocument>> list(AiDocument entity, Boolean asTree, String sortKey, String sortType) {
+    public Result<List<Document>> list(Document entity, Boolean asTree, String sortKey, String sortType) {
         String kbSlug = RequestUtil.getParamAsString("id");
         if (StringUtil.noText(kbSlug)) {
             throw new BusinessException("知识库id不能为空");
         }
 
-        AiKnowledge knowledge = StringUtil.isNumeric(kbSlug)
+        DocumentCollection knowledge = StringUtil.isNumeric(kbSlug)
                 ? knowledgeService.getById(kbSlug)
-                : knowledgeService.getOne(QueryWrapper.create().eq(AiKnowledge::getSlug, kbSlug));
+                : knowledgeService.getOne(QueryWrapper.create().eq(DocumentCollection::getSlug, kbSlug));
 
         if (knowledge == null) {
             throw new BusinessException("知识库不存在");
         }
 
         QueryWrapper queryWrapper = QueryWrapper.create()
-                .eq(AiDocument::getKnowledgeId, knowledge.getId());
+                .eq(Document::getKnowledgeId, knowledge.getId());
         queryWrapper.orderBy(buildOrderBy(sortKey, sortType, getDefaultOrderBy()));
-        List<AiDocument> aiDocuments = service.list(queryWrapper);
-        List<AiDocument> list = Tree.tryToTree(aiDocuments, asTree);
+        List<Document> documents = service.list(queryWrapper);
+        List<Document> list = Tree.tryToTree(documents, asTree);
         return Result.ok(list);
     }
 
     @GetMapping("documentList")
     @SaCheckPermission("/api/v1/aiKnowledge/query")
-    public Result<Page<AiDocument>> documentList(@RequestParam(name="title", required = false) String fileName, @RequestParam(name="pageSize") int pageSize, @RequestParam(name = "pageNumber") int pageNumber) {
+    public Result<Page<Document>> documentList(@RequestParam(name="title", required = false) String fileName, @RequestParam(name="pageSize") int pageSize, @RequestParam(name = "pageNumber") int pageNumber) {
         String kbSlug = RequestUtil.getParamAsString("id");
         if (StringUtil.noText(kbSlug)) {
             throw new BusinessException("知识库id不能为空");
         }
-        Page<AiDocument> documentList = aiDocumentService.getDocumentList(kbSlug, pageSize, pageNumber,fileName);
+        Page<Document> documentList = aiDocumentService.getDocumentList(kbSlug, pageSize, pageNumber,fileName);
         return Result.ok(documentList);
     }
 
@@ -135,7 +134,7 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
     @PostMapping("update")
     @Override
     @SaCheckPermission("/api/v1/aiKnowledge/save")
-    public Result<Boolean> update(@JsonBody AiDocument entity) {
+    public Result<Boolean> update(@JsonBody Document entity) {
         super.update(entity);
         return Result.ok(updatePosition(entity));
     }
@@ -190,13 +189,13 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
      * @param entity
      * @return Result
      */
-    private boolean updatePosition(AiDocument entity) {
+    private boolean updatePosition(Document entity) {
         Integer orderNo = entity.getOrderNo();
         if (orderNo != null) {
             if (orderNo <= 0) orderNo = 0;
             BigInteger knowledgeId = service.getById(entity.getId()).getKnowledgeId();
-            List<AiDocument> list = service.list(QueryWrapper.create()
-                    .eq(AiDocument::getKnowledgeId, knowledgeId)
+            List<Document> list = service.list(QueryWrapper.create()
+                    .eq(Document::getKnowledgeId, knowledgeId)
                     .orderBy(getDefaultOrderBy())
             );
 
@@ -207,9 +206,9 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
                 list.add(orderNo, entity);
             }
 
-            List<AiDocument> updateList = new ArrayList<>();
+            List<Document> updateList = new ArrayList<>();
             for (int i = 0; i < list.size(); i++) {
-                AiDocument updateItem = new AiDocument();
+                Document updateItem = new Document();
                 updateItem.setId(list.get(i).getId());
                 updateItem.setOrderNo(i);
                 updateList.add(updateItem);
@@ -240,15 +239,15 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
     public void downloadDocument(@RequestParam String documentId, HttpServletResponse response) throws IOException {
         // 1. 从数据库获取文件信息
         QueryWrapper queryWrapper = QueryWrapper.create().select("*").where("id = ?", documentId);
-        AiDocument aiDocument = service.getOne(queryWrapper);
+        Document document = service.getOne(queryWrapper);
 
-        if (aiDocument == null) {
+        if (document == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "文件不存在");
             return;
         }
 
         // 2. 获取文件路径
-        String filePath = getRootPath() + aiDocument.getDocumentPath();
+        String filePath = getRootPath() + document.getDocumentPath();
         File file = new File(filePath);
 
         if (!file.exists()) {
@@ -257,7 +256,7 @@ public class AiDocumentController extends BaseCurdController<AiDocumentService, 
         }
 
         // 3. 构造文件名并设置响应头
-        String originalFilename = aiDocument.getTitle() + "." + aiDocument.getDocumentType();
+        String originalFilename = document.getTitle() + "." + document.getDocumentType();
         String encodedFilename = URLEncoder.encode(originalFilename, StandardCharsets.UTF_8.name())
                 .replaceAll("\\+", "%20");
 

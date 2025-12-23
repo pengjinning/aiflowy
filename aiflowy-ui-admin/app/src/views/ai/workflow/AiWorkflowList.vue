@@ -61,7 +61,7 @@ const actions: ActionButton[] = [
     icon: Edit,
     text: $t('button.edit'),
     className: '',
-    permission: '/api/v1/aiWorkflow/save',
+    permission: '/api/v1/workflow/save',
     onClick: (row: any) => {
       showDialog(row);
     },
@@ -70,7 +70,7 @@ const actions: ActionButton[] = [
     icon: DesignIcon,
     text: $t('button.design'),
     className: '',
-    permission: '/api/v1/aiWorkflow/save',
+    permission: '/api/v1/workflow/save',
     onClick: (row: any) => {
       toDesignPage(row);
     },
@@ -93,7 +93,7 @@ const actions: ActionButton[] = [
     icon: Tickets,
     text: $t('aiWorkflowExecRecord.moduleName'),
     className: '',
-    permission: '/api/v1/aiWorkflow/save',
+    permission: '/api/v1/workflow/save',
     onClick: (row: any) => {
       router.push({
         name: 'ExecRecord',
@@ -148,7 +148,7 @@ const headerButtons = [
     icon: markRaw(Plus),
     type: 'primary',
     data: { action: 'create' },
-    permission: '/api/v1/aiWorkflow/save',
+    permission: '/api/v1/workflow/save',
   },
 ];
 
@@ -173,7 +173,7 @@ function remove(row: any) {
       if (action === 'confirm') {
         instance.confirmButtonLoading = true;
         api
-          .post('/api/v1/aiWorkflow/remove', { id: row.id })
+          .post('/api/v1/workflow/remove', { id: row.id })
           .then((res) => {
             instance.confirmButtonLoading = false;
             if (res.errorCode === 0) {
@@ -201,7 +201,7 @@ function toDesignPage(row: any) {
 }
 function exportJson(row: any) {
   api
-    .get('/api/v1/aiWorkflow/exportWorkFlow', {
+    .get('/api/v1/workflow/exportWorkFlow', {
       params: {
         id: row.id,
       },
@@ -378,7 +378,7 @@ const getSideList = async () => {
       <div class="h-full flex-1 overflow-auto">
         <PageData
           ref="pageDataRef"
-          page-url="/api/v1/aiWorkflow/page"
+          page-url="/api/v1/workflow/page"
           :page-sizes="[12, 18, 24]"
           :page-size="12"
         >
