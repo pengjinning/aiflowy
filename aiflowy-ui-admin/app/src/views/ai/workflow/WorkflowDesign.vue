@@ -222,7 +222,7 @@ function onAsyncExecute(info: any) {
       <SingleRun :node="singleNode" :workflow-id="workflowId" />
     </ElDrawer>
     <ElDrawer v-model="drawerVisible" :title="$t('button.run')" size="600px">
-      <div class="mb-2.5 font-semibold">{{ $t('workflow.params') }}：</div>
+      <div class="mb-2.5 font-semibold">{{ $t('aiWorkflow.params') }}：</div>
       <WorkflowForm
         ref="workflowForm"
         :workflow-id="workflowId"
@@ -231,7 +231,7 @@ function onAsyncExecute(info: any) {
         :on-async-execute="onAsyncExecute"
         :tiny-flow-data="tinyFlowData"
       />
-      <div class="mb-2.5 font-semibold">{{ $t('workflow.steps') }}：</div>
+      <div class="mb-2.5 font-semibold">{{ $t('aiWorkflow.steps') }}：</div>
       <WorkflowSteps
         :workflow-id="workflowId"
         :node-json="sortNodes(tinyFlowData)"
@@ -240,7 +240,7 @@ function onAsyncExecute(info: any) {
         @resume="resumeChain"
       />
       <div class="mb-2.5 mt-2.5 font-semibold">
-        {{ $t('workflow.result') }}：
+        {{ $t('aiWorkflow.result') }}：
       </div>
       <ExecResult
         :workflow-id="workflowId"

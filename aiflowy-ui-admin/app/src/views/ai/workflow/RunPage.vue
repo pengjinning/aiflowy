@@ -83,7 +83,7 @@ function onAsyncExecute(info: any) {
             body-class="overflow-auto h-full"
           >
             <div class="mb-2.5 font-semibold">
-              {{ $t('workflow.params') }}：
+              {{ $t('aiWorkflow.params') }}：
             </div>
             <WorkflowForm
               v-if="runParams && tinyFlowData"
@@ -101,7 +101,7 @@ function onAsyncExecute(info: any) {
             body-class="overflow-auto h-full"
           >
             <div class="mb-2.5 font-semibold">
-              {{ $t('workflow.steps') }}：
+              {{ $t('aiWorkflow.steps') }}：
             </div>
             <WorkflowSteps
               v-if="tinyFlowData"
@@ -117,7 +117,7 @@ function onAsyncExecute(info: any) {
       <ElCol :span="14">
         <ElCard shadow="never" class="h-full" body-class="h-full overflow-auto">
           <div class="mb-2.5 mt-2.5 font-semibold">
-            {{ $t('workflow.result') }}：
+            {{ $t('aiWorkflow.result') }}：
           </div>
           <ExecResult
             v-if="tinyFlowData"

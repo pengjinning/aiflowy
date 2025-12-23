@@ -55,7 +55,7 @@ function save() {
       btnLoading.value = true;
       api
         .post(
-          isAdd.value ? 'api/v1/aiWorkflow/save' : 'api/v1/aiWorkflow/update',
+          isAdd.value ? '/api/v1/workflow/save' : '/api/v1/workflow/update',
           entity.value,
         )
         .then((res) => {
