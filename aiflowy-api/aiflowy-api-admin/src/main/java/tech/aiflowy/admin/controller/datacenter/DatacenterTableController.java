@@ -16,11 +16,11 @@ import tech.aiflowy.common.entity.LoginAccount;
 import tech.aiflowy.common.satoken.util.SaTokenUtil;
 import tech.aiflowy.common.web.controller.BaseCurdController;
 import tech.aiflowy.datacenter.entity.DatacenterTable;
-import tech.aiflowy.datacenter.entity.DatacenterTableFields;
+import tech.aiflowy.datacenter.entity.DatacenterTableField;
 import tech.aiflowy.datacenter.entity.vo.HeaderVo;
 import tech.aiflowy.datacenter.excel.ReadDataListener;
 import tech.aiflowy.datacenter.excel.ReadResVo;
-import tech.aiflowy.datacenter.service.DatacenterTableFieldsService;
+import tech.aiflowy.datacenter.service.DatacenterTableFieldService;
 import tech.aiflowy.datacenter.service.DatacenterTableService;
 
 import javax.annotation.Resource;
@@ -44,7 +44,7 @@ import java.util.Map;
 public class DatacenterTableController extends BaseCurdController<DatacenterTableService, DatacenterTable> {
 
     @Resource
-    private DatacenterTableFieldsService fieldsService;
+    private DatacenterTableFieldService fieldsService;
 
     public DatacenterTableController(DatacenterTableService service) {
         super(service);
@@ -65,7 +65,7 @@ public class DatacenterTableController extends BaseCurdController<DatacenterTabl
     @SaCheckPermission("/api/v1/datacenterTable/save")
     public Result<Void> saveTable(@RequestBody DatacenterTable entity) {
         LoginAccount loginUser = SaTokenUtil.getLoginAccount();
-        List<DatacenterTableFields> fields = entity.getFields();
+        List<DatacenterTableField> fields = entity.getFields();
         if (CollectionUtil.isEmpty(fields)) {
             return Result.fail(99, "字段不能为空");
         }
@@ -85,9 +85,9 @@ public class DatacenterTableController extends BaseCurdController<DatacenterTabl
     public Result<DatacenterTable> detailInfo(BigInteger tableId) {
         DatacenterTable table = service.getById(tableId);
         QueryWrapper wrapper = QueryWrapper.create();
-        wrapper.eq(DatacenterTableFields::getTableId, tableId);
+        wrapper.eq(DatacenterTableField::getTableId, tableId);
         wrapper.orderBy("id");
-        List<DatacenterTableFields> fields = fieldsService.list(wrapper);
+        List<DatacenterTableField> fields = fieldsService.list(wrapper);
         table.setFields(fields);
         return Result.ok(table);
     }
@@ -152,7 +152,7 @@ public class DatacenterTableController extends BaseCurdController<DatacenterTabl
             throw new RuntimeException("数据表不存在");
         }
         InputStream is = file.getInputStream();
-        List<DatacenterTableFields> fields = service.getFields(record.getId());
+        List<DatacenterTableField> fields = service.getFields(record.getId());
 
         LoginAccount account = SaTokenUtil.getLoginAccount();
         ReadDataListener listener = new ReadDataListener(record.getId(), fields, account);
@@ -168,7 +168,7 @@ public class DatacenterTableController extends BaseCurdController<DatacenterTabl
 
     @GetMapping("/getTemplate")
     public void getTemplate(BigInteger tableId, HttpServletResponse response) throws Exception {
-        List<DatacenterTableFields> fields = service.getFields(tableId);
+        List<DatacenterTableField> fields = service.getFields(tableId);
         // 设置响应内容类型
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
@@ -180,7 +180,7 @@ public class DatacenterTableController extends BaseCurdController<DatacenterTabl
         // 动态表头数据
         List<List<String>> headList = new ArrayList<>();
 
-        for (DatacenterTableFields field : fields) {
+        for (DatacenterTableField field : fields) {
             List<String> head = new ArrayList<>();
             head.add(field.getFieldName());
             headList.add(head);

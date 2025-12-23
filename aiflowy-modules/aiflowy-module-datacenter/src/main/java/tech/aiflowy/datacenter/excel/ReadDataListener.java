@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.aiflowy.common.entity.LoginAccount;
 import tech.aiflowy.common.util.SpringContextUtil;
-import tech.aiflowy.datacenter.entity.DatacenterTableFields;
+import tech.aiflowy.datacenter.entity.DatacenterTableField;
 import tech.aiflowy.datacenter.service.DatacenterTableService;
 
 import java.math.BigInteger;
@@ -20,7 +20,7 @@ public class ReadDataListener implements ReadListener<LinkedHashMap<Integer, Obj
 
     private BigInteger tableId;
 
-    private List<DatacenterTableFields> fields;
+    private List<DatacenterTableField> fields;
 
     private LoginAccount loginAccount;
 
@@ -35,7 +35,7 @@ public class ReadDataListener implements ReadListener<LinkedHashMap<Integer, Obj
     public ReadDataListener() {
     }
 
-    public ReadDataListener(BigInteger tableId, List<DatacenterTableFields> fields, LoginAccount loginAccount) {
+    public ReadDataListener(BigInteger tableId, List<DatacenterTableField> fields, LoginAccount loginAccount) {
         this.tableId = tableId;
         this.fields = fields;
         this.loginAccount = loginAccount;
@@ -45,7 +45,7 @@ public class ReadDataListener implements ReadListener<LinkedHashMap<Integer, Obj
     public void invoke(LinkedHashMap<Integer, Object> o, AnalysisContext analysisContext) {
         DatacenterTableService service = SpringContextUtil.getBean(DatacenterTableService.class);
         JSONObject obj = new JSONObject();
-        for (DatacenterTableFields field : fields) {
+        for (DatacenterTableField field : fields) {
             String fieldName = field.getFieldName();
             Integer i = headFieldIndex.get(fieldName);
             if (i != null) {
@@ -81,11 +81,11 @@ public class ReadDataListener implements ReadListener<LinkedHashMap<Integer, Obj
 
     }
 
-    public List<DatacenterTableFields> getFields() {
+    public List<DatacenterTableField> getFields() {
         return fields;
     }
 
-    public void setFields(List<DatacenterTableFields> fields) {
+    public void setFields(List<DatacenterTableField> fields) {
         this.fields = fields;
     }
 

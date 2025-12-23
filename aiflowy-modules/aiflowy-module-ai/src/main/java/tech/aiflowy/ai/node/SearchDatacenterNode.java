@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.aiflowy.common.entity.DatacenterQuery;
 import tech.aiflowy.common.util.SpringContextUtil;
-import tech.aiflowy.datacenter.entity.DatacenterTableFields;
+import tech.aiflowy.datacenter.entity.DatacenterTableField;
 import tech.aiflowy.datacenter.service.DatacenterTableService;
 import tech.aiflowy.datacenter.utils.WhereConditionSecurityChecker;
 
@@ -125,8 +125,8 @@ public class SearchDatacenterNode extends BaseNode {
             if (expression != null) {
                 WhereConditionSecurityChecker checker = new WhereConditionSecurityChecker();
                 DatacenterTableService service = SpringContextUtil.getBean(DatacenterTableService.class);
-                List<DatacenterTableFields> fields = service.getFields(tableId);
-                Set<String> columns = fields.stream().map(DatacenterTableFields::getFieldName).collect(Collectors.toSet());
+                List<DatacenterTableField> fields = service.getFields(tableId);
+                Set<String> columns = fields.stream().map(DatacenterTableField::getFieldName).collect(Collectors.toSet());
                 columns.add("id");
                 columns.add("created");
                 columns.add("modified");

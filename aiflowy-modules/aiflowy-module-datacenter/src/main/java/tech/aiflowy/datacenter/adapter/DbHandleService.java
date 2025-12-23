@@ -4,9 +4,8 @@ import cn.hutool.core.date.DateUtil;
 import com.alibaba.fastjson2.JSONObject;
 import tech.aiflowy.common.constant.enums.EnumFieldType;
 import tech.aiflowy.common.entity.LoginAccount;
-import tech.aiflowy.common.web.exceptions.BusinessException;
 import tech.aiflowy.datacenter.entity.DatacenterTable;
-import tech.aiflowy.datacenter.entity.DatacenterTableFields;
+import tech.aiflowy.datacenter.entity.DatacenterTableField;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -24,11 +23,11 @@ public abstract class DbHandleService {
      */
     public abstract String convertFieldType(Integer fieldType);
 
-    public abstract void addField(DatacenterTable entity, DatacenterTableFields field);
+    public abstract void addField(DatacenterTable entity, DatacenterTableField field);
 
-    public abstract void deleteField(DatacenterTable entity, DatacenterTableFields field);
+    public abstract void deleteField(DatacenterTable entity, DatacenterTableField field);
 
-    public abstract void updateField(DatacenterTable entity, DatacenterTableFields fieldRecord, DatacenterTableFields field);
+    public abstract void updateField(DatacenterTable entity, DatacenterTableField fieldRecord, DatacenterTableField field);
 
     public abstract void saveValue(DatacenterTable entity, JSONObject object, LoginAccount account);
 

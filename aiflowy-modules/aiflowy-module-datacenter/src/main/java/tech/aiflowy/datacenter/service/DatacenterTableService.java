@@ -7,7 +7,7 @@ import com.mybatisflex.core.service.IService;
 import tech.aiflowy.common.entity.DatacenterQuery;
 import tech.aiflowy.common.entity.LoginAccount;
 import tech.aiflowy.datacenter.entity.DatacenterTable;
-import tech.aiflowy.datacenter.entity.DatacenterTableFields;
+import tech.aiflowy.datacenter.entity.DatacenterTableField;
 import tech.aiflowy.datacenter.entity.vo.HeaderVo;
 
 import java.math.BigInteger;
@@ -31,5 +31,5 @@ public interface DatacenterTableService extends IService<DatacenterTable> {
 
     void removeValue(BigInteger tableId, BigInteger id, LoginAccount account);
 
-    List<DatacenterTableFields> getFields(BigInteger tableId);
+    List<DatacenterTableField> getFields(BigInteger tableId);
 }

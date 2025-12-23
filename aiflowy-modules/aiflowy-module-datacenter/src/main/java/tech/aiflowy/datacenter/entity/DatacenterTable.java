@@ -17,13 +17,13 @@ import java.util.List;
 public class DatacenterTable extends DatacenterTableBase {
 
     @Column(ignore = true)
-    private List<DatacenterTableFields> fields = new ArrayList<>();
+    private List<DatacenterTableField> fields = new ArrayList<>();
 
-    public List<DatacenterTableFields> getFields() {
+    public List<DatacenterTableField> getFields() {
         return fields;
     }
 
-    public void setFields(List<DatacenterTableFields> fields) {
+    public void setFields(List<DatacenterTableField> fields) {
         this.fields = fields;
     }
 }

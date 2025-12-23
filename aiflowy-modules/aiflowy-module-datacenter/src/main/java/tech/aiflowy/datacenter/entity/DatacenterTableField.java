@@ -2,7 +2,7 @@ package tech.aiflowy.datacenter.entity;
 
 import com.mybatisflex.annotation.Column;
 import com.mybatisflex.annotation.Table;
-import tech.aiflowy.datacenter.entity.base.DatacenterTableFieldsBase;
+import tech.aiflowy.datacenter.entity.base.DatacenterTableFieldBase;
 
 import java.math.BigInteger;
 
@@ -13,8 +13,8 @@ import java.math.BigInteger;
  * @author ArkLight
  * @since 2025-07-10
  */
-@Table(value = "tb_datacenter_table_fields", comment = "数据中枢字段表")
-public class DatacenterTableFields extends DatacenterTableFieldsBase {
+@Table(value = "tb_datacenter_table_field", comment = "数据中枢字段表")
+public class DatacenterTableField extends DatacenterTableFieldBase {
 
     /**
      * 是否删除该字段

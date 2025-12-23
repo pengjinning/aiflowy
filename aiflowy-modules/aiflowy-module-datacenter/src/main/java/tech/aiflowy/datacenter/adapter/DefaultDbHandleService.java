@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import tech.aiflowy.common.constant.enums.EnumFieldType;
 import tech.aiflowy.common.entity.LoginAccount;
 import tech.aiflowy.datacenter.entity.DatacenterTable;
-import tech.aiflowy.datacenter.entity.DatacenterTableFields;
+import tech.aiflowy.datacenter.entity.DatacenterTableField;
 import tech.aiflowy.datacenter.utils.SqlInjectionUtils;
 
 import java.math.BigInteger;
@@ -31,7 +31,7 @@ public class DefaultDbHandleService extends DbHandleService {
         String tableDesc = table.getTableDesc();
         SqlInjectionUtils.checkComment(tableDesc);
 
-        List<DatacenterTableFields> fields = table.getFields();
+        List<DatacenterTableField> fields = table.getFields();
         StringBuilder sql = new StringBuilder("CREATE TABLE " + actualTable + " (");
         sql.append("`id` bigint unsigned NOT NULL COMMENT '主键',");
         sql.append("`dept_id` bigint unsigned NOT NULL COMMENT '部门ID',");
@@ -41,7 +41,7 @@ public class DefaultDbHandleService extends DbHandleService {
         sql.append("`modified` datetime NOT NULL COMMENT '修改时间',");
         sql.append("`modified_by` bigint unsigned NOT NULL COMMENT '修改者',");
         sql.append("`remark` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '' COMMENT '备注',");
-        for (DatacenterTableFields field : fields) {
+        for (DatacenterTableField field : fields) {
             Integer required = field.getRequired();
             String fieldName = SqlInjectionUtils.checkIdentifier(field.getFieldName());
             String fieldDesc = SqlInjectionUtils.checkComment(field.getFieldDesc());
@@ -96,7 +96,7 @@ public class DefaultDbHandleService extends DbHandleService {
     }
 
     @Override
-    public void addField(DatacenterTable entity, DatacenterTableFields field) {
+    public void addField(DatacenterTable entity, DatacenterTableField field) {
         String fieldName = field.getFieldName();
         SqlInjectionUtils.checkIdentifier(fieldName);
 
@@ -114,7 +114,7 @@ public class DefaultDbHandleService extends DbHandleService {
     }
 
     @Override
-    public void deleteField(DatacenterTable entity, DatacenterTableFields field) {
+    public void deleteField(DatacenterTable entity, DatacenterTableField field) {
 
         String fieldName = field.getFieldName();
         SqlInjectionUtils.checkIdentifier(fieldName);
@@ -126,7 +126,7 @@ public class DefaultDbHandleService extends DbHandleService {
     }
 
     @Override
-    public void updateField(DatacenterTable entity, DatacenterTableFields fieldRecord, DatacenterTableFields field) {
+    public void updateField(DatacenterTable entity, DatacenterTableField fieldRecord, DatacenterTableField field) {
         String actualTable = entity.getActualTable();
         // 是否必填
         Integer required = field.getRequired();
@@ -170,7 +170,7 @@ public class DefaultDbHandleService extends DbHandleService {
     @Override
     public void saveValue(DatacenterTable entity, JSONObject object, LoginAccount account) {
         String actualTable = entity.getActualTable();
-        List<DatacenterTableFields> fields = entity.getFields();
+        List<DatacenterTableField> fields = entity.getFields();
 
         Row row = Row.ofKey(RowKey.SNOW_FLAKE_ID);
         row.put("dept_id", account.getDeptId());
@@ -180,7 +180,7 @@ public class DefaultDbHandleService extends DbHandleService {
         row.put("modified", new Date());
         row.put("modified_by", account.getId());
         row.put("remark", object.get("remark"));
-        for (DatacenterTableFields field : fields) {
+        for (DatacenterTableField field : fields) {
             String fieldName = field.getFieldName();
             row.put(fieldName, object.get(fieldName));
         }
@@ -191,12 +191,12 @@ public class DefaultDbHandleService extends DbHandleService {
     @Override
     public void updateValue(DatacenterTable entity, JSONObject object, LoginAccount account) {
         String actualTable = entity.getActualTable();
-        List<DatacenterTableFields> fields = entity.getFields();
+        List<DatacenterTableField> fields = entity.getFields();
 
         Row row = Row.ofKey("id", object.get("id"));
         row.put("modified", new Date());
         row.put("modified_by", account.getId());
-        for (DatacenterTableFields field : fields) {
+        for (DatacenterTableField field : fields) {
             String fieldName = field.getFieldName();
             row.put(fieldName, object.get(fieldName));
         }

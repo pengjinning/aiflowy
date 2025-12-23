@@ -7,8 +7,8 @@ import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.entity.LoginAccount;
 import tech.aiflowy.common.satoken.util.SaTokenUtil;
 import tech.aiflowy.common.web.controller.BaseCurdController;
-import tech.aiflowy.datacenter.entity.DatacenterTableFields;
-import tech.aiflowy.datacenter.service.DatacenterTableFieldsService;
+import tech.aiflowy.datacenter.entity.DatacenterTableField;
+import tech.aiflowy.datacenter.service.DatacenterTableFieldService;
 
 import java.util.Date;
 
@@ -21,14 +21,14 @@ import java.util.Date;
 @RestController
 @RequestMapping("/api/v1/datacenterTableFields")
 @UsePermission(moduleName = "/api/v1/datacenterTable")
-public class DatacenterTableFieldsController extends BaseCurdController<DatacenterTableFieldsService, DatacenterTableFields> {
+public class DatacenterTableFieldsController extends BaseCurdController<DatacenterTableFieldService, DatacenterTableField> {
 
-    public DatacenterTableFieldsController(DatacenterTableFieldsService service) {
+    public DatacenterTableFieldsController(DatacenterTableFieldService service) {
         super(service);
     }
 
     @Override
-    protected Result onSaveOrUpdateBefore(DatacenterTableFields entity, boolean isSave) {
+    protected Result onSaveOrUpdateBefore(DatacenterTableField entity, boolean isSave) {
         LoginAccount loginUser = SaTokenUtil.getLoginAccount();
         if (isSave) {
             commonFiled(entity, loginUser.getId(), loginUser.getTenantId(), loginUser.getDeptId());

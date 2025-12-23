@@ -183,10 +183,10 @@ CREATE TABLE `tb_datacenter_table`
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '数据中枢表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
--- Table structure for tb_datacenter_table_fields
+-- Table structure for tb_datacenter_table_field
 -- ----------------------------
-DROP TABLE IF EXISTS `tb_datacenter_table_fields`;
-CREATE TABLE `tb_datacenter_table_fields`
+DROP TABLE IF EXISTS `tb_datacenter_table_field`;
+CREATE TABLE `tb_datacenter_table_field`
 (
     `id`          bigint UNSIGNED NOT NULL COMMENT '主键',
     `table_id`    bigint UNSIGNED NOT NULL COMMENT '数据表ID',

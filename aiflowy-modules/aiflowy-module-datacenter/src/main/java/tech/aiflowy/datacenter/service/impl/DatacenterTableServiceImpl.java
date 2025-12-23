@@ -17,9 +17,9 @@ import tech.aiflowy.common.web.exceptions.BusinessException;
 import tech.aiflowy.datacenter.adapter.DbHandleManager;
 import tech.aiflowy.datacenter.adapter.DbHandleService;
 import tech.aiflowy.datacenter.entity.DatacenterTable;
-import tech.aiflowy.datacenter.entity.DatacenterTableFields;
+import tech.aiflowy.datacenter.entity.DatacenterTableField;
 import tech.aiflowy.datacenter.entity.vo.HeaderVo;
-import tech.aiflowy.datacenter.mapper.DatacenterTableFieldsMapper;
+import tech.aiflowy.datacenter.mapper.DatacenterTableFieldMapper;
 import tech.aiflowy.datacenter.mapper.DatacenterTableMapper;
 import tech.aiflowy.datacenter.service.DatacenterTableService;
 
@@ -35,7 +35,7 @@ public class DatacenterTableServiceImpl extends ServiceImpl<DatacenterTableMappe
     @Resource
     private DbHandleManager dbHandleManager;
     @Resource
-    private DatacenterTableFieldsMapper fieldsMapper;
+    private DatacenterTableFieldMapper fieldsMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -43,7 +43,7 @@ public class DatacenterTableServiceImpl extends ServiceImpl<DatacenterTableMappe
 
         DbHandleService dbHandler = dbHandleManager.getDbHandler();
 
-        List<DatacenterTableFields> fields = entity.getFields();
+        List<DatacenterTableField> fields = entity.getFields();
 
         BigInteger tableId = entity.getId();
 
@@ -57,7 +57,7 @@ public class DatacenterTableServiceImpl extends ServiceImpl<DatacenterTableMappe
             dbHandler.createTable(entity);
             // 保存主表和字段表
             save(entity);
-            for (DatacenterTableFields field : fields) {
+            for (DatacenterTableField field : fields) {
                 // 插入
                 field.setCreated(new Date());
                 field.setCreatedBy(loginUser.getId());
@@ -74,13 +74,13 @@ public class DatacenterTableServiceImpl extends ServiceImpl<DatacenterTableMappe
             updateById(entity);
             // 查询所有字段
             QueryWrapper w = QueryWrapper.create();
-            w.eq(DatacenterTableFields::getTableId, entity.getId());
-            List<DatacenterTableFields> fieldRecords = fieldsMapper.selectListByQuery(w);
+            w.eq(DatacenterTableField::getTableId, entity.getId());
+            List<DatacenterTableField> fieldRecords = fieldsMapper.selectListByQuery(w);
 
-            Map<BigInteger, DatacenterTableFields> fieldsMap = fieldRecords.stream()
-                    .collect(Collectors.toMap(DatacenterTableFields::getId, field -> field));
+            Map<BigInteger, DatacenterTableField> fieldsMap = fieldRecords.stream()
+                    .collect(Collectors.toMap(DatacenterTableField::getId, field -> field));
 
-            for (DatacenterTableFields field : fields) {
+            for (DatacenterTableField field : fields) {
                 BigInteger id = field.getId();
                 if (id == null) {
                     // 新增字段到物理表
@@ -101,7 +101,7 @@ public class DatacenterTableServiceImpl extends ServiceImpl<DatacenterTableMappe
                         fieldsMapper.deleteById(id);
                     } else {
                         // 修改物理表中的字段
-                        DatacenterTableFields fieldRecord = fieldsMap.get(id);
+                        DatacenterTableField fieldRecord = fieldsMap.get(id);
                         dbHandler.updateField(entity, fieldRecord, field);
                         // 更新字段，字段类型不允许修改
                         field.setFieldType(field.getFieldType());
@@ -121,7 +121,7 @@ public class DatacenterTableServiceImpl extends ServiceImpl<DatacenterTableMappe
         dbHandleManager.getDbHandler().deleteTable(record);
         removeById(tableId);
         QueryWrapper wrapper = QueryWrapper.create();
-        wrapper.eq(DatacenterTableFields::getTableId, tableId);
+        wrapper.eq(DatacenterTableField::getTableId, tableId);
         fieldsMapper.deleteByQuery(wrapper);
     }
 
@@ -186,9 +186,9 @@ public class DatacenterTableServiceImpl extends ServiceImpl<DatacenterTableMappe
         QueryWrapper wrapper = QueryWrapper.create();
         wrapper.eq("table_id", tableId);
         wrapper.orderBy("id");
-        List<DatacenterTableFields> fields = fieldsMapper.selectListByQuery(wrapper);
+        List<DatacenterTableField> fields = fieldsMapper.selectListByQuery(wrapper);
         List<HeaderVo> headers = new ArrayList<>();
-        for (DatacenterTableFields field : fields) {
+        for (DatacenterTableField field : fields) {
             HeaderVo header = new HeaderVo();
             header.setKey(field.getFieldName());
             header.setDataIndex(field.getFieldName());
@@ -209,7 +209,7 @@ public class DatacenterTableServiceImpl extends ServiceImpl<DatacenterTableMappe
 
         QueryWrapper wrapper = QueryWrapper.create();
         wrapper.eq("table_id", tableId);
-        List<DatacenterTableFields> fields = fieldsMapper.selectListByQuery(wrapper);
+        List<DatacenterTableField> fields = fieldsMapper.selectListByQuery(wrapper);
 
         if (CollectionUtil.isEmpty(fields)) {
             throw new BusinessException("请先添加字段");
@@ -230,7 +230,7 @@ public class DatacenterTableServiceImpl extends ServiceImpl<DatacenterTableMappe
     }
 
     @Override
-    public List<DatacenterTableFields> getFields(BigInteger tableId) {
+    public List<DatacenterTableField> getFields(BigInteger tableId) {
         QueryWrapper wrapper = QueryWrapper.create();
         wrapper.eq("table_id", tableId);
         return fieldsMapper.selectListByQuery(wrapper);
