@@ -106,7 +106,7 @@ public class DocumentController extends BaseCurdController<DocumentService, Docu
         }
 
         QueryWrapper queryWrapper = QueryWrapper.create()
-                .eq(Document::getKnowledgeId, knowledge.getId());
+                .eq(Document::getCollectionId, knowledge.getId());
         queryWrapper.orderBy(buildOrderBy(sortKey, sortType, getDefaultOrderBy()));
         List<Document> documents = service.list(queryWrapper);
         List<Document> list = Tree.tryToTree(documents, asTree);
@@ -193,9 +193,9 @@ public class DocumentController extends BaseCurdController<DocumentService, Docu
         Integer orderNo = entity.getOrderNo();
         if (orderNo != null) {
             if (orderNo <= 0) orderNo = 0;
-            BigInteger knowledgeId = service.getById(entity.getId()).getKnowledgeId();
+            BigInteger knowledgeId = service.getById(entity.getId()).getCollectionId();
             List<Document> list = service.list(QueryWrapper.create()
-                    .eq(Document::getKnowledgeId, knowledgeId)
+                    .eq(Document::getCollectionId, knowledgeId)
                     .orderBy(getDefaultOrderBy())
             );
 

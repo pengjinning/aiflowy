@@ -36,7 +36,7 @@ public class DocumentChunkBase implements Serializable {
      * 分割顺序
      */
     @Column(comment = "分割顺序")
-    private Long sorting;
+    private Integer sorting;
 
     public BigInteger getId() {
         return id;
@@ -70,11 +70,11 @@ public class DocumentChunkBase implements Serializable {
         this.content = content;
     }
 
-    public Long getSorting() {
+    public Integer getSorting() {
         return sorting;
     }
 
-    public void setSorting(Long sorting) {
+    public void setSorting(Integer sorting) {
         this.sorting = sorting;
     }
 

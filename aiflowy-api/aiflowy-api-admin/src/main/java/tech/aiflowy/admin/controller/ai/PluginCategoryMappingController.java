@@ -9,6 +9,7 @@ import tech.aiflowy.common.web.controller.BaseCurdController;
 import tech.aiflowy.common.web.jsonbody.JsonBody;
 
 import javax.annotation.Resource;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,14 +31,14 @@ public class PluginCategoryMappingController extends BaseCurdController<PluginCa
 
     @PostMapping("/updateRelation")
     public Result<Boolean> updateRelation(
-            @JsonBody(value="pluginId") long pluginId,
-            @JsonBody(value="categoryIds") ArrayList<Integer> categoryIds
+            @JsonBody(value="pluginId") BigInteger pluginId,
+            @JsonBody(value="categoryIds") ArrayList<BigInteger> categoryIds
     ){
         return Result.ok(relationService.updateRelation(pluginId, categoryIds));
     }
 
     @GetMapping("/getPluginCategories")
-    public Result<List<PluginCategory>> getPluginCategories(@RequestParam(value="pluginId") long pluginId
+    public Result<List<PluginCategory>> getPluginCategories(@RequestParam(value="pluginId") BigInteger pluginId
     ){
         return Result.ok(relationService.getPluginCategories(pluginId));
     }

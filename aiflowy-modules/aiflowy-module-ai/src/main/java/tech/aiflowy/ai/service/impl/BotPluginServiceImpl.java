@@ -61,7 +61,7 @@ public class BotPluginServiceImpl extends ServiceImpl<BotPluginMapper, BotPlugin
         for (BigInteger pluginToolId : pluginToolIds) {
             BotPlugin aiBotPluginTool = new BotPlugin();
             aiBotPluginTool.setBotId(botId);
-            aiBotPluginTool.setPluginToolId(pluginToolId);
+            aiBotPluginTool.setPluginItemId(pluginToolId);
             list.add(aiBotPluginTool);
         }
         this.saveBatch(list);

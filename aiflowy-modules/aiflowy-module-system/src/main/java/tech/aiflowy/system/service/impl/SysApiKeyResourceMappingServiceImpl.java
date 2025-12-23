@@ -29,7 +29,7 @@ public class SysApiKeyResourceMappingServiceImpl extends ServiceImpl<SysApiKeyRe
     public void authInterface(SysApiKey entity) {
         this.remove(QueryWrapper.create().eq(SysApiKeyResourceMapping::getApiKeyId, entity.getId()));
         List<SysApiKeyResourceMapping> rows = new ArrayList<>(entity.getPermissionIds().size());
-        BigInteger apiKeyId = BigInteger.valueOf(entity.getId());
+        BigInteger apiKeyId = entity.getId();
         for (BigInteger resourceId : entity.getPermissionIds()) {
             SysApiKeyResourceMapping sysApiKeyResourcePermissionRelationship = new SysApiKeyResourceMapping();
             sysApiKeyResourcePermissionRelationship.setApiKeyId(apiKeyId);

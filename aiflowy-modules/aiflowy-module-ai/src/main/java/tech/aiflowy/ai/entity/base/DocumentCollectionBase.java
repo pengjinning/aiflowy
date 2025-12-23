@@ -91,7 +91,7 @@ public class DocumentCollectionBase extends DateEntity implements Serializable {
      * Embedding 模型ID
      */
     @Column(comment = "Embedding 模型ID")
-    private Long vectorEmbedModelId;
+    private BigInteger vectorEmbedModelId;
 
     /**
      * 创建时间
@@ -127,7 +127,7 @@ public class DocumentCollectionBase extends DateEntity implements Serializable {
      * 重排模型id
      */
     @Column(comment = "重排模型id")
-    private Long rerankModelId;
+    private BigInteger rerankModelId;
 
     /**
      * 是否启用搜索引擎
@@ -237,11 +237,11 @@ public class DocumentCollectionBase extends DateEntity implements Serializable {
         this.vectorStoreConfig = vectorStoreConfig;
     }
 
-    public Long getVectorEmbedModelId() {
+    public BigInteger getVectorEmbedModelId() {
         return vectorEmbedModelId;
     }
 
-    public void setVectorEmbedModelId(Long vectorEmbedModelId) {
+    public void setVectorEmbedModelId(BigInteger vectorEmbedModelId) {
         this.vectorEmbedModelId = vectorEmbedModelId;
     }
 
@@ -285,11 +285,11 @@ public class DocumentCollectionBase extends DateEntity implements Serializable {
         this.options = options;
     }
 
-    public Long getRerankModelId() {
+    public BigInteger getRerankModelId() {
         return rerankModelId;
     }
 
-    public void setRerankModelId(Long rerankModelId) {
+    public void setRerankModelId(BigInteger rerankModelId) {
         this.rerankModelId = rerankModelId;
     }
 

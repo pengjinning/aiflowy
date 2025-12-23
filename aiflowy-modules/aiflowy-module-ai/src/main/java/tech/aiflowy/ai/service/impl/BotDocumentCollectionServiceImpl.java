@@ -36,7 +36,7 @@ public class BotDocumentCollectionServiceImpl extends ServiceImpl<BotDocumentCol
         for (BigInteger knowledgeId : knowledgeIds) {
             BotDocumentCollection botDocumentCollection = new BotDocumentCollection();
             botDocumentCollection.setBotId(botId);
-            botDocumentCollection.setKnowledgeId(knowledgeId);
+            botDocumentCollection.setDocumentCollectionId(knowledgeId);
             list.add(botDocumentCollection);
         }
         this.saveBatch(list);

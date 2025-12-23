@@ -109,7 +109,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         QueryWrapper where = QueryWrapper.create().where("document_id = ? ", id);
         QueryWrapper aiDocumentWapper = QueryWrapper.create().where("id = ? ", id);
         Document oneByQuery = documentMapper.selectOneByQuery(aiDocumentWapper);
-        DocumentCollection knowledge = knowledgeService.getById(oneByQuery.getKnowledgeId());
+        DocumentCollection knowledge = knowledgeService.getById(oneByQuery.getCollectionId());
         if (knowledge == null) {
             return false;
         }
@@ -189,7 +189,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             }
             String fileTypeByExtension = FileUtil.getFileTypeByExtension(filePath);
             aiDocument.setDocumentType(fileTypeByExtension);
-            aiDocument.setKnowledgeId(knowledgeId);
+            aiDocument.setCollectionId(knowledgeId);
             aiDocument.setDocumentPath(filePath);
             aiDocument.setCreated(new Date());
             aiDocument.setModifiedBy(BigInteger.valueOf(StpUtil.getLoginIdAsLong()));
@@ -239,7 +239,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             this.getMapper().insert(document);
             AtomicInteger sort = new AtomicInteger(1);
             documentChunks.forEach(item -> {
-                item.setKnowledgeId(document.getKnowledgeId());
+                item.setDocumentCollectionId(document.getCollectionId());
                 item.setSorting(sort.get());
                 item.setDocumentId(document.getId());
                 sort.getAndIncrement();
@@ -251,7 +251,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     }
 
     protected Boolean storeDocument(Document entity, List<DocumentChunk> documentChunks) {
-        DocumentCollection knowledge = knowledgeService.getById(entity.getKnowledgeId());
+        DocumentCollection knowledge = knowledgeService.getById(entity.getCollectionId());
         if (knowledge == null) {
             throw new BusinessException("知识库不存在");
         }
@@ -295,9 +295,9 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
         }
 
         DocumentCollection documentCollection = new DocumentCollection();
-        documentCollection.setId(entity.getKnowledgeId());
+        documentCollection.setId(entity.getCollectionId());
         // CanUpdateEmbedLlm false: 不能修改知识库的大模型 true: 可以修改
-        DocumentCollection knowledge1 = knowledgeService.getById(entity.getKnowledgeId());
+        DocumentCollection knowledge1 = knowledgeService.getById(entity.getCollectionId());
         Map<String, Object> knowledgeoptions = new HashMap<>();
         if (knowledge1.getOptions() == null) {
             knowledgeoptions.put("canUpdateEmbedding", false);

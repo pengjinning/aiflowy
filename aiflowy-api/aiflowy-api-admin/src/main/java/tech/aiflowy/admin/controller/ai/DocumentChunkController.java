@@ -56,8 +56,8 @@ public class DocumentChunkController extends BaseCurdController<DocumentChunkSer
     public Result<?> update(@JsonBody DocumentChunk documentChunk) {
         boolean success = service.updateById(documentChunk);
         if (success){
-            DocumentChunk documentChunk1 = documentChunkService.getById(documentChunk.getId());
-            DocumentCollection knowledge = documentCollectionService.getById(documentChunk1.getKnowledgeId());
+            DocumentChunk record = documentChunkService.getById(documentChunk.getId());
+            DocumentCollection knowledge = documentCollectionService.getById(record.getDocumentCollectionId());
             if (knowledge == null) {
                 return Result.fail(1, "知识库不存在");
             }
@@ -92,7 +92,7 @@ public class DocumentChunkController extends BaseCurdController<DocumentChunkSer
         if (docChunk == null) {
             return Result.fail(1, "记录不存在");
         }
-        DocumentCollection knowledge = documentCollectionService.getById(docChunk.getKnowledgeId());
+        DocumentCollection knowledge = documentCollectionService.getById(docChunk.getDocumentCollectionId());
         if (knowledge == null) {
             return Result.fail(2, "知识库不存在");
         }

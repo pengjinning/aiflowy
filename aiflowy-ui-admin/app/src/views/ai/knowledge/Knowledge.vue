@@ -13,7 +13,7 @@ import CardPage from '#/components/page/CardList.vue';
 import PageData from '#/components/page/PageData.vue';
 import AiKnowledgeModal from '#/views/ai/knowledge/AiKnowledgeModal.vue';
 import KnowledgeSearch from '#/views/ai/knowledge/KnowledgeSearch.vue';
-
+import defaultIcon from '#/assets/ai/knowledge/book.svg';
 const router = useRouter();
 
 // 操作按钮配置
@@ -129,6 +129,7 @@ const handleSearch = (params) => {
       >
         <template #default="{ pageList }">
           <CardPage
+            :default-icon="defaultIcon"
             title-key="title"
             avatar-key="icon"
             description-key="description"

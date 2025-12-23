@@ -49,7 +49,7 @@ public abstract class BaseQuartzJob implements Job {
         sysJobLog.setJobId(job.getId());
         sysJobLog.setJobName(job.getJobName());
         sysJobLog.setStatus(EnumJobExecStatus.SUCCESS.getCode());
-        sysJobLog.setJobParams(JSON.toJSONString(job.getJobParams()));
+        sysJobLog.setJobParams(job.getJobParams());
         if (result != null) {
             sysJobLog.setJobResult(JSON.toJSONString(result));
         }

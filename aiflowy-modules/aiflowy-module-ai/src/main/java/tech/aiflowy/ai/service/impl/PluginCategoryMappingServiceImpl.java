@@ -31,7 +31,7 @@ public class PluginCategoryMappingServiceImpl extends ServiceImpl<PluginCategory
     private PluginCategoryMapper pluginCategoryMapper;
 
     @Override
-    public boolean updateRelation(long pluginId, ArrayList<Integer> categoryIds) {
+    public boolean updateRelation(BigInteger pluginId, ArrayList<BigInteger> categoryIds) {
         if (categoryIds == null){
             QueryWrapper queryWrapper = QueryWrapper.create().select("*")
                     .from("tb_plugin_category_mapping")
@@ -42,7 +42,7 @@ public class PluginCategoryMappingServiceImpl extends ServiceImpl<PluginCategory
             }
             return true;
         }
-        for (Integer categoryId : categoryIds) {
+        for (BigInteger categoryId : categoryIds) {
             QueryWrapper queryWrapper = QueryWrapper.create().select("*")
                     .from("tb_plugin_category_mapping")
                     .where("plugin_id  = ?", pluginId)
@@ -75,7 +75,7 @@ public class PluginCategoryMappingServiceImpl extends ServiceImpl<PluginCategory
     }
 
     @Override
-    public List<PluginCategory>  getPluginCategories(long pluginId) {
+    public List<PluginCategory>  getPluginCategories(BigInteger pluginId) {
         QueryWrapper categoryQueryWrapper =   QueryWrapper.create().select("category_id")
                 .from("tb_plugin_category_mapping")
                 .where("plugin_id  = ?", pluginId);

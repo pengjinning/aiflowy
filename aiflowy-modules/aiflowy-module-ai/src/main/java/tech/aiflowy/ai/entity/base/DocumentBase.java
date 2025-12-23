@@ -82,7 +82,7 @@ public class DocumentBase extends DateEntity implements Serializable {
      * 创建人ID
      */
     @Column(comment = "创建人ID")
-    private Long createdBy;
+    private BigInteger createdBy;
 
     /**
      * 最后的修改时间
@@ -94,7 +94,7 @@ public class DocumentBase extends DateEntity implements Serializable {
      * 最后的修改人的ID
      */
     @Column(comment = "最后的修改人的ID")
-    private Long modifiedBy;
+    private BigInteger modifiedBy;
 
     public BigInteger getId() {
         return id;
@@ -184,11 +184,11 @@ public class DocumentBase extends DateEntity implements Serializable {
         this.created = created;
     }
 
-    public Long getCreatedBy() {
+    public BigInteger getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(Long createdBy) {
+    public void setCreatedBy(BigInteger createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -200,11 +200,11 @@ public class DocumentBase extends DateEntity implements Serializable {
         this.modified = modified;
     }
 
-    public Long getModifiedBy() {
+    public BigInteger getModifiedBy() {
         return modifiedBy;
     }
 
-    public void setModifiedBy(Long modifiedBy) {
+    public void setModifiedBy(BigInteger modifiedBy) {
         this.modifiedBy = modifiedBy;
     }
 

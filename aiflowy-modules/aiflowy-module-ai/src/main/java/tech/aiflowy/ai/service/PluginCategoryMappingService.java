@@ -4,6 +4,7 @@ import com.mybatisflex.core.service.IService;
 import tech.aiflowy.ai.entity.PluginCategory;
 import tech.aiflowy.ai.entity.PluginCategoryMapping;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public interface PluginCategoryMappingService extends IService<PluginCategoryMapping> {
 
-    boolean updateRelation(long pluginId, ArrayList<Integer> categoryIds);
+    boolean updateRelation(BigInteger pluginId, ArrayList<BigInteger> categoryIds);
 
-    List<PluginCategory> getPluginCategories(long pluginId);
+    List<PluginCategory> getPluginCategories(BigInteger pluginId);
 }
