@@ -12,8 +12,6 @@ import {
   ElDropdownMenu,
   ElTable,
   ElTableColumn,
-  ElText,
-  ElTooltip,
 } from 'element-plus';
 
 import Tag from '#/components/tag/Tag.vue';
@@ -53,14 +51,15 @@ function handleSelectionChange(items: any[]) {
       <ElTableColumn label="文件名称" show-overflow-tooltip :width="300">
         <template #default="{ row }">
           <div class="flex items-center gap-2.5">
-            <ElAvatar :src="getSrc(row)" shape="square" :size="32" />
-            <div class="w-[200px]">
-              <ElTooltip :content="`${row.resourceName}`" placement="top">
-                <ElText truncated>
-                  {{ row.resourceName }}
-                </ElText>
-              </ElTooltip>
-            </div>
+            <ElAvatar
+              class="shrink-0"
+              :src="getSrc(row)"
+              shape="square"
+              :size="32"
+            />
+            <span class="w-full overflow-hidden text-ellipsis">{{
+              row.resourceName
+            }}</span>
           </div>
         </template>
       </ElTableColumn>
@@ -94,10 +93,20 @@ function handleSelectionChange(items: any[]) {
         <template #default="{ row }">
           <div class="flex items-center gap-3">
             <div class="flex items-center">
-              <ElButton link type="primary" @click="onPreview?.(row)">
+              <ElButton
+                class="[--el-font-weight-primary:400]"
+                link
+                type="primary"
+                @click="onPreview?.(row)"
+              >
                 预览
               </ElButton>
-              <ElButton link type="primary" @click="onEdit?.(row)">
+              <ElButton
+                class="[--el-font-weight-primary:400]"
+                link
+                type="primary"
+                @click="onEdit?.(row)"
+              >
                 编辑
               </ElButton>
             </div>

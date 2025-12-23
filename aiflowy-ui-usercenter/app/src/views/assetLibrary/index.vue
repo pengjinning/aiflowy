@@ -181,13 +181,30 @@ function handleOperation(type: string) {
             v-if="checkedItems.length > 0"
             class="border-border bg-background flex items-center rounded border px-2 py-1.5"
           >
-            <ElButton link :icon="View" @click="handleOperation('preview')">
+            <ElButton
+              class="[--el-font-weight-primary:400]"
+              link
+              :icon="View"
+              @click="handleOperation('preview')"
+            >
               预览
             </ElButton>
-            <ElButton link :icon="EditPen" @click="handleOperation('edit')">
+            <ElButton
+              class="[--el-font-weight-primary:400]"
+              link
+              :icon="EditPen"
+              @click="handleOperation('edit')"
+            >
               编辑
             </ElButton>
-            <ElButton link :icon="Delete" @click="batchRemove">删除</ElButton>
+            <ElButton
+              class="[--el-font-weight-primary:400]"
+              link
+              :icon="Delete"
+              @click="batchRemove"
+            >
+              删除
+            </ElButton>
           </div>
           <ElButton type="primary" :icon="Plus" @click="showDialog({})">
             本地上传

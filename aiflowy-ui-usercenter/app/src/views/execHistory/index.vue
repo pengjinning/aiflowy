@@ -196,7 +196,12 @@ function getDateRange() {
                     </span>
 
                     <div class="flex items-center gap-3">
-                      <ElButton link type="primary" @click="toDetail(record)">
+                      <ElButton
+                        class="[--el-font-weight-primary:400]"
+                        link
+                        type="primary"
+                        @click="toDetail(record)"
+                      >
                         查看详情
                       </ElButton>
 

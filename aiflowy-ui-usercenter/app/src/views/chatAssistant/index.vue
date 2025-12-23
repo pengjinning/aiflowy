@@ -6,9 +6,10 @@ import { cn } from '@aiflowy/utils';
 import { ElAside, ElContainer, ElMain } from 'element-plus';
 
 import { api } from '#/api/request';
-import AssistantAvatar from '#/components/avatar/Assistant.vue';
+import defaultAssistantAvatar from '#/assets/defaultAssistantAvatar.svg';
 import {
   Card,
+  CardAvatar,
   CardContent,
   CardDescription,
   CardTitle,
@@ -65,7 +66,10 @@ function setMessageList(messages: any) {
           "
           @click="handleSelectAssistant(assistant)"
         >
-          <AssistantAvatar :src="assistant.icon" />
+          <CardAvatar
+            :src="assistant.icon"
+            :default-avatar="defaultAssistantAvatar"
+          />
           <CardContent>
             <CardTitle :class="cn(assistant.checked && 'text-primary')">
               {{ assistant.title }}

@@ -23,9 +23,10 @@ import {
 } from 'element-plus';
 
 import { api } from '#/api/request';
-import AssistantAvatar from '#/components/avatar/Assistant.vue';
+import defaultAssistantAvatar from '#/assets/defaultAssistantAvatar.svg';
 import {
   Card,
+  CardAvatar,
   CardContent,
   CardDescription,
   CardTitle,
@@ -172,7 +173,7 @@ function remove(row: any) {
   <ElContainer class="border-border bg-background h-full rounded-lg border">
     <ElAside width="287px" class="border-border border-r p-6">
       <Card class="max-w-max p-0">
-        <AssistantAvatar :src="bot.icon" />
+        <CardAvatar :src="bot.icon" :default-avatar="defaultAssistantAvatar" />
         <CardContent>
           <CardTitle>{{ bot.title }}</CardTitle>
           <CardDescription>{{ bot.description }}</CardDescription>
