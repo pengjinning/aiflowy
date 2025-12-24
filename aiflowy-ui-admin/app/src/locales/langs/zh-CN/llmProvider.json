@@ -3,7 +3,7 @@
   "provider": "供应商",
   "icon": "Icon",
   "apiKey": "API 密钥",
-  "endPoint": "API 地址",
+  "endpoint": "API 地址",
   "embedPath": "向量地址",
   "chatPath": "对话地址",
   "rerankPath": "重排地址",

@@ -3,7 +3,7 @@
   "provider": "Provider",
   "icon": "Icon",
   "apiKey": "ApiKey",
-  "endPoint": "APIAddress",
+  "endpoint": "APIAddress",
   "embedPath": "EmbedPath",
   "chatPath": "ChatPath",
   "rerankPath": "RerankPath",

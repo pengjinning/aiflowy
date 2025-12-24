@@ -241,7 +241,7 @@ const handleFormBlur = async () => {
     const res = await api.post('/api/v1/modelProvider/update', {
       id: defaultSelectProviderId.value,
       apiKey: llmProviderForm.value.apiKey,
-      endPoint: llmProviderForm.value.endPoint,
+      endpoint: llmProviderForm.value.endpoint,
       chatPath: llmProviderForm.value.chatPath,
       embedPath: llmProviderForm.value.embedPath,
       rerankPath: llmProviderForm.value.rerankPath,
@@ -316,9 +316,9 @@ const handleTest = () => {
               </template>
             </ElInput>
           </ElFormItem>
-          <ElFormItem prop="endPoint" :label="$t('llmProvider.endPoint')">
+          <ElFormItem prop="endpoint" :label="$t('llmProvider.endpoint')">
             <ElInput
-              v-model.trim="llmProviderForm.endPoint"
+              v-model.trim="llmProviderForm.endpoint"
               @blur="handleFormBlur"
             />
           </ElFormItem>

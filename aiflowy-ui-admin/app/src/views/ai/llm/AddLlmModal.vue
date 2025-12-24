@@ -119,7 +119,7 @@ const formData = reactive({
   groupName: '',
   providerId: '',
   provider: '',
-  endPoint: '',
+  endpoint: '',
   supportReasoning: false,
   supportEmbedding: false,
   supportRerank: false,
@@ -277,8 +277,8 @@ const save = async () => {
       <ElFormItem prop="llmModel" :label="$t('llm.llmModel')">
         <ElInput v-model.trim="formData.llmModel" />
       </ElFormItem>
-      <ElFormItem prop="endPoint" :label="$t('llmProvider.endPoint')">
-        <ElInput v-model.trim="formData.endPoint" />
+      <ElFormItem prop="endpoint" :label="$t('llmProvider.endpoint')">
+        <ElInput v-model.trim="formData.endpoint" />
       </ElFormItem>
       <ElFormItem prop="chatPath" :label="$t('llmProvider.chatPath')">
         <ElInput v-model.trim="formData.options.chatPath" />
