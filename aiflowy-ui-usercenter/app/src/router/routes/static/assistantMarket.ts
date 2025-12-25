@@ -20,7 +20,7 @@ const routes: RouteRecordRaw[] = [
       hideInMenu: true,
       hideInTab: true,
       hideInBreadcrumb: true,
-      noBasicLayout: true,
+      // noBasicLayout: true,
       activePath: '/assistantMarket',
     },
   },
