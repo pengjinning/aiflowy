@@ -1,8 +1,8 @@
 
 
-# IFlowy Chat Protocol Specification v1.1
+# AIFlowy Chat Protocol Specification v1.1
 
-* **Protocol Name:** `aiflowy-chat-sse`
+* **Protocol Name:** `aiflowy-chat`
 * **Version:** `1.1`
 * **Status:** Draft / Recommended
 * **Transport:** Server-Sent Events (SSE)
@@ -66,7 +66,7 @@
 
 ```json
 {
-  "protocol": "aiflowy-chat-sse",
+  "protocol": "aiflowy-chat",
   "version": "1.1",
   "domain": "llm | tool | system | business | workflow | interaction | debug",
   "type": "string",
@@ -84,7 +84,7 @@
 
 | 字段              | 类型      | 必填 | 说明                     |
 | -- |---------| -- |------------------------|
-| protocol        | string  | ✔  | 固定值 `aiflowy-chat-sse` |
+| protocol        | string  | ✔  | 固定值 `aiflowy-chat` |
 | version         | string  | ✔  | 协议版本                   |
 | domain          | string  | ✔  | 事件所属领域                 |
 | type            | string  | ✔  | 领域内事件类型                |

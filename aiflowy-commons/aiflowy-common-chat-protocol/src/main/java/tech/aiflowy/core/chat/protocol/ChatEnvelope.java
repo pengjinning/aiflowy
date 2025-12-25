@@ -2,7 +2,7 @@ package tech.aiflowy.core.chat.protocol;
 
 public class ChatEnvelope<T> {
 
-    private String protocol = "aiflowy-ai-chat";
+    private String protocol = "aiflowy-chat";
     private String version = "1.1";
 
     private ChatDomain domain;
