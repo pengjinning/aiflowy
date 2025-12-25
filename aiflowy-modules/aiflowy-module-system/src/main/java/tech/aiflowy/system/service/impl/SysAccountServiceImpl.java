@@ -1,15 +1,18 @@
 package tech.aiflowy.system.service.impl;
 
-import tech.aiflowy.common.util.Maps;
-import tech.aiflowy.system.entity.SysAccount;
-import tech.aiflowy.system.mapper.SysAccountMapper;
-import tech.aiflowy.system.service.SysAccountService;
 import com.mybatisflex.core.keygen.impl.SnowFlakeIDKeyGenerator;
-import com.mybatisflex.core.row.Db;
-import com.mybatisflex.core.row.Row;
+import com.mybatisflex.core.query.QueryWrapper;
 import com.mybatisflex.spring.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import tech.aiflowy.system.entity.SysAccount;
+import tech.aiflowy.system.entity.SysAccountPosition;
+import tech.aiflowy.system.entity.SysAccountRole;
+import tech.aiflowy.system.mapper.SysAccountMapper;
+import tech.aiflowy.system.mapper.SysAccountPositionMapper;
+import tech.aiflowy.system.mapper.SysAccountRoleMapper;
+import tech.aiflowy.system.service.SysAccountService;
 
+import javax.annotation.Resource;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +26,11 @@ import java.util.List;
 @Service
 public class SysAccountServiceImpl extends ServiceImpl<SysAccountMapper, SysAccount> implements SysAccountService {
 
+    @Resource
+    private SysAccountRoleMapper sysAccountRoleMapper;
+    @Resource
+    private SysAccountPositionMapper sysAccountPositionMapper;
+
     @Override
     public void syncRelations(SysAccount entity) {
         if (entity == null || entity.getId() == null) {
@@ -34,34 +42,36 @@ public class SysAccountServiceImpl extends ServiceImpl<SysAccountMapper, SysAcco
         //sync roleIds
         List<BigInteger> roleIds = entity.getRoleIds();
         if (roleIds != null) {
-            Db.deleteByMap("tb_sys_account_role", Maps.of("account_id", entity.getId()));
+            QueryWrapper delW = QueryWrapper.create();
+            delW.eq(SysAccountRole::getAccountId, entity.getId());
+            sysAccountRoleMapper.deleteByQuery(delW);
             if (!roleIds.isEmpty()) {
-                List<Row> rows = new ArrayList<>(roleIds.size());
+                List<SysAccountRole> rows = new ArrayList<>(roleIds.size());
                 roleIds.forEach(roleId -> {
-                    Row row = new Row();
-                    row.set("id", generator.nextId());
-                    row.set("account_id", entity.getId());
-                    row.set("role_id", roleId);
+                    SysAccountRole row = new SysAccountRole();
+                    row.setAccountId(entity.getId());
+                    row.setRoleId(roleId);
                     rows.add(row);
                 });
-                Db.insertBatch("tb_sys_account_role", rows);
+                sysAccountRoleMapper.insertBatch(rows);
             }
         }
 
         //sync positionIds
         List<BigInteger> positionIds = entity.getPositionIds();
         if (positionIds != null) {
-            Db.deleteByMap("tb_sys_account_position", Maps.of("account_id", entity.getId()));
+            QueryWrapper delW = QueryWrapper.create();
+            delW.eq(SysAccountPosition::getAccountId, entity.getId());
+            sysAccountPositionMapper.deleteByQuery(delW);
             if (!positionIds.isEmpty()) {
-                List<Row> rows = new ArrayList<>(positionIds.size());
+                List<SysAccountPosition> rows = new ArrayList<>(positionIds.size());
                 positionIds.forEach(positionId -> {
-                    Row row = new Row();
-                    row.set("id", generator.nextId());
-                    row.set("account_id", entity.getId());
-                    row.set("position_id", positionId);
+                    SysAccountPosition row = new SysAccountPosition();
+                    row.setAccountId(entity.getId());
+                    row.setPositionId(positionId);
                     rows.add(row);
                 });
-                Db.insertBatch("tb_sys_account_position", rows);
+                sysAccountPositionMapper.insertBatch(rows);
             }
         }
     }

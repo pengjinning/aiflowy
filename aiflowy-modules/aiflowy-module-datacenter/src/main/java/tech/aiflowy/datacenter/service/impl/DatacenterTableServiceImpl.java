@@ -184,7 +184,7 @@ public class DatacenterTableServiceImpl extends ServiceImpl<DatacenterTableMappe
     @Override
     public List<HeaderVo> getHeaders(BigInteger tableId) {
         QueryWrapper wrapper = QueryWrapper.create();
-        wrapper.eq("table_id", tableId);
+        wrapper.eq(DatacenterTableField::getTableId, tableId);
         wrapper.orderBy("id");
         List<DatacenterTableField> fields = fieldsMapper.selectListByQuery(wrapper);
         List<HeaderVo> headers = new ArrayList<>();
@@ -208,7 +208,7 @@ public class DatacenterTableServiceImpl extends ServiceImpl<DatacenterTableMappe
         DatacenterTable table = getById(tableId);
 
         QueryWrapper wrapper = QueryWrapper.create();
-        wrapper.eq("table_id", tableId);
+        wrapper.eq(DatacenterTableField::getTableId, tableId);
         List<DatacenterTableField> fields = fieldsMapper.selectListByQuery(wrapper);
 
         if (CollectionUtil.isEmpty(fields)) {
@@ -232,7 +232,7 @@ public class DatacenterTableServiceImpl extends ServiceImpl<DatacenterTableMappe
     @Override
     public List<DatacenterTableField> getFields(BigInteger tableId) {
         QueryWrapper wrapper = QueryWrapper.create();
-        wrapper.eq("table_id", tableId);
+        wrapper.eq(DatacenterTableField::getTableId, tableId);
         return fieldsMapper.selectListByQuery(wrapper);
     }
 

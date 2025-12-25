@@ -15,5 +15,4 @@ import tech.aiflowy.datacenter.service.DatacenterTableFieldService;
 @Service
 public class DatacenterTableFieldServiceImpl extends ServiceImpl<DatacenterTableFieldMapper, DatacenterTableField> implements DatacenterTableFieldService {
 
-
 }

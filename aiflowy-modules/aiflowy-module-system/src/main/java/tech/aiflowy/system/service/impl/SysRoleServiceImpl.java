@@ -1,20 +1,20 @@
 package tech.aiflowy.system.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
+import com.mybatisflex.core.query.QueryWrapper;
+import com.mybatisflex.spring.service.impl.ServiceImpl;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tech.aiflowy.common.constant.enums.EnumDataScope;
-import tech.aiflowy.system.entity.*;
+import tech.aiflowy.system.entity.SysAccountRole;
+import tech.aiflowy.system.entity.SysRole;
+import tech.aiflowy.system.entity.SysRoleDept;
+import tech.aiflowy.system.entity.SysRoleMenu;
 import tech.aiflowy.system.mapper.SysRoleDeptMapper;
 import tech.aiflowy.system.mapper.SysRoleMapper;
 import tech.aiflowy.system.mapper.SysRoleMenuMapper;
 import tech.aiflowy.system.service.SysAccountRoleService;
 import tech.aiflowy.system.service.SysRoleService;
-import cn.hutool.core.collection.CollectionUtil;
-import com.mybatisflex.core.keygen.impl.SnowFlakeIDKeyGenerator;
-import com.mybatisflex.core.query.QueryWrapper;
-import com.mybatisflex.core.row.Db;
-import com.mybatisflex.core.row.Row;
-import com.mybatisflex.spring.service.impl.ServiceImpl;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
@@ -41,17 +41,19 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void saveRoleMenu(BigInteger roleId, List<String> keys) {
-        Db.deleteBySql("delete from tb_sys_role_menu where role_id = ?", roleId);
-        List<Row> rows = new ArrayList<>(keys.size());
-        SnowFlakeIDKeyGenerator generator = new SnowFlakeIDKeyGenerator();
+
+        QueryWrapper delW = QueryWrapper.create();
+        delW.eq(SysRoleMenu::getRoleId, roleId);
+        sysRoleMenuMapper.deleteByQuery(delW);
+
+        List<SysRoleMenu> rows = new ArrayList<>(keys.size());
         keys.forEach(string -> {
-            Row row = new Row();
-            row.set("id",generator.nextId());
-            row.set("role_id", roleId);
-            row.set("menu_id", string);
+            SysRoleMenu row = new SysRoleMenu();
+            row.setRoleId(roleId);
+            row.setMenuId(new BigInteger(string));
             rows.add(row);
         });
-        Db.insertBatch("tb_sys_role_menu", rows);
+        sysRoleMenuMapper.insertBatch(rows);
     }
 
     @Override
