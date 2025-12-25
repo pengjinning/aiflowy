@@ -5,10 +5,13 @@ import com.mybatisflex.annotation.Id;
 import com.mybatisflex.annotation.KeyType;
 import com.mybatisflex.core.handler.FastjsonTypeHandler;
 import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.Date;
 import java.util.Map;
+import tech.aiflowy.common.entity.DateEntity;
 
 
-public class BotApiKeyBase implements Serializable {
+public class BotApiKeyBase extends DateEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -16,7 +19,7 @@ public class BotApiKeyBase implements Serializable {
      * id
      */
     @Id(keyType = KeyType.Generator, value = "snowFlakeId", comment = "id")
-    private Long id;
+    private BigInteger id;
 
     /**
      * apiKey，请勿手动修改！
@@ -28,7 +31,7 @@ public class BotApiKeyBase implements Serializable {
      * botId
      */
     @Column(comment = "botId")
-    private Long botId;
+    private BigInteger botId;
 
     /**
      * 加密botId，生成apiKey的盐
@@ -42,11 +45,19 @@ public class BotApiKeyBase implements Serializable {
     @Column(typeHandler = FastjsonTypeHandler.class, comment = "预留拓展配置的字段")
     private Map<String, Object> options;
 
-    public Long getId() {
+    private Date created;
+
+    private BigInteger createdBy;
+
+    private Date modified;
+
+    private BigInteger modifiedBy;
+
+    public BigInteger getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(BigInteger id) {
         this.id = id;
     }
 
@@ -58,11 +69,11 @@ public class BotApiKeyBase implements Serializable {
         this.apiKey = apiKey;
     }
 
-    public Long getBotId() {
+    public BigInteger getBotId() {
         return botId;
     }
 
-    public void setBotId(Long botId) {
+    public void setBotId(BigInteger botId) {
         this.botId = botId;
     }
 
@@ -80,6 +91,38 @@ public class BotApiKeyBase implements Serializable {
 
     public void setOptions(Map<String, Object> options) {
         this.options = options;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public BigInteger getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(BigInteger createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getModified() {
+        return modified;
+    }
+
+    public void setModified(Date modified) {
+        this.modified = modified;
+    }
+
+    public BigInteger getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(BigInteger modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
 }

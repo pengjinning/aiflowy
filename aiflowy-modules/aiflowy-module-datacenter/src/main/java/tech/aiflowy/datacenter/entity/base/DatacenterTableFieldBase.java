@@ -52,6 +52,12 @@ public class DatacenterTableFieldBase extends DateEntity implements Serializable
     private Integer required;
 
     /**
+     * 扩展项
+     */
+    @Column(typeHandler = FastjsonTypeHandler.class, comment = "扩展项")
+    private Map<String, Object> options;
+
+    /**
      * 创建时间
      */
     @Column(comment = "创建时间")
@@ -74,12 +80,6 @@ public class DatacenterTableFieldBase extends DateEntity implements Serializable
      */
     @Column(comment = "修改者")
     private BigInteger modifiedBy;
-
-    /**
-     * 扩展项
-     */
-    @Column(typeHandler = FastjsonTypeHandler.class, comment = "扩展项")
-    private Map<String, Object> options;
 
     public BigInteger getId() {
         return id;
@@ -129,6 +129,14 @@ public class DatacenterTableFieldBase extends DateEntity implements Serializable
         this.required = required;
     }
 
+    public Map<String, Object> getOptions() {
+        return options;
+    }
+
+    public void setOptions(Map<String, Object> options) {
+        this.options = options;
+    }
+
     public Date getCreated() {
         return created;
     }
@@ -159,14 +167,6 @@ public class DatacenterTableFieldBase extends DateEntity implements Serializable
 
     public void setModifiedBy(BigInteger modifiedBy) {
         this.modifiedBy = modifiedBy;
-    }
-
-    public Map<String, Object> getOptions() {
-        return options;
-    }
-
-    public void setOptions(Map<String, Object> options) {
-        this.options = options;
     }
 
 }

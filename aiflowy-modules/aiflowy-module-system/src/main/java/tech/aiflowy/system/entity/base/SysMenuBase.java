@@ -109,12 +109,6 @@ public class SysMenuBase extends DateTreeEntity implements Serializable {
     @Column(comment = "备注")
     private String remark;
 
-    /**
-     * 删除标识
-     */
-    @Column(isLogicDelete = true, comment = "删除标识")
-    private Integer isDeleted;
-
     public BigInteger getId() {
         return id;
     }
@@ -241,14 +235,6 @@ public class SysMenuBase extends DateTreeEntity implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    public Integer getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(Integer isDeleted) {
-        this.isDeleted = isDeleted;
     }
 
 }

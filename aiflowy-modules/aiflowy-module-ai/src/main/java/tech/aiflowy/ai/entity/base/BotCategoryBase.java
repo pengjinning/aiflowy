@@ -32,6 +32,12 @@ public class BotCategoryBase extends DateEntity implements Serializable {
     private Integer sortNo;
 
     /**
+     * 数据状态
+     */
+    @Column(comment = "数据状态")
+    private Integer status;
+
+    /**
      * 创建时间
      */
     @Column(comment = "创建时间")
@@ -55,12 +61,6 @@ public class BotCategoryBase extends DateEntity implements Serializable {
     @Column(comment = "修改者")
     private BigInteger modifiedBy;
 
-    /**
-     * 数据状态
-     */
-    @Column(comment = "数据状态")
-    private Integer status;
-
     public BigInteger getId() {
         return id;
     }
@@ -83,6 +83,14 @@ public class BotCategoryBase extends DateEntity implements Serializable {
 
     public void setSortNo(Integer sortNo) {
         this.sortNo = sortNo;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public Date getCreated() {
@@ -115,14 +123,6 @@ public class BotCategoryBase extends DateEntity implements Serializable {
 
     public void setModifiedBy(BigInteger modifiedBy) {
         this.modifiedBy = modifiedBy;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
     }
 
 }

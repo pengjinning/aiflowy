@@ -6,9 +6,10 @@ import com.mybatisflex.annotation.KeyType;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
+import tech.aiflowy.common.entity.DateEntity;
 
 
-public class BotConversationBase implements Serializable {
+public class BotConversationBase extends DateEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -41,6 +42,12 @@ public class BotConversationBase implements Serializable {
      */
     @Column(comment = "创建时间")
     private Date created;
+
+    private BigInteger createdBy;
+
+    private Date modified;
+
+    private BigInteger modifiedBy;
 
     public BigInteger getId() {
         return id;
@@ -80,6 +87,30 @@ public class BotConversationBase implements Serializable {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    public BigInteger getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(BigInteger createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getModified() {
+        return modified;
+    }
+
+    public void setModified(Date modified) {
+        this.modified = modified;
+    }
+
+    public BigInteger getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(BigInteger modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
 }

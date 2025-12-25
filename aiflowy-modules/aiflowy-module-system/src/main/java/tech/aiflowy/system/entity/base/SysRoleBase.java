@@ -74,12 +74,6 @@ public class SysRoleBase extends DateEntity implements Serializable {
     private String remark;
 
     /**
-     * 删除标识
-     */
-    @Column(isLogicDelete = true, comment = "删除标识")
-    private Integer isDeleted;
-
-    /**
      * 数据权限(EnumDataScope)
      */
     @Column(comment = "数据权限(EnumDataScope)")
@@ -175,14 +169,6 @@ public class SysRoleBase extends DateEntity implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
-    }
-
-    public Integer getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(Integer isDeleted) {
-        this.isDeleted = isDeleted;
     }
 
     public Integer getDataScope() {

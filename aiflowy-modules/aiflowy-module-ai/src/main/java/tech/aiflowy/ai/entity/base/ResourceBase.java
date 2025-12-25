@@ -100,12 +100,6 @@ public class ResourceBase extends DateEntity implements Serializable {
     private Map<String, Object> options;
 
     /**
-     * 删除标识
-     */
-    @Column(isLogicDelete = true, comment = "删除标识")
-    private Integer isDeleted;
-
-    /**
      * 文件大小
      */
     @Column(comment = "文件大小")
@@ -227,14 +221,6 @@ public class ResourceBase extends DateEntity implements Serializable {
 
     public void setOptions(Map<String, Object> options) {
         this.options = options;
-    }
-
-    public Integer getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(Integer isDeleted) {
-        this.isDeleted = isDeleted;
     }
 
     public BigInteger getFileSize() {

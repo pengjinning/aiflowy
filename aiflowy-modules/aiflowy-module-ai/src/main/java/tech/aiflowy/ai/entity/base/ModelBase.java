@@ -146,12 +146,6 @@ public class ModelBase implements Serializable {
     private Boolean added;
 
     /**
-     * 是否能删除
-     */
-    @Column(comment = "是否能删除")
-    private Boolean canDelete;
-
-    /**
      * 是否免费
      */
     @Column(comment = "是否免费")
@@ -331,14 +325,6 @@ public class ModelBase implements Serializable {
 
     public void setAdded(Boolean added) {
         this.added = added;
-    }
-
-    public Boolean getCanDelete() {
-        return canDelete;
-    }
-
-    public void setCanDelete(Boolean canDelete) {
-        this.canDelete = canDelete;
     }
 
     public Boolean getSupportFree() {
