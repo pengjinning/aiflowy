@@ -1,6 +1,7 @@
 package tech.aiflowy.ai.tinyflow.listener;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson2.JSON;
 import dev.tinyflow.core.chain.*;
 import dev.tinyflow.core.chain.event.*;
@@ -158,12 +159,11 @@ public class ChainEventListenerForSave implements ChainEventListener {
      * 递归查找顶级状态
      */
     private ChainState findAncestorState(ChainState state, Chain chain) {
-//        String parentInstanceId = state.getParentInstanceId();
-//        if (StrUtil.isEmpty(parentInstanceId)) {
-//            return state;
-//        }
-//        ChainState chainState = chain.getChainStateRepository().load(parentInstanceId);
-//        return findAncestorState(chainState, chain);
-        return state;
+        String parentInstanceId = state.getParentInstanceId();
+        if (StrUtil.isEmpty(parentInstanceId)) {
+            return state;
+        }
+        ChainState chainState = chain.getChainStateRepository().load(parentInstanceId);
+        return findAncestorState(chainState, chain);
     }
 }
