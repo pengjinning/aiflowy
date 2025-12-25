@@ -18,7 +18,7 @@ const logoDark = computed(() => preferences.logo.sourceDark);
     :logo-dark="logoDark"
     :page-description="$t('authentication.pageDesc')"
     :page-title="$t('authentication.pageTitle')"
-    slogan-image="/slogan.png"
+    slogan-image="/slogan.webp"
   >
     <!-- 自定义工具栏 -->
     <!-- <template #toolbar></template> -->
