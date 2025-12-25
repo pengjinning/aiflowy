@@ -8,22 +8,22 @@ FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `tb_bot`;
 CREATE TABLE `tb_bot`
 (
-    `id`          bigint UNSIGNED NOT NULL COMMENT '主键ID',
-    `alias`       varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '别名',
-    `dept_id`     bigint UNSIGNED NOT NULL COMMENT '部门ID',
-    `tenant_id`   bigint UNSIGNED NOT NULL COMMENT '租户ID',
-    `title`       varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标题',
-    `description` varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '描述',
-    `icon`        varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '图标',
-    `llm_id`      bigint UNSIGNED NULL DEFAULT NULL COMMENT 'LLM ID',
-    `llm_options` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT 'LLM选项',
-    `options`     text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '选项',
-    `created`     datetime NULL DEFAULT NULL COMMENT '创建时间',
-    `created_by`  bigint UNSIGNED NULL DEFAULT NULL COMMENT '创建者ID',
-    `modified`    datetime NULL DEFAULT NULL COMMENT '修改时间',
-    `modified_by` bigint UNSIGNED NULL DEFAULT NULL COMMENT '修改者ID',
-    `status`      int NULL DEFAULT 0 COMMENT '数据状态',
-    `category_id` bigint UNSIGNED NULL DEFAULT NULL COMMENT '分类ID',
+    `id`            bigint UNSIGNED NOT NULL COMMENT '主键ID',
+    `alias`         varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '别名',
+    `dept_id`       bigint UNSIGNED NOT NULL COMMENT '部门ID',
+    `tenant_id`     bigint UNSIGNED NOT NULL COMMENT '租户ID',
+    `category_id`   bigint UNSIGNED NULL DEFAULT NULL COMMENT '分类ID',
+    `title`         varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标题',
+    `description`   varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '描述',
+    `icon`          varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '图标',
+    `model_id`      bigint UNSIGNED NULL DEFAULT NULL COMMENT '模型 ID',
+    `model_options` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '模型配置',
+    `status`        int NULL DEFAULT 0 COMMENT '数据状态',
+    `options`       text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '选项',
+    `created`       datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `created_by`    bigint UNSIGNED NULL DEFAULT NULL COMMENT '创建者ID',
+    `modified`      datetime NULL DEFAULT NULL COMMENT '修改时间',
+    `modified_by`   bigint UNSIGNED NULL DEFAULT NULL COMMENT '修改者ID',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `tb_ai_bot_alias_uindex`(`alias`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'bot表' ROW_FORMAT = DYNAMIC;
@@ -34,11 +34,15 @@ CREATE TABLE `tb_bot`
 DROP TABLE IF EXISTS `tb_bot_api_key`;
 CREATE TABLE `tb_bot_api_key`
 (
-    `id`      bigint                                                         NOT NULL COMMENT 'id',
-    `api_key` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT 'apiKey，请勿手动修改！',
-    `bot_id`  bigint                                                         NOT NULL COMMENT 'botId',
-    `salt`    varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci  NOT NULL DEFAULT '' COMMENT '加密botId，生成apiKey的盐',
-    `options` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '预留拓展配置的字段',
+    `id`          bigint UNSIGNED NOT NULL COMMENT 'id',
+    `api_key`     varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '' COMMENT 'apiKey，请勿手动修改！',
+    `bot_id`      bigint UNSIGNED NOT NULL COMMENT 'botId',
+    `salt`        varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci  NOT NULL DEFAULT '' COMMENT '加密botId，生成apiKey的盐',
+    `options`     text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '预留拓展配置的字段',
+    `created`     datetime NULL DEFAULT NULL,
+    `created_by`  bigint UNSIGNED NULL DEFAULT NULL,
+    `modified`    datetime NULL DEFAULT NULL,
+    `modified_by` bigint UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'bot apiKey 表' ROW_FORMAT = DYNAMIC;
 
@@ -51,11 +55,11 @@ CREATE TABLE `tb_bot_category`
     `id`            bigint UNSIGNED NOT NULL COMMENT '主键',
     `category_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '分类名称',
     `sort_no`       int NULL DEFAULT 0 COMMENT '排序',
+    `status`        int                                                          NOT NULL DEFAULT 0 COMMENT '数据状态',
     `created`       datetime                                                     NOT NULL COMMENT '创建时间',
     `created_by`    bigint UNSIGNED NOT NULL COMMENT '创建者',
     `modified`      datetime                                                     NOT NULL COMMENT '修改时间',
     `modified_by`   bigint UNSIGNED NOT NULL COMMENT '修改者',
-    `status`        int                                                          NOT NULL DEFAULT 0 COMMENT '数据状态',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'bot分类' ROW_FORMAT = Dynamic;
 
@@ -65,11 +69,14 @@ CREATE TABLE `tb_bot_category`
 DROP TABLE IF EXISTS `tb_bot_conversation`;
 CREATE TABLE `tb_bot_conversation`
 (
-    `id`         bigint UNSIGNED NOT NULL COMMENT '会话id',
-    `title`      varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '会话标题',
-    `bot_id`     bigint UNSIGNED NULL DEFAULT NULL COMMENT 'botid',
-    `account_id` bigint UNSIGNED NULL DEFAULT NULL COMMENT '账户 id',
-    `created`    datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `id`          bigint UNSIGNED NOT NULL COMMENT '会话id',
+    `title`       varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '会话标题',
+    `bot_id`      bigint UNSIGNED NULL DEFAULT NULL COMMENT 'botid',
+    `account_id`  bigint UNSIGNED NULL DEFAULT NULL COMMENT '账户 id',
+    `created`     datetime NULL DEFAULT NULL COMMENT '创建时间',
+    `created_by`  bigint UNSIGNED NULL DEFAULT NULL,
+    `modified`    datetime NULL DEFAULT NULL,
+    `modified_by` bigint UNSIGNED NULL DEFAULT NULL,
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'bot对话' ROW_FORMAT = DYNAMIC;
 
@@ -193,11 +200,11 @@ CREATE TABLE `tb_datacenter_table_field`
     `field_desc`  varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '字段描述',
     `field_type`  int                                                          NOT NULL COMMENT '字段类型',
     `required`    int                                                          NOT NULL DEFAULT 0 COMMENT '是否必填',
+    `options`     text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '扩展项',
     `created`     datetime                                                     NOT NULL COMMENT '创建时间',
     `created_by`  bigint UNSIGNED NOT NULL COMMENT '创建者',
     `modified`    datetime                                                     NOT NULL COMMENT '修改时间',
     `modified_by` bigint UNSIGNED NOT NULL COMMENT '修改者',
-    `options`     text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '扩展项',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '数据中枢字段表' ROW_FORMAT = DYNAMIC;
 
@@ -295,30 +302,29 @@ CREATE TABLE `tb_document_history`
 DROP TABLE IF EXISTS `tb_model`;
 CREATE TABLE `tb_model`
 (
-    `id`                bigint UNSIGNED NOT NULL COMMENT 'ID',
-    `dept_id`           bigint UNSIGNED NOT NULL COMMENT '部门ID',
-    `tenant_id`         bigint UNSIGNED NOT NULL COMMENT '租户ID',
-    `title`             varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标题或名称',
-    `brand`             varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '品牌',
-    `icon`              varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'ICON',
-    `description`       varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '描述',
-    `endpoint`          varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '大模型请求地址',
-    `request_path`      varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '请求路径',
-    `model_name`        varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '大模型名称',
-    `api_key`           varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '大模型 API KEY',
-    `extra_config`      text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '大模型其他属性配置',
-    `options`           text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '其他配置内容',
-    `group_name`        varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '分组名称',
-    `model_type`        varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '模型类型',
-    `provider`          varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '供应商',
-    `support_reasoning` tinyint(1) NULL DEFAULT NULL COMMENT '是否支持推理',
-    `support_tool`      tinyint(1) NULL DEFAULT NULL COMMENT '是否支持工具',
-    `support_embedding` tinyint(1) NULL DEFAULT NULL COMMENT '是否支持嵌入',
-    `support_rerank`    tinyint(1) NULL DEFAULT NULL COMMENT '是否支持重排',
-    `provider_id`       bigint UNSIGNED NULL DEFAULT NULL COMMENT '供应商id',
-    `added`             tinyint(1) NULL DEFAULT NULL COMMENT '是否添加',
-    `can_delete`        tinyint(1) NULL DEFAULT NULL COMMENT '是否能删除',
-    `support_free`      tinyint(1) NULL DEFAULT NULL COMMENT '是否免费',
+    `id`                     bigint UNSIGNED NOT NULL COMMENT 'ID',
+    `dept_id`                bigint UNSIGNED NOT NULL COMMENT '部门ID',
+    `tenant_id`              bigint UNSIGNED NOT NULL COMMENT '租户ID',
+    `provider_id`            bigint UNSIGNED NULL DEFAULT NULL COMMENT '供应商id',
+    `title`                  varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标题或名称',
+    `icon`                   varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'ICON',
+    `description`            varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '描述',
+    `endpoint`               varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '大模型请求地址',
+    `request_path`           varchar(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '请求路径',
+    `model_name`             varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '大模型名称',
+    `api_key`                varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '大模型 API KEY',
+    `extra_config`           text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '大模型其他属性配置',
+    `options`                text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '其他配置内容',
+    `group_name`             varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '分组名称',
+    `model_type`             varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '模型类型: chat/embedding/rerank/orc..',
+    `with_used`              tinyint(1) NULL DEFAULT NULL COMMENT '是否使用',
+    `support_thinking`       tinyint(1) NULL DEFAULT NULL COMMENT '是否支持推理',
+    `support_tool`           tinyint(1) NULL DEFAULT NULL COMMENT '是否支持工具',
+    `support_image`          tinyint(1) NULL DEFAULT NULL COMMENT '是否支持图片',
+    `support_image_b64_only` tinyint(1) NULL DEFAULT NULL COMMENT '仅支持 base64 的图片类型',
+    `support_video`          tinyint(1) NULL DEFAULT NULL COMMENT '是否支持视频',
+    `support_audio`          tinyint(1) NULL DEFAULT NULL COMMENT '是否支持音频',
+    `support_free`           tinyint(1) NULL DEFAULT NULL COMMENT '是否免费',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '大模型管理' ROW_FORMAT = DYNAMIC;
 
@@ -330,17 +336,17 @@ CREATE TABLE `tb_model_provider`
 (
     `id`            bigint UNSIGNED NOT NULL COMMENT 'id',
     `provider_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '供应商名称',
-    `created`       datetime                                                      NOT NULL COMMENT '创建时间',
-    `created_by`    bigint UNSIGNED NOT NULL COMMENT '创建者',
-    `modified`      datetime                                                      NOT NULL COMMENT '修改时间',
-    `modified_by`   bigint UNSIGNED NOT NULL COMMENT '修改者',
+    `provider_type` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '不同的 client 实现，默认为 openai',
     `icon`          varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '图标',
     `api_key`       varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'apiKey',
     `endpoint`      varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'endPoint',
     `chat_path`     varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '对话地址',
     `embed_path`    varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '向量地址',
     `rerank_path`   varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '重排路径',
-    `provider`      varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '供应商',
+    `created`       datetime                                                      NOT NULL COMMENT '创建时间',
+    `created_by`    bigint UNSIGNED NOT NULL COMMENT '创建者',
+    `modified`      datetime                                                      NOT NULL COMMENT '修改时间',
+    `modified_by`   bigint UNSIGNED NOT NULL COMMENT '修改者',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '大模型供应商，比如 Aliyun/Gitee/火山引擎 等' ROW_FORMAT = DYNAMIC;
 
@@ -380,7 +386,7 @@ CREATE TABLE `tb_plugin_category`
     `name`       varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
     `created_at` datetime NULL DEFAULT NULL,
     PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 43 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '插件分类' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 44 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '插件分类' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for tb_plugin_category_mapping
@@ -638,26 +644,27 @@ CREATE TABLE `tb_resource`
     `modified`      datetime                                                      NOT NULL COMMENT '修改时间',
     `modified_by`   bigint UNSIGNED NOT NULL COMMENT '修改者',
     `options`       text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '扩展项',
-    `is_deleted`    tinyint NULL DEFAULT 0 COMMENT '删除标识',
     `file_size`     bigint UNSIGNED NULL DEFAULT NULL COMMENT '文件大小',
+    `category_id`   bigint UNSIGNED NULL DEFAULT NULL COMMENT '分类ID',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '素材库' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for tb_resource_category
 -- ----------------------------
+DROP TABLE IF EXISTS `tb_resource_category`;
 CREATE TABLE `tb_resource_category`
 (
-    `id`            bigint unsigned NOT NULL COMMENT '主键',
-    `category_name` varchar(50) NOT NULL COMMENT '分类名称',
-    `sort_no`       int                  DEFAULT '0' COMMENT '排序',
-    `created`       datetime    NOT NULL COMMENT '创建时间',
-    `created_by`    bigint unsigned NOT NULL COMMENT '创建者',
-    `modified`      datetime    NOT NULL COMMENT '修改时间',
-    `modified_by`   bigint unsigned NOT NULL COMMENT '修改者',
-    `status`        int         NOT NULL DEFAULT '0' COMMENT '数据状态',
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='素材分类';
+    `id`            bigint UNSIGNED NOT NULL COMMENT '主键',
+    `category_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '分类名称',
+    `sort_no`       int NULL DEFAULT 0 COMMENT '排序',
+    `created`       datetime                                                     NOT NULL COMMENT '创建时间',
+    `created_by`    bigint UNSIGNED NOT NULL COMMENT '创建者',
+    `modified`      datetime                                                     NOT NULL COMMENT '修改时间',
+    `modified_by`   bigint UNSIGNED NOT NULL COMMENT '修改者',
+    `status`        int                                                          NOT NULL DEFAULT 0 COMMENT '数据状态',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '素材分类' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for tb_sys_account
@@ -681,7 +688,6 @@ CREATE TABLE `tb_sys_account`
     `modified`     datetime                                                      NOT NULL COMMENT '修改时间',
     `modified_by`  bigint UNSIGNED NOT NULL COMMENT '修改者',
     `remark`       varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
-    `is_deleted`   tinyint NULL DEFAULT 0 COMMENT '删除标识',
     PRIMARY KEY (`id`) USING BTREE,
     UNIQUE INDEX `uni_login_name`(`login_name`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
@@ -770,7 +776,6 @@ CREATE TABLE `tb_sys_dept`
     `modified`    datetime                                                      NOT NULL COMMENT '修改时间',
     `modified_by` bigint UNSIGNED NOT NULL COMMENT '修改者',
     `remark`      varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
-    `is_deleted`  tinyint NULL DEFAULT 0 COMMENT '删除标识',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '部门表' ROW_FORMAT = DYNAMIC;
 
@@ -837,7 +842,6 @@ CREATE TABLE `tb_sys_job`
     `modified`         datetime                                                      NOT NULL COMMENT '修改时间',
     `modified_by`      bigint UNSIGNED NOT NULL COMMENT '修改者',
     `remark`           varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
-    `is_deleted`       tinyint NULL DEFAULT 0 COMMENT '删除标识',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '系统任务表' ROW_FORMAT = DYNAMIC;
 
@@ -904,7 +908,6 @@ CREATE TABLE `tb_sys_menu`
     `modified`       datetime                                                      NOT NULL COMMENT '修改时间',
     `modified_by`    bigint UNSIGNED NOT NULL COMMENT '修改者',
     `remark`         varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
-    `is_deleted`     tinyint NULL DEFAULT 0 COMMENT '删除标识',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '菜单表' ROW_FORMAT = DYNAMIC;
 
@@ -938,7 +941,6 @@ CREATE TABLE `tb_sys_position`
     `modified`      datetime                                                     NOT NULL COMMENT '修改时间',
     `modified_by`   bigint UNSIGNED NOT NULL COMMENT '修改者',
     `remark`        varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
-    `is_deleted`    tinyint NULL DEFAULT 0 COMMENT '删除标识',
     PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '职位表' ROW_FORMAT = DYNAMIC;
 
@@ -958,7 +960,6 @@ CREATE TABLE `tb_sys_role`
     `modified`            datetime                                                     NOT NULL COMMENT '修改时间',
     `modified_by`         bigint UNSIGNED NOT NULL COMMENT '修改者',
     `remark`              varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT '' COMMENT '备注',
-    `is_deleted`          tinyint NULL DEFAULT 0 COMMENT '删除标识',
     `data_scope`          int NULL DEFAULT 1 COMMENT '数据权限(EnumDataScope)',
     `menu_check_strictly` tinyint(1) NULL DEFAULT 1 COMMENT '菜单树选择项是否关联显示',
     `dept_check_strictly` tinyint(1) NULL DEFAULT 1 COMMENT '部门树选择项是否关联显示',
