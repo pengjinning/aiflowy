@@ -148,7 +148,7 @@ public class ModelController extends BaseCurdController<ModelService, Model> {
     @Override
     protected Result<?> onSaveOrUpdateBefore(Model entity, boolean isSave) {
         if (isSave) {
-            entity.setAdded(true);
+            entity.setWithUsed(true);
         }
         return super.onSaveOrUpdateBefore(entity, isSave);
     }

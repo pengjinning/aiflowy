@@ -78,7 +78,7 @@ public class Model extends ModelBase {
 
     private ChatModel deepSeekLLm() {
         DeepseekConfig deepseekConfig = new DeepseekConfig();
-        deepseekConfig.setProvider(getProvider());
+        deepseekConfig.setProvider(getModelProvider().getProviderType());
         deepseekConfig.setEndpoint(getPath(LLM_ENDPOINT));
         deepseekConfig.setApiKey(getApiKey());
         deepseekConfig.setModel(getModelName());
@@ -88,7 +88,7 @@ public class Model extends ModelBase {
 
     private ChatModel openaiLLm() {
         OpenAIChatConfig openAIChatConfig = new OpenAIChatConfig();
-        openAIChatConfig.setProvider(getProvider());
+        openAIChatConfig.setProvider(getModelProvider().getProviderType());
         openAIChatConfig.setEndpoint(getPath(LLM_ENDPOINT));
         openAIChatConfig.setApiKey(getApiKey());
         openAIChatConfig.setModel(getModelName());

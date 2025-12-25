@@ -92,7 +92,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
 
         QueryWrapper queryWrapper = new QueryWrapper()
                 .eq(Model::getProviderId, entity.getProviderId());
-        queryWrapper.eq(Model::getAdded, entity.getAdded());
+        queryWrapper.eq(Model::getWithUsed, entity.getWithUsed());
         List<Model> totalList = modelMapper.selectListWithRelationsByQuery(queryWrapper);
         for (String modelType : llmModelTypes) {
             Map<String, List<Model>> groupMap = groupLlmByGroupName(totalList, modelType);

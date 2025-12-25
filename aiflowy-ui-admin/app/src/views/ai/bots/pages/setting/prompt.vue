@@ -8,6 +8,7 @@ import { ElIcon, ElInput } from 'element-plus';
 
 import { updateLlmOptions } from '#/api';
 import MagicStaffIcon from '#/components/icons/MagicStaffIcon.vue';
+import PromptChoreChatModal from '#/views/ai/bots/pages/setting/PromptChoreChatModal.vue';
 
 const props = defineProps<{
   bot?: BotInfo;
@@ -16,7 +17,7 @@ const props = defineProps<{
 const systemPrompt = ref(
   '你是一个AI助手，请根据用户的问题给出清晰、准确的回答。',
 );
-
+const promptChoreChatModalRef = ref();
 watch(
   () => props.bot?.llmOptions.systemPrompt,
   (newPrompt) => {
@@ -44,6 +45,7 @@ const handleInput = useDebounceFn((value: string) => {
         系统提示词（System Prompt）
       </h1>
       <button
+        @click="promptChoreChatModalRef.open(props.bot?.id, systemPrompt)"
         type="button"
         class="flex items-center gap-0.5 rounded-lg bg-[#F7F7F7] px-3 py-1"
       >
@@ -64,6 +66,9 @@ const handleInput = useDebounceFn((value: string) => {
       :disabled="!hasSavePermission"
       @input="handleInput"
     />
+
+    <!--系统提示词优化模态框-->
+    <PromptChoreChatModal ref="promptChoreChatModalRef" />
   </div>
 </template>
 

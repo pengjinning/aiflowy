@@ -123,16 +123,16 @@ public class BotServiceImpl extends ServiceImpl<BotMapper, Bot> implements BotSe
 
     @Override
     public void updateBotLlmId(Bot aiBot) {
-        Bot byId = getById(aiBot.getId());
+        Bot bot = getById(aiBot.getId());
 
-        if (byId == null) {
+        if (bot == null) {
             log.error("修改bot的llmId失败，bot不存在！");
             throw new BusinessException("bot不存在！");
         }
 
-        byId.setLlmId(aiBot.getLlmId());
+        bot.setModelId(aiBot.getModelId());
 
-        updateById(byId, false);
+        updateById(bot, false);
 
     }
 

@@ -120,14 +120,14 @@ public class UcAiBotController extends BaseCurdController<BotService, Bot> {
                                          BigInteger id, @JsonBody("llmOptions")
                                          Map<String, Object> llmOptions) {
         Bot aiBot = service.getById(id);
-        Map<String, Object> existLlmOptions = aiBot.getLlmOptions();
+        Map<String, Object> existLlmOptions = aiBot.getModelOptions();
         if (existLlmOptions == null) {
             existLlmOptions = new HashMap<>();
         }
         if (llmOptions != null) {
             existLlmOptions.putAll(llmOptions);
         }
-        aiBot.setLlmOptions(existLlmOptions);
+        aiBot.setModelOptions(existLlmOptions);
         service.updateById(aiBot);
         return Result.ok();
     }
@@ -180,10 +180,10 @@ public class UcAiBotController extends BaseCurdController<BotService, Bot> {
             return SSEUtil.sseEmitterForContent("此bot不支持匿名访问");
         }
 
-        Map<String, Object> llmOptions = aiBot.getLlmOptions();
+        Map<String, Object> llmOptions = aiBot.getModelOptions();
         String systemPrompt = MapUtil.getString(llmOptions, "systemPrompt");
 
-        Model model = modelService.getLlmInstance(aiBot.getLlmId());
+        Model model = modelService.getLlmInstance(aiBot.getModelId());
         if (model == null) {
             return SSEUtil.sseEmitterForContent("LLM不存在");
         }
@@ -248,20 +248,20 @@ public class UcAiBotController extends BaseCurdController<BotService, Bot> {
             return Result.ok(data);
         }
 
-        Map<String, Object> llmOptions = data.getLlmOptions();
+        Map<String, Object> llmOptions = data.getModelOptions();
         if (llmOptions == null) {
             llmOptions = new HashMap<>();
         }
 
-        if (data.getLlmId() == null) {
+        if (data.getModelId() == null) {
             return Result.ok(data);
         }
 
-        BigInteger llmId = data.getLlmId();
+        BigInteger llmId = data.getModelId();
         Model llm = modelService.getById(llmId);
 
         if (llm == null) {
-            data.setLlmId(null);
+            data.setModelId(null);
             return Result.ok(data);
         }
 
@@ -300,7 +300,7 @@ public class UcAiBotController extends BaseCurdController<BotService, Bot> {
 
         if (isSave) {
             // 设置默认值
-            entity.setLlmOptions(getDefaultLlmOptions());
+            entity.setModelOptions(getDefaultLlmOptions());
         }
         return super.onSaveOrUpdateBefore(entity, isSave);
     }

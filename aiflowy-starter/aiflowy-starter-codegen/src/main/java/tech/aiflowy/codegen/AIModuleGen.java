@@ -30,7 +30,7 @@ public class AIModuleGen {
 
     public static GlobalConfig createGlobalConfig() {
 
-        String optionsColumns = "options,vector_store_options,llm_options";
+        String optionsColumns = "options,vector_store_options,model_options";
 
         //创建配置内容
         GlobalConfig globalConfig = Util.createBaseConfig(optionsColumns);

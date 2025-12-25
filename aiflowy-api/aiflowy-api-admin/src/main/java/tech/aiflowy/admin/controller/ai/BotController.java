@@ -8,7 +8,10 @@ import com.agentsflex.core.message.SystemMessage;
 import com.agentsflex.core.message.UserMessage;
 import com.agentsflex.core.model.chat.ChatModel;
 import com.agentsflex.core.model.chat.ChatOptions;
+import com.agentsflex.core.model.chat.StreamResponseListener;
+import com.agentsflex.core.model.chat.response.AiMessageResponse;
 import com.agentsflex.core.model.chat.tool.Tool;
+import com.agentsflex.core.model.client.StreamContext;
 import com.agentsflex.core.prompt.MemoryPrompt;
 import com.alicp.jetcache.Cache;
 import com.mybatisflex.core.keygen.impl.SnowFlakeIDKeyGenerator;
@@ -24,18 +27,22 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tech.aiflowy.ai.entity.*;
 import tech.aiflowy.ai.mapper.BotConversationMapper;
 import tech.aiflowy.ai.service.*;
+import tech.aiflowy.ai.utils.PromptChoreChatStreamListener;
+import tech.aiflowy.common.ai.ChatSseEmitter;
 import tech.aiflowy.common.audio.core.AudioServiceManager;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.satoken.util.SaTokenUtil;
 import tech.aiflowy.common.util.MapUtil;
 import tech.aiflowy.common.util.Maps;
 import tech.aiflowy.common.util.SSEUtil;
+import tech.aiflowy.common.util.StringUtil;
 import tech.aiflowy.common.web.controller.BaseCurdController;
 import tech.aiflowy.common.web.exceptions.BusinessException;
 import tech.aiflowy.common.web.jsonbody.JsonBody;
 import tech.aiflowy.system.mapper.SysApiKeyMapper;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.*;
@@ -116,14 +123,14 @@ public class BotController extends BaseCurdController<BotService, Bot> {
                                          BigInteger id, @JsonBody("llmOptions")
                                          Map<String, Object> llmOptions) {
         Bot aiBot = service.getById(id);
-        Map<String, Object> existLlmOptions = aiBot.getLlmOptions();
+        Map<String, Object> existLlmOptions = aiBot.getModelOptions();
         if (existLlmOptions == null) {
             existLlmOptions = new HashMap<>();
         }
         if (llmOptions != null) {
             existLlmOptions.putAll(llmOptions);
         }
-        aiBot.setLlmOptions(existLlmOptions);
+        aiBot.setModelOptions(existLlmOptions);
         service.updateById(aiBot);
         return Result.ok();
     }
@@ -177,10 +184,10 @@ public class BotController extends BaseCurdController<BotService, Bot> {
 
         }
 
-        Map<String, Object> llmOptions = aiBot.getLlmOptions();
+        Map<String, Object> llmOptions = aiBot.getModelOptions();
         String systemPrompt = MapUtil.getString(llmOptions, "systemPrompt");
 
-        Model model = modelService.getLlmInstance(aiBot.getLlmId());
+        Model model = modelService.getLlmInstance(aiBot.getModelId());
         if (model == null) {
             return SSEUtil.sseEmitterForContent( "LLM不存在");
         }
@@ -231,20 +238,20 @@ public class BotController extends BaseCurdController<BotService, Bot> {
             return Result.ok(data);
         }
 
-        Map<String, Object> llmOptions = data.getLlmOptions();
+        Map<String, Object> llmOptions = data.getModelOptions();
         if (llmOptions == null) {
             llmOptions = new HashMap<>();
         }
 
-        if (data.getLlmId() == null) {
+        if (data.getModelId() == null) {
             return Result.ok(data);
         }
 
-        BigInteger llmId = data.getLlmId();
+        BigInteger llmId = data.getModelId();
         Model llm = modelService.getById(llmId);
 
         if (llm == null) {
-            data.setLlmId(null);
+            data.setModelId(null);
             return Result.ok(data);
         }
 
@@ -283,7 +290,7 @@ public class BotController extends BaseCurdController<BotService, Bot> {
 
         if (isSave) {
             // 设置默认值
-            entity.setLlmOptions(getDefaultLlmOptions());
+            entity.setModelOptions(getDefaultLlmOptions());
         }
         return super.onSaveOrUpdateBefore(entity, isSave);
     }
@@ -407,5 +414,36 @@ public class BotController extends BaseCurdController<BotService, Bot> {
 
 
         return functionList;
+    }
+
+    /**
+     * 系统提示词优化
+     *
+     * @param prompt
+     * @return
+     */
+    @PostMapping("prompt/chore/chat")
+    @SaIgnore
+    public SseEmitter chat(
+            @JsonBody(value = "prompt", required = true) String prompt,
+            @JsonBody(value = "botId", required = true) BigInteger botId
+    ){
+        if (!StringUtils.hasLength(prompt)) {
+            throw new BusinessException("提示词不能为空！");
+        }
+
+        Bot aiBot = service.getById(botId);
+        if (aiBot == null) {
+            return SSEUtil.sseEmitterForContent( "聊天助手不存在");
+        }
+        SseEmitter sseEmitter = ChatSseEmitter.create();
+        Model model = modelService.getLlmInstance(aiBot.getModelId());
+        if (model == null) {
+            return SSEUtil.sseEmitterForContent("模型不存在");
+        }
+        ChatModel chatModel = model.toChatModel();
+        PromptChoreChatStreamListener promptChoreChatStreamListener = new PromptChoreChatStreamListener(sseEmitter);
+        chatModel.chatStream(prompt, promptChoreChatStreamListener);
+        return sseEmitter;
     }
 }

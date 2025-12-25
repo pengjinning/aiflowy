@@ -72,8 +72,8 @@ public class BotBase extends DateEntity implements Serializable {
     /**
      * 模型配置
      */
-    @Column(comment = "模型配置")
-    private String modelOptions;
+    @Column(typeHandler = FastjsonTypeHandler.class, comment = "模型配置")
+    private Map<String, Object> modelOptions;
 
     /**
      * 数据状态
@@ -183,11 +183,11 @@ public class BotBase extends DateEntity implements Serializable {
         this.modelId = modelId;
     }
 
-    public String getModelOptions() {
+    public Map<String, Object> getModelOptions() {
         return modelOptions;
     }
 
-    public void setModelOptions(String modelOptions) {
+    public void setModelOptions(Map<String, Object> modelOptions) {
         this.modelOptions = modelOptions;
     }
 
