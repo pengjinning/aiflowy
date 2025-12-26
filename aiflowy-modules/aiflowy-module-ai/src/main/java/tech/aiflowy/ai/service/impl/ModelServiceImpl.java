@@ -40,7 +40,7 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
     ModelMapper modelMapper;
 
     @Autowired
-    ModelProviderService llmProviderService;
+    ModelProviderService modelProviderService;
 
     @Resource
     private Cache<String, Object> cache;
@@ -58,24 +58,22 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
     private static final Logger log = LoggerFactory.getLogger(ModelServiceImpl.class);
 
     @Override
-    public void verifyLlmConfig(Model llm) {
-        String modelType = llm.getModelType();
-        if ("chatModel".equals(modelType)) {
-            // 走聊天验证逻辑
-            verifyChatLlm(llm);
+    public void verifyModelConfig(Model model) {
+        String modelType = model.getModelType();
+        // 走聊天验证逻辑
+        if (Model.MODEL_TYPES[0].equals(modelType)) {
+            verifyChatLlm(model);
             return;
         }
-
-        if ("embeddingModel".equals(modelType)) {
-            // 走向量化验证逻辑
-            verifyEmbedLlm(llm);
+        // 走向量化验证逻辑
+        if (Model.MODEL_TYPES[1].equals(modelType)) {
+            verifyEmbedLlm(model);
             return;
 
         }
-
-        if ("rerankModel".equals(modelType)) {
-            // 走重排验证逻辑
-            verifyRerankLlm(llm);
+        // 走重排验证逻辑
+        if (Model.MODEL_TYPES[2].equals(modelType)) {
+            verifyRerankLlm(model);
             return;
 
         }
@@ -87,14 +85,13 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
 
     @Override
     public Map<String, Map<String, List<Model>>> getList(Model entity) {
-        String[] llmModelTypes = {"chatModel", "embeddingModel", "rerankModel"};
         Map<String, Map<String, List<Model>>> result = new HashMap<>();
 
         QueryWrapper queryWrapper = new QueryWrapper()
                 .eq(Model::getProviderId, entity.getProviderId());
         queryWrapper.eq(Model::getWithUsed, entity.getWithUsed());
         List<Model> totalList = modelMapper.selectListWithRelationsByQuery(queryWrapper);
-        for (String modelType : llmModelTypes) {
+        for (String modelType : Model.MODEL_TYPES) {
             Map<String, List<Model>> groupMap = groupLlmByGroupName(totalList, modelType);
             if (!CollectionUtils.isEmpty(groupMap)) {
                 result.put(modelType, groupMap);
@@ -116,8 +113,8 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
     }
 
 
-    private void verifyRerankLlm(Model llm) {
-        RerankModel rerankModel = llm.toRerankModel();
+    private void verifyRerankLlm(Model model) {
+        RerankModel rerankModel = model.toRerankModel();
         List<Document> documents = new ArrayList<>();
         documents.add(Document.of("Paris is the capital of France."));
         documents.add(Document.of("London is the capital of England."));
@@ -136,10 +133,10 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
         }
     }
 
-    private void verifyEmbedLlm(Model llm) {
+    private void verifyEmbedLlm(Model model) {
         try {
-            EmbeddingModel transLlm = llm.toEmbeddingModel();
-            VectorData vectorData = transLlm.embed("这是一条校验模型配置的文本");
+            EmbeddingModel embeddingModel = model.toEmbeddingModel();
+            VectorData vectorData = embeddingModel.embed("这是一条校验模型配置的文本");
             if (vectorData.getVector() == null) {
                 throw new BusinessException("校验未通过，请前往后端日志查看详情！");
             }
@@ -167,18 +164,6 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
             throw new BusinessException("校验未通过，请前往后端日志查看详情！");
         }
 
-
-        Map<String, Object> options = llm.getOptions();
-//        if (options != null && options.get("multimodal") != null && (boolean) options.get("multimodal")) {
-//
-//            textPrompt = new ImagePrompt("我在对模型配置进行校验，你无需描述图片，只需回答“看到了图片”即可",
-//                "http://115.190.9.61:7900/aiflowy-pro/public/aibot/files/40b64e32b081942bd7ab30f8a369f2a34fc7fafc04f45c50cd96d8a102fd7afa.jpg");
-//
-//        } else {
-//            textPrompt = new TextPrompt("我在对模型配置进行校验，你收到这条消息无需做任何思考，直接回复一个“你好”即可!");
-//        }
-
-
     }
 
     @Override
@@ -188,50 +173,32 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
     }
 
     @Override
-    public Model getLlmInstance(BigInteger llmId) {
-        Model aillm = getById(llmId);
-        if (aillm == null) {
-            return null;
+    public Model getModelInstance(BigInteger modelId) {
+        Model model = modelMapper.selectOneWithRelationsById(modelId);
+        ModelProvider modelProvider = model.getModelProvider();
+        model.setModelProvider(modelProvider);
+        if (StrUtil.isBlank(model.getApiKey())) {
+            model.setApiKey(modelProvider.getApiKey());
         }
-        ModelProvider provider = llmProviderService.getById(aillm.getProviderId());
-        if (provider == null) {
-            return aillm;
-        }
-        aillm.setModelProvider(provider);
-        if (StrUtil.isBlank(aillm.getApiKey())) {
-            aillm.setApiKey(provider.getApiKey());
-        }
-        if (StrUtil.isBlank(aillm.getEndpoint())) {
-            aillm.setEndpoint(provider.getEndpoint());
+        if (StrUtil.isBlank(model.getEndpoint())) {
+            model.setEndpoint(modelProvider.getEndpoint());
         }
 
-        Map<String, Object> options = aillm.getOptions();
-        if (options == null) {
-            options = new HashMap<>();
-            aillm.setOptions(options);
+        // 请求路径为空，从modelProvider中获取
+        if (StrUtil.isBlank(model.getRequestPath())) {
+            // 模型类型为chatModel
+            if (model.getModelType().equals(Model.MODEL_TYPES[0])) {
+                model.setRequestPath(modelProvider.getChatPath());
+                // 模型类型为embeddingModel
+            } else if (model.getModelType().equals(Model.MODEL_TYPES[1])) {
+                model.setRequestPath(modelProvider.getEmbedPath());
+                // 模型类型为rerankModel
+            } else if (model.getModelType().equals(Model.MODEL_TYPES[2])) {
+                model.setRequestPath(modelProvider.getRerankPath());
+            }
         }
 
-        String chatPath = (String) options.get("chatPath");
-        if (StrUtil.isBlank(chatPath)) {
-            options.put("chatPath", provider.getChatPath());
-        }
-
-        String embedPath = (String) options.get("embedPath");
-        if (StrUtil.isBlank(embedPath)) {
-            options.put("embedPath", provider.getEmbedPath());
-        }
-
-        String rerankPath = (String) options.get("rerankPath");
-        if (StrUtil.isBlank(rerankPath)) {
-            options.put("rerankPath", provider.getRerankPath());
-        }
-
-        String llmEndpoint = (String) options.get("llmEndpoint");
-        if (StrUtil.isBlank(llmEndpoint)) {
-            options.put("llmEndpoint", provider.getEndpoint());
-        }
-
-        return aillm;
+        return model;
     }
 
     @Override

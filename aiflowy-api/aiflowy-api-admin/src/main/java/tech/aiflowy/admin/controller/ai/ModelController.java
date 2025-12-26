@@ -78,8 +78,8 @@ public class ModelController extends BaseCurdController<ModelService, Model> {
     @GetMapping("verifyLlmConfig")
     @SaCheckPermission("/api/v1/model/save")
     public Result<Void> verifyLlmConfig(@RequestParam BigInteger id) {
-        Model llm = service.getLlmInstance(id);
-        service.verifyLlmConfig(llm);
+        Model model = service.getModelInstance(id);
+        service.verifyModelConfig(model);
 
         return Result.ok();
     }

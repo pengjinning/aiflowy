@@ -183,7 +183,7 @@ public class UcBotController extends BaseCurdController<BotService, Bot> {
         Map<String, Object> llmOptions = aiBot.getModelOptions();
         String systemPrompt = MapUtil.getString(llmOptions, "systemPrompt");
 
-        Model model = modelService.getLlmInstance(aiBot.getModelId());
+        Model model = modelService.getModelInstance(aiBot.getModelId());
         if (model == null) {
             return SSEUtil.sseEmitterForContent("LLM不存在");
         }

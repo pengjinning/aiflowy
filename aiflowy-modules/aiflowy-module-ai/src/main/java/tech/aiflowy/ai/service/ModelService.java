@@ -17,13 +17,13 @@ public interface ModelService extends IService<Model> {
 
     boolean addAiLlm(Model entity);
 
-    void verifyLlmConfig(Model llm);
+    void verifyModelConfig(Model llm);
 
     Map<String, Map<String, List<Model>>> getList(Model entity);
 
     void removeByEntity(Model entity);
 
-    Model getLlmInstance(BigInteger llmId);
+    Model getModelInstance(BigInteger modelId);
 
     void updateByEntity(Model entity);
 }

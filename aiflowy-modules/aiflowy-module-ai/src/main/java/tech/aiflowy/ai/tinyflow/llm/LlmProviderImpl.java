@@ -21,7 +21,7 @@ public class LlmProviderImpl implements LlmProvider {
 
     @Override
     public Llm getChatModel(Object modelId) {
-        Model model = modelService.getLlmInstance(new BigInteger(modelId.toString()));
+        Model model = modelService.getModelInstance(new BigInteger(modelId.toString()));
         if (model == null) {
             log.error("LlmProviderImpl.getChatModel: modelId not found: {}", modelId);
             return null;

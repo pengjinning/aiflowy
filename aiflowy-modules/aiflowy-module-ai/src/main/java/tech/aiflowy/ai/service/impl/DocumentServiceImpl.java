@@ -259,7 +259,7 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
             throw new BusinessException("向量数据库类型未设置");
         }
         // 设置向量模型
-        Model model = modelService.getLlmInstance(knowledge.getVectorEmbedModelId());
+        Model model = modelService.getModelInstance(knowledge.getVectorEmbedModelId());
         if (model == null) {
             throw new BusinessException("该知识库未配置大模型");
         }

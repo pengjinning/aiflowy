@@ -181,7 +181,7 @@ public class BotController extends BaseCurdController<BotService, Bot> {
         Map<String, Object> modelOptions = aiBot.getModelOptions();
         String systemPrompt = MapUtil.getString(modelOptions, "systemPrompt");
 
-        Model model = modelService.getLlmInstance(aiBot.getModelId());
+        Model model = modelService.getModelInstance(aiBot.getModelId());
         if (model == null) {
             return SSEUtil.sseEmitterForContent( "LLM不存在");
         }
@@ -431,7 +431,7 @@ public class BotController extends BaseCurdController<BotService, Bot> {
             return SSEUtil.sseEmitterForContent( "聊天助手不存在");
         }
         SseEmitter sseEmitter = ChatSseEmitter.create();
-        Model model = modelService.getLlmInstance(aiBot.getModelId());
+        Model model = modelService.getModelInstance(aiBot.getModelId());
         if (model == null) {
             return SSEUtil.sseEmitterForContent("模型不存在");
         }
