@@ -187,7 +187,9 @@ const handleSubmit = async (refreshContent: string) => {
         sending.value = false;
         return;
       }
-      const content = message.data!.replace(/^Final Answer:\s*/i, '');
+      const content = JSON.parse(
+        message.data!.replace(/^Final Answer:\s*/i, ''),
+      );
       if (event === 'needSaveMessage' && message.data) {
         const dataObj = JSON.parse(message.data);
         const role = dataObj.role;

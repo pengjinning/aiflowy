@@ -3,6 +3,7 @@ package tech.aiflowy.ai.agentsflex.listener;
 import com.agentsflex.core.model.chat.StreamResponseListener;
 import com.agentsflex.core.model.chat.response.AiMessageResponse;
 import com.agentsflex.core.model.client.StreamContext;
+import com.alibaba.fastjson.JSON;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class PromptChoreChatStreamListener implements StreamResponseListener {
         String content = response.getMessage().getContent();
         if (content != null) {
             try {
-                sseEmitter.send(content);
+                sseEmitter.send(JSON.toJSONString(content));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -36,6 +37,12 @@ public class PromptChoreChatStreamListener implements StreamResponseListener {
 
     @Override
     public void onStop(StreamContext context) {
+        try {
+            System.out.println("onStop");
+            sseEmitter.send(SseEmitter.event().name("finish").data("finish"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         StreamResponseListener.super.onStop(context);
     }
 

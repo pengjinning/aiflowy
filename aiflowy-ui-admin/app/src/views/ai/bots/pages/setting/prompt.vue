@@ -36,6 +36,11 @@ const handleInput = useDebounceFn((value: string) => {
     },
   });
 }, 1000);
+
+const handelReplacePrompt = (value: string) => {
+  systemPrompt.value = value;
+  handleInput(value);
+};
 </script>
 
 <template>
@@ -68,7 +73,7 @@ const handleInput = useDebounceFn((value: string) => {
     />
 
     <!--系统提示词优化模态框-->
-    <PromptChoreChatModal ref="promptChoreChatModalRef" />
+    <PromptChoreChatModal ref="promptChoreChatModalRef" @success="handelReplacePrompt"/>
   </div>
 </template>
 

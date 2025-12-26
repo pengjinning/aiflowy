@@ -7,6 +7,7 @@ import com.agentsflex.core.model.chat.StreamResponseListener;
 import com.agentsflex.core.model.chat.response.AiMessageResponse;
 import com.agentsflex.core.model.client.StreamContext;
 import com.agentsflex.core.prompt.MemoryPrompt;
+import com.alibaba.fastjson.JSON;
 import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import tech.aiflowy.common.util.StringUtil;
@@ -53,7 +54,7 @@ public class ChatStreamListener implements StreamResponseListener {
             } else {
                 String delta = aiMessageResponse.getMessage().getContent();
                 if (StringUtil.hasText(delta)) {
-                    sseEmitter.send(delta);
+                    sseEmitter.send(JSON.toJSONString(delta));
                 }
             }
         } catch (Exception e) {

@@ -425,7 +425,54 @@ public class BotController extends BaseCurdController<BotService, Bot> {
         if (!StringUtils.hasLength(prompt)) {
             throw new BusinessException("提示词不能为空！");
         }
-
+        String promptChore = "# 角色与目标\n" +
+                "\n" +
+                "你是一位专业的提示词工程师（Prompt Engineer）。你的任务是，分析我提供的“用户原始提示词”，并将其优化成一个结构清晰、指令明确、效果最优的“系统提示词（System Prompt）”。\n" +
+                "\n" +
+                "这个优化后的系统提示词将直接用于引导一个AI助手，使其能够精准、高效地完成用户的请求。\n" +
+                "\n" +
+                "# 优化指南 (请严格遵循)\n" +
+                "\n" +
+                "在优化过程中，请遵循以下原则，以确保最终提示词的质量：\n" +
+                "\n" +
+                "1.  **角色定义 (Role Definition)**：\n" +
+                "    *   为AI助手明确一个具体、专业的角色。这个角色应该与任务高度相关。\n" +
+                "    *   例如：“你是一位资深的软件架构师”、“你是一位经验丰富的产品经理”。\n" +
+                "\n" +
+                "2.  **任务与目标 (Task & Goal)**：\n" +
+                "    *   清晰、具体地描述AI需要完成的任务。\n" +
+                "    *   明确指出期望的最终输出是什么，以及输出的目标和用途。\n" +
+                "    *   避免模糊不清的指令。\n" +
+                "\n" +
+                "3.  **输入输出格式 (Input/Output Format)**：\n" +
+                "    *   如果任务涉及到处理特定格式的数据，请明确说明输入数据的格式。\n" +
+                "    *   **至关重要**：请为AI的输出指定一个清晰、结构化的格式。这能极大地提升结果的可用性。\n" +
+                "    *   例如：“请以Markdown表格的形式输出”、“请分点列出，每点不超过20字”。\n" +
+                "\n" +
+                "4.  **背景与上下文 (Context & Background)**：\n" +
+                "    *   提供完成任务所必需的背景信息。\n" +
+                "    *   例如：项目的阶段、目标用户、使用的技术栈、相关的约束条件等。\n" +
+                "\n" +
+                "5.  **语气与风格 (Tone & Style)**：\n" +
+                "    *   指定AI回答时应采用的语气和风格。\n" +
+                "    *   例如：“专业且简洁”、“通俗易懂，避免使用专业术语”。\n" +
+                "\n" +
+                "6.  **约束与规则 (Constraints & Rules)**：\n" +
+                "    *   设定AI在回答时必须遵守的规则和限制。\n" +
+                "    *   例如：“回答必须基于提供的文档”、“禁止猜测用户未提及的信息”。\n" +
+                "\n" +
+                "7.  **思考过程 (Chain-of-Thought)**：\n" +
+                "    *   对于复杂的推理任务，可以引导AI展示其思考过程。\n" +
+                "    *   例如：“请先分析问题的关键点，然后给出解决方案，并解释你的推理步骤。”\n" +
+                "\n" +
+                "# 输出要求\n" +
+                "\n" +
+                "请你直接输出优化后的完整系统提示词。不要包含任何额外的解释或说明。\n" +
+                "\n" +
+                "---\n" +
+                "\n" +
+                "## 用户原始提示词\n" +
+                "[" + prompt + "]\n";
         Bot aiBot = service.getById(botId);
         if (aiBot == null) {
             return SSEUtil.sseEmitterForContent( "聊天助手不存在");
@@ -437,7 +484,7 @@ public class BotController extends BaseCurdController<BotService, Bot> {
         }
         ChatModel chatModel = model.toChatModel();
         PromptChoreChatStreamListener promptChoreChatStreamListener = new PromptChoreChatStreamListener(sseEmitter);
-        chatModel.chatStream(prompt, promptChoreChatStreamListener);
+        chatModel.chatStream(promptChore, promptChoreChatStreamListener);
         return sseEmitter;
     }
 }

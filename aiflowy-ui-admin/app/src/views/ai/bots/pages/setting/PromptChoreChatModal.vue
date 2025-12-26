@@ -4,6 +4,7 @@ import { ref } from 'vue';
 import { $t } from '@aiflowy/locales';
 
 import { ElButton, ElDialog, ElForm, ElFormItem, ElInput } from 'element-plus';
+
 import { sseClient } from '#/api/request';
 
 const emit = defineEmits(['success']);
@@ -17,7 +18,13 @@ const rules = {
 const loading = ref(false);
 
 const handleSubmit = async () => {
-  sseClient.post('/api/v1/bot/prompt/chore/chat', formData, {
+  loading.value = true;
+  const data = {
+    botId: formData.value.botId,
+    prompt: formData.value.prompt,
+  };
+  formData.value.prompt = '';
+  sseClient.post('/api/v1/bot/prompt/chore/chat', data, {
     onMessage(message) {
       const event = message.event;
       //  finish
@@ -25,12 +32,17 @@ const handleSubmit = async () => {
         loading.value = false;
         return;
       }
-      const content = message.data!.replace(/^Final Answer:\s*/i, '');
-      console.log('content', content);
+      const content = JSON.parse(
+        message.data!.replace(/^Final Answer:\s*/i, ''),
+      );
+      formData.value.prompt += content;
     },
   });
 };
-
+const handleReplace = () => {
+  emit('success', formData.value.prompt);
+  dialogVisible.value = false;
+};
 defineExpose({
   open(botId: string, systemPrompt: string) {
     formData.value = {
@@ -59,6 +71,9 @@ defineExpose({
     <template #footer>
       <ElButton @click="dialogVisible = false">
         {{ $t('button.cancel') }}
+      </ElButton>
+      <ElButton type="primary" @click="handleReplace">
+        {{ $t('button.replace') }}
       </ElButton>
       <ElButton
         type="primary"

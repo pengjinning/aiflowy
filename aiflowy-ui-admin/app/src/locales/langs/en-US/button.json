@@ -35,5 +35,6 @@
   "setting": "Setting",
   "create": "Create",
   "update": "Update",
-  "oneClickOptimization": "One-click optimization"
+  "oneClickOptimization": "One-click optimization",
+  "replace": "Replace"
 }
