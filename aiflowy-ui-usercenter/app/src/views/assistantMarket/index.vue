@@ -155,7 +155,7 @@ function removeBotFromRecentlyUsed(botId: any) {
                 :src="assistant.icon"
                 :default-avatar="defaultBotAvatar"
               />
-              <CardTitle>
+              <CardTitle :title="assistant.title">
                 {{ assistant.title }}
               </CardTitle>
             </CardContent>

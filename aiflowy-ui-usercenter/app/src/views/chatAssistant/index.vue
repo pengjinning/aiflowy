@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 
+import { IconifyIcon } from '@aiflowy/icons';
 import { cn } from '@aiflowy/utils';
 
 import { ElAside, ElContainer, ElMain } from 'element-plus';
@@ -47,59 +48,102 @@ function addMessage(message: any) {
 function setMessageList(messages: any) {
   messageList.value = messages;
 }
+const isFold = ref(false);
+const toggleFold = () => {
+  isFold.value = !isFold.value;
+};
 </script>
 
 <template>
-  <ElContainer class="bg-background-deep h-full">
-    <ElAside width="283px" class="flex flex-col gap-5 p-5">
-      <span class="text-foreground pl-2.5 text-sm">最近使用</span>
-      <div class="flex h-full flex-col gap-5 overflow-auto">
-        <Card
-          v-for="assistant in recentUsedAssistant"
-          :key="assistant.id"
-          :class="
-            cn(
-              currentBot.id === assistant.id
-                ? 'bg-[hsl(var(--primary)/15%)] dark:bg-[hsl(var(--accent))]'
-                : 'hover:bg-[hsl(var(--accent))]',
-            )
-          "
-          @click="handleSelectAssistant(assistant)"
+  <div class="bg-background-deep h-full w-full p-6">
+    <ElContainer
+      class="bg-background border-border h-full overflow-hidden rounded-lg border"
+    >
+      <ElMain class="!p-0">
+        <ChatContainer
+          class="border-none"
+          :bot="currentBot"
+          :is-fold="isFold"
+          :on-message-list="setMessageList"
+          :toggle-fold="toggleFold"
         >
-          <CardAvatar
-            :src="assistant.icon"
-            :default-avatar="defaultAssistantAvatar"
-          />
-          <CardContent>
-            <CardTitle :class="cn(assistant.checked && 'text-primary')">
-              {{ assistant.title }}
-            </CardTitle>
-            <CardDescription>
-              {{ assistant.description }}
-            </CardDescription>
-          </CardContent>
-        </Card>
-      </div>
-    </ElAside>
-    <ElMain class="p-6 !pl-0">
-      <ChatContainer :bot="currentBot" :on-message-list="setMessageList">
-        <template #default="{ conversationId }">
-          <div class="flex h-full flex-col justify-between">
-            <ChatBubbleList :bot="currentBot" :messages="messageList" />
-            <ChatSender
-              :add-message="addMessage"
-              :bot="currentBot"
-              :conversation-id="conversationId"
+          <template #default="{ conversationId }">
+            <div class="flex h-full flex-col justify-between">
+              <ChatBubbleList :bot="currentBot" :messages="messageList" />
+              <ChatSender
+                :add-message="addMessage"
+                :bot="currentBot"
+                :conversation-id="conversationId"
+              />
+            </div>
+          </template>
+        </ChatContainer>
+      </ElMain>
+      <transition name="collapse-horizontal">
+        <ElAside
+          v-if="isFold"
+          width="283px"
+          class="bg-background border-border flex flex-col gap-5 border-l p-5 pt-4 transition-all"
+        >
+          <div class="flex items-center justify-between">
+            <span class="pl-2.5 text-base font-medium">助理</span>
+            <IconifyIcon
+              icon="svg:assistant-fold"
+              class="cursor-pointer"
+              @click="toggleFold"
             />
           </div>
-        </template>
-      </ChatContainer>
-    </ElMain>
-  </ElContainer>
+          <div class="flex h-full flex-col gap-5 overflow-auto">
+            <Card
+              v-for="assistant in recentUsedAssistant"
+              :key="assistant.id"
+              :class="
+                cn(
+                  currentBot.id === assistant.id
+                    ? 'bg-[hsl(var(--primary)/15%)] dark:bg-[hsl(var(--accent))]'
+                    : 'hover:bg-[hsl(var(--accent))]',
+                )
+              "
+              @click="handleSelectAssistant(assistant)"
+            >
+              <CardAvatar
+                :src="assistant.icon"
+                :default-avatar="defaultAssistantAvatar"
+              />
+              <CardContent>
+                <CardTitle :class="cn(assistant.checked && 'text-primary')">
+                  {{ assistant.title }}
+                </CardTitle>
+                <CardDescription>
+                  {{ assistant.description }}
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </div>
+        </ElAside>
+      </transition>
+    </ElContainer>
+  </div>
 </template>
 
 <style lang="css" scoped>
 .el-aside::-webkit-scrollbar {
   display: none;
+}
+
+.collapse-horizontal-enter-active,
+.collapse-horizontal-leave-active {
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+.collapse-horizontal-enter-from,
+.collapse-horizontal-leave-to {
+  max-width: 0;
+  opacity: 0;
+}
+.collapse-horizontal-enter-to,
+.collapse-horizontal-leave-from {
+  max-width: 283px; /* 设置一个足够大的值 */
+  opacity: 1;
 }
 </style>

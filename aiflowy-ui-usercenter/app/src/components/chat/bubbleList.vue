@@ -75,8 +75,9 @@ function getUserAvatar() {
     </template>
 
     <!-- 自定义气泡内容 -->
-    <!-- <template #content="{ item }">
-    </template> -->
+    <template #content="{ item }">
+      <el-x-markdown :markdown="item.content" />
+    </template>
 
     <!-- 自定义底部 -->
     <!--<template #footer="{ item }">

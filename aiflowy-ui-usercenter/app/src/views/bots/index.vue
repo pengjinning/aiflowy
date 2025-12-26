@@ -105,7 +105,9 @@ function handleTagClick(tag: any) {
                 :src="workflow.icon"
                 :default-avatar="defaultBotAvatar"
               />
-              <CardTitle>{{ workflow.title }}</CardTitle>
+              <CardTitle :title="workflow.title">
+                {{ workflow.title }}
+              </CardTitle>
             </CardContent>
             <CardDescription
               class="line-clamp-2 text-sm text-[#566882]"

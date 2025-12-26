@@ -11,7 +11,9 @@ const props = defineProps<CardContentProps>();
 
 <template>
   <div
-    :class="cn('flex flex-col gap-1 overflow-hidden text-nowrap', props.class)"
+    :class="
+      cn('flex w-full flex-col gap-1 overflow-hidden text-nowrap', props.class)
+    "
   >
     <slot></slot>
   </div>

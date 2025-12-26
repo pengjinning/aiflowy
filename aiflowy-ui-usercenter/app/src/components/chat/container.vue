@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { provide, ref, watch } from 'vue';
 
+import { IconifyIcon } from '@aiflowy/icons';
 import { cn } from '@aiflowy/utils';
 
 import { Delete, Edit, MoreFilled } from '@element-plus/icons-vue';
@@ -23,20 +24,14 @@ import {
 } from 'element-plus';
 
 import { api } from '#/api/request';
-import defaultAssistantAvatar from '#/assets/defaultAssistantAvatar.svg';
-import {
-  Card,
-  CardAvatar,
-  CardContent,
-  CardDescription,
-  CardTitle,
-} from '#/components/card';
 import ChatIcon from '#/components/icons/ChatIcon.vue';
 import { $t } from '#/locales';
 
 interface Props {
   bot: any;
+  isFold: boolean;
   onMessageList?: (list: any[]) => void;
+  toggleFold: () => void;
 }
 const props = defineProps<Props>();
 const sessionList = ref<any>([]);
@@ -174,13 +169,14 @@ function remove(row: any) {
 <template>
   <ElContainer class="border-border bg-background h-full rounded-lg border">
     <ElAside width="287px" class="border-border border-r p-6">
-      <Card class="max-w-max p-0">
+      <!-- <Card class="max-w-max p-0">
         <CardAvatar :src="bot.icon" :default-avatar="defaultAssistantAvatar" />
         <CardContent>
           <CardTitle>{{ bot.title }}</CardTitle>
           <CardDescription>{{ bot.description }}</CardDescription>
         </CardContent>
-      </Card>
+      </Card> -->
+      <span>会话</span>
       <ElButton
         class="mt-6 !h-10 w-full !text-sm"
         type="primary"
@@ -263,13 +259,18 @@ function remove(row: any) {
       </div>
     </ElAside>
     <ElContainer>
-      <ElHeader
-        class="rounded-tr-lg border border-[#E6E9EE] bg-[#FAFAFA]"
-        height="53px"
-      >
-        <span class="text-base/[53px] font-medium text-[#323233]">
-          {{ currentSession.title || '未命名' }}
-        </span>
+      <ElHeader class="border-border border-b" height="53">
+        <div class="flex items-center justify-between">
+          <span class="text-base/[53px] font-medium">
+            {{ currentSession.title || '未命名' }}
+          </span>
+          <IconifyIcon
+            v-if="!isFold"
+            icon="svg:assistant-fold"
+            class="rotate-180 cursor-pointer"
+            @click="toggleFold"
+          />
+        </div>
       </ElHeader>
       <ElMain>
         <slot :conversation-id="currentSession.id"></slot>

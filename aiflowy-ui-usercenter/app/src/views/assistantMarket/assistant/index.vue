@@ -119,7 +119,7 @@ function addMessage(message: any) {
         </Card>
         <ChatBubbleList v-else :bot="botInfo" :messages="messageList" />
         <ChatSender
-          class="absolute bottom-11 left-0 w-full"
+          class="absolute bottom-5 left-0 w-full"
           :add-message="addMessage"
           :bot="botInfo"
           :conversation-id="conversationId"
