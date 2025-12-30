@@ -40,7 +40,7 @@ const handleSubmit = async () => {
 <template>
   <Teleport v-if="!route.path.includes('auth')" to="#app">
     <div
-      class="fixed bottom-3 right-5 cursor-pointer text-6xl active:opacity-70"
+      class="fixed bottom-1 right-2 cursor-pointer text-6xl active:opacity-70"
       @click="showDialog = !showDialog"
     >
       <IconifyIcon icon="svg:issue" />
