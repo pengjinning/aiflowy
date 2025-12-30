@@ -72,7 +72,8 @@
     "SupportVideo": "Video",
     "SupportImage": "Image",
     "supportFree": "Free",
-    "supportImageB64Only": "ImageB64Only"
+    "supportImageB64Only": "ImageB64Only",
+    "supportToolMessage": "SupportToolMessage"
   },
   "requestPath": "RequestPath"
 }

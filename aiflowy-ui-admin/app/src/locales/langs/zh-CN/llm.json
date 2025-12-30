@@ -69,7 +69,8 @@
     "supportVideo": "视频",
     "supportImage": "图片",
     "supportFree": "免费",
-    "supportImageB64Only": "支持base64图片"
+    "supportImageB64Only": "支持base64图片",
+    "supportToolMessage": "支持Tool消息"
   },
   "requestPath": "请求路径"
 }

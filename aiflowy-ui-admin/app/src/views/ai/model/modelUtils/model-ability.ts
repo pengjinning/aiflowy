@@ -7,6 +7,7 @@ export type BooleanField =
   | 'supportImageB64Only'
   | 'supportThinking'
   | 'supportTool'
+  | 'supportToolMessage'
   | 'supportVideo';
 
 export interface ModelAbilityItem {
@@ -78,6 +79,14 @@ export const getDefaultModelAbility = (): ModelAbilityItem[] => [
     activeType: 'success',
     selected: false,
     field: 'supportImageB64Only',
+  },
+  {
+    label: $t('llm.modelAbility.supportToolMessage'),
+    value: 'toolMessage',
+    defaultType: 'info',
+    activeType: 'success',
+    selected: true,
+    field: 'supportToolMessage',
   },
 ];
 

@@ -108,7 +108,7 @@ public class BotServiceImpl extends ServiceImpl<BotMapper, Bot> implements BotSe
         threadPoolTaskExecutor.execute(() -> {
             ServletRequestAttributes sra = (ServletRequestAttributes) requestAttributes;
             RequestContextHolder.setRequestAttributes(sra, true);
-            StreamResponseListener streamResponseListener = new ChatStreamListener(chatModel, memoryPrompt, chatSseEmitter);
+            StreamResponseListener streamResponseListener = new ChatStreamListener(chatModel, memoryPrompt, chatSseEmitter, chatOptions);
             chatModel.chatStream(memoryPrompt, streamResponseListener, chatOptions);
         });
 

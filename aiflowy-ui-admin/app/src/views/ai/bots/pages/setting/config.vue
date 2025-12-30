@@ -176,7 +176,6 @@ const handleLlmChange = async (value: string) => {
 };
 const handleLlmOptionsChange = useDebounceFn(
   (key: keyof typeof llmConfig.value, value: number) => {
-    llmConfig.value.temperature = value;
     updateLlmOptions({
       id: props.bot?.id || '',
       llmOptions: {

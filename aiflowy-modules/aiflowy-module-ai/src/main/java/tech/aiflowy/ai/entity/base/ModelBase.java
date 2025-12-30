@@ -98,9 +98,9 @@ public class ModelBase implements Serializable {
     private String groupName;
 
     /**
-     * 模型类型: chat/embedding/rerank/orc..
+     * 模型类型: chatModel/embeddingModel/rerankModel/orc..
      */
-    @Column(comment = "模型类型: chat/embedding/rerank/orc..")
+    @Column(comment = "模型类型: chatModel/embeddingModel/rerankModel/orc..")
     private String modelType;
 
     /**
@@ -150,6 +150,12 @@ public class ModelBase implements Serializable {
      */
     @Column(comment = "是否免费")
     private Boolean supportFree;
+
+    /**
+     * 是否支持tool消息
+     */
+    @Column(comment = "是否支持tool消息")
+    private Boolean supportToolMessage;
 
     public BigInteger getId() {
         return id;
@@ -333,6 +339,14 @@ public class ModelBase implements Serializable {
 
     public void setSupportFree(Boolean supportFree) {
         this.supportFree = supportFree;
+    }
+
+    public Boolean getSupportToolMessage() {
+        return supportToolMessage;
+    }
+
+    public void setSupportToolMessage(Boolean supportToolMessage) {
+        this.supportToolMessage = supportToolMessage;
     }
 
 }

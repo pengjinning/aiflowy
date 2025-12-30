@@ -15,7 +15,6 @@ import {
 
 import { api } from '#/api/request';
 import { $t } from '#/locales';
-
 import {
   getDefaultModelAbility,
   handleTagClick as handleTagClickUtil,
@@ -43,6 +42,7 @@ interface FormData {
   supportFree: boolean;
   supportVideo: boolean;
   supportImageB64Only: boolean;
+  supportToolMessage: boolean;
   options: {
     chatPath: string;
     embedPath: string;
@@ -94,6 +94,7 @@ const formData = reactive<FormData>({
   supportFree: false,
   supportVideo: false,
   supportImageB64Only: false,
+  supportToolMessage: false,
   options: {
     llmEndpoint: '',
     chatPath: '',
@@ -145,6 +146,7 @@ defineExpose({
       supportImage: false,
       supportImageB64Only: false,
       supportFree: false,
+      supportToolMessage: true,
       options: {
         llmEndpoint: '',
         chatPath: '',
@@ -155,6 +157,7 @@ defineExpose({
 
     // 重置标签状态
     resetModelAbility(modelAbility.value);
+    syncTagSelectedStatus();
     dialogVisible.value = true;
   },
 
@@ -179,6 +182,7 @@ defineExpose({
       supportVideo: item.supportVideo || false,
       supportTool: item.supportTool || false,
       supportFree: item.supportFree || false,
+      supportToolMessage: item.supportToolMessage || false,
       options: {
         llmEndpoint: item.options?.llmEndpoint || '',
         chatPath: item.options?.chatPath || '',

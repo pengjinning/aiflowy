@@ -42,10 +42,10 @@ public class DefaultBotMessageMemory extends DefaultChatMemory {
             Message message = botMessage.getContentAsMessage();
             list.add(message);
         }
-
-        return list.stream()
+        List<Message> collect = list.stream()
                 .limit(count)
                 .collect(Collectors.toList());
+        return collect;
     }
 
     @Override

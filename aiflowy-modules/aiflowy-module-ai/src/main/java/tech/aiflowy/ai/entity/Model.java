@@ -75,12 +75,14 @@ public class Model extends ModelBase {
                 return new DeepseekChatModel(deepseekConfig);
             default:
                 OpenAIChatConfig openAIChatConfig = new OpenAIChatConfig();
-                openAIChatConfig.setLogEnabled(true);
                 openAIChatConfig.setProvider(getModelProvider().getProviderName());
                 openAIChatConfig.setEndpoint(checkAndGetEndpoint());
                 openAIChatConfig.setApiKey(checkAndGetApiKey());
                 openAIChatConfig.setModel(checkAndGetModelName());
                 openAIChatConfig.setRequestPath(checkAndGetRequestPath());
+                if (getSupportToolMessage() != null) {
+                    openAIChatConfig.setSupportToolMessage(getSupportToolMessage());
+                }
                 return new OpenAIChatModel(openAIChatConfig);
         }
     }
