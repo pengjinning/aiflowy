@@ -81,6 +81,10 @@ INSERT INTO `tb_sys_menu` (`id`, `parent_id`, `menu_type`, `menu_title`, `menu_u
 INSERT INTO `tb_sys_menu` (`id`, `parent_id`, `menu_type`, `menu_title`, `menu_url`, `component`, `menu_icon`, `is_show`, `permission_tag`, `sort_no`, `status`, `created`, `created_by`, `modified`, `modified_by`, `remark`) VALUES (300818387710222336, 300817858217091072, 1, '保存', '', '', '', 1, '/api/v1/datacenterTable/save', 0, 0, '2025-07-10 15:25:53', 1, '2025-07-10 15:25:53', 1, '');
 INSERT INTO `tb_sys_menu` (`id`, `parent_id`, `menu_type`, `menu_title`, `menu_url`, `component`, `menu_icon`, `is_show`, `permission_tag`, `sort_no`, `status`, `created`, `created_by`, `modified`, `modified_by`, `remark`) VALUES (300818488214134784, 300817858217091072, 1, '删除', '', '', '', 1, '/api/v1/datacenterTable/remove', 0, 0, '2025-07-10 15:26:17', 1, '2025-07-10 15:26:17', 1, '');
 INSERT INTO `tb_sys_menu` (`id`, `parent_id`, `menu_type`, `menu_title`, `menu_url`, `component`, `menu_icon`, `is_show`, `permission_tag`, `sort_no`, `status`, `created`, `created_by`, `modified`, `modified_by`, `remark`) VALUES (356254301289807872, 0, 0, 'Bots', '/bots', '/ai/bots/index', 'ant-design:account-book-filled', 1, '', 0, 0, '2025-12-10 14:48:24', 1, '2025-12-10 14:48:24', 1, '');
+INSERT INTO `tb_sys_menu` (`id`, `parent_id`, `menu_type`, `menu_title`, `menu_url`, `component`, `menu_icon`, `is_show`, `permission_tag`, `sort_no`, `status`, `created`, `created_by`, `modified`, `modified_by`, `remark`) VALUES (363168956276838400, 258052082618335232, 0, 'menus.system.sysFeedback', '/sys/sysFeedback', '/system/sysFeedback/sysFeedbackList', 'svg:user-feedback', 1, '', 62, 0, '2025-12-29 16:44:47', 1, '2025-12-29 16:45:39', 1, '');
+INSERT INTO `tb_sys_menu` (`id`, `parent_id`, `menu_type`, `menu_title`, `menu_url`, `component`, `menu_icon`, `is_show`, `permission_tag`, `sort_no`, `status`, `created`, `created_by`, `modified`, `modified_by`, `remark`) VALUES (363435797225017344, 363168956276838400, 1, '删除', '', '', '', 0, '/api/v1/sysUserFeedback/remove', 3, 0, '2025-12-30 10:25:06', 1, '2025-12-30 10:26:15', 1, '');
+INSERT INTO `tb_sys_menu` (`id`, `parent_id`, `menu_type`, `menu_title`, `menu_url`, `component`, `menu_icon`, `is_show`, `permission_tag`, `sort_no`, `status`, `created`, `created_by`, `modified`, `modified_by`, `remark`) VALUES (363435864921083904, 363168956276838400, 1, '查询', '', '', '', 0, '/api/v1/sysUserFeedback/query', 1, 0, '2025-12-30 10:25:23', 1, '2025-12-30 10:26:04', 1, '');
+INSERT INTO `tb_sys_menu` (`id`, `parent_id`, `menu_type`, `menu_title`, `menu_url`, `component`, `menu_icon`, `is_show`, `permission_tag`, `sort_no`, `status`, `created`, `created_by`, `modified`, `modified_by`, `remark`) VALUES (363435949415337984, 363168956276838400, 1, '保存', '', '', '', 0, '/api/v1/sysUserFeedback/save', 2, 0, '2025-12-30 10:25:43', 1, '2025-12-30 10:26:10', 1, '');
 
 -- ----------------------------
 -- Records of tb_sys_role
@@ -153,6 +157,7 @@ INSERT INTO `tb_sys_role_menu` VALUES (300817858284199936, 1, 300817858217091072
 INSERT INTO `tb_sys_role_menu` VALUES (300818298325409792, 1, 300818298270883840);
 INSERT INTO `tb_sys_role_menu` VALUES (300818387789914112, 1, 300818387710222336);
 INSERT INTO `tb_sys_role_menu` VALUES (300818488344158208, 1, 300818488214134784);
+INSERT INTO `tb_sys_role_menu` VALUES (363168956335558656, 1, 363168956276838400);
 
 -- ----------------------------
 -- Records of tb_model_provider

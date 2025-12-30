@@ -1082,5 +1082,28 @@ CREATE TABLE `tb_workflow_exec_step`
     INDEX        `idx_record_id`(`record_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '执行记录步骤' ROW_FORMAT = DYNAMIC;
 
+-- ----------------------------
+-- Table structure for tb_sys_user_feedback
+-- ----------------------------
+DROP TABLE IF EXISTS `tb_sys_user_feedback`;
+CREATE TABLE `tb_sys_user_feedback`
+(
+    `id`               bigint(0) UNSIGNED NOT NULL COMMENT '主键id',
+    `feedback_content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '问题摘要',
+    `feedback_type`    int(0) NOT NULL COMMENT '问题类型（1-功能故障 2-优化建议 3-账号问题 4-其他）',
+    `contact_info`     varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '联系方式【手机号/邮箱】',
+    `attachment_url`   text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '附件url',
+    `status`           int(0) NULL DEFAULT NULL COMMENT '反馈处理状态（0-未查看 1-已查看 2-已处理）',
+    `handler_id`       bigint(0) UNSIGNED NULL DEFAULT NULL COMMENT '处理人id',
+    `handle_time`      datetime(0) NULL DEFAULT NULL COMMENT '处理时间',
+    `dept_id`          bigint(0) UNSIGNED NOT NULL COMMENT '部门ID',
+    `tenant_id`        bigint(0) UNSIGNED NOT NULL COMMENT '租户ID',
+    `created`          datetime(0) NOT NULL COMMENT '创建时间',
+    `created_by`       bigint(0) UNSIGNED NOT NULL COMMENT '创建人',
+    `modified`         datetime(0) NULL DEFAULT NULL COMMENT '最后修改时间',
+    `modified_by`      bigint(0) UNSIGNED NULL DEFAULT NULL COMMENT '最后修改的人',
+    PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
 SET
 FOREIGN_KEY_CHECKS = 1;
