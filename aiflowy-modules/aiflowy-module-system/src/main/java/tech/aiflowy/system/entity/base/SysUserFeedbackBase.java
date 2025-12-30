@@ -20,12 +20,6 @@ public class SysUserFeedbackBase extends DateEntity implements Serializable {
     private BigInteger id;
 
     /**
-     * 反馈用户id
-     */
-    @Column(comment = "反馈用户id")
-    private BigInteger accountId;
-
-    /**
      * 问题摘要
      */
     @Column(comment = "问题摘要")
@@ -109,14 +103,6 @@ public class SysUserFeedbackBase extends DateEntity implements Serializable {
 
     public void setId(BigInteger id) {
         this.id = id;
-    }
-
-    public BigInteger getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(BigInteger accountId) {
-        this.accountId = accountId;
     }
 
     public String getFeedbackContent() {
