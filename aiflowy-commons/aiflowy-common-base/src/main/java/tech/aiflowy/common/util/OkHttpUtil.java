@@ -25,12 +25,32 @@ public class OkHttpUtil {
         return executeString(url, "GET", null, null);
     }
 
+    public static long getSize(String url) {
+
+        return 0l;
+    }
+
     public static byte[] getBytes(String url) {
         return executeBytes(url, "GET", null, null);
     }
 
     public static String get(String url, Map<String, String> headers) {
         return executeString(url, "GET", headers, null);
+    }
+
+    public static InputStream getInputStream(String url) {
+        try (Response response = getOkHttpClient().newCall(new Request.Builder().url(url).build()).execute();
+             ResponseBody body = response.body()) {
+            if (body != null) {
+                return body.byteStream();
+            }
+        } catch (IOException ioe) {
+            LOG.error("HTTP getInputStream failed: " + url, ioe);
+        } catch (Exception e) {
+            LOG.error(e.toString(), e);
+            throw e;
+        }
+        return null;
     }
 
     public static String post(String url, Map<String, String> headers, String payload) {
@@ -154,8 +174,6 @@ public class OkHttpUtil {
 
         return getOkHttpClient().newCall(request).execute();
     }
-
-
 
 
     public static class InputStreamRequestBody extends RequestBody {
