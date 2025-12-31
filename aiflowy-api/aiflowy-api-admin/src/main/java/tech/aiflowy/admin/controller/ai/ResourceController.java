@@ -2,6 +2,8 @@ package tech.aiflowy.admin.controller.ai;
 
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.http.HttpUtil;
+import com.mybatisflex.core.paginate.Page;
+import com.mybatisflex.core.query.QueryWrapper;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tech.aiflowy.ai.entity.Resource;
@@ -44,5 +46,11 @@ public class ResourceController extends BaseCurdController<ResourceService, Reso
             entity.setModifiedBy(loginUser.getId());
         }
         return super.onSaveOrUpdateBefore(entity, isSave);
+    }
+
+    @Override
+    protected Page<Resource> queryPage(Page<Resource> page, QueryWrapper queryWrapper) {
+        queryWrapper.eq(Resource::getCreatedBy, SaTokenUtil.getLoginAccount().getId().toString());
+        return super.queryPage(page, queryWrapper);
     }
 }
