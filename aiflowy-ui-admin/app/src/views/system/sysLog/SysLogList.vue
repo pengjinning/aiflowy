@@ -37,7 +37,7 @@ function reset(formEl?: FormInstance) {
           <ElTable :data="pageList" border>
             <ElTableColumn prop="accountId" :label="$t('sysLog.accountId')">
               <template #default="{ row }">
-                {{ row.account.nickname }}
+                {{ row.account?.nickname }}
               </template>
             </ElTableColumn>
             <ElTableColumn prop="actionName" :label="$t('sysLog.actionName')">
