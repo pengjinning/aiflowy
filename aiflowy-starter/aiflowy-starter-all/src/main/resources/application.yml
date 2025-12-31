@@ -10,6 +10,9 @@ server:
       enabled: true
       charset: UTF-8 # 必须设置 UTF-8，避免 WebFlux 流式返回（AI 场景）会乱码问题
       force: true
+app:
+  file:
+    base-path: attachment # 文件存储基础路径
 spring:
   profiles:
     active: dev
@@ -24,10 +27,10 @@ spring:
   web:
     resources:
       # 示例：windows【file: C:\aiflowy\attachment】 linux【file: /www/aiflowy/attachment】
-      static-locations: file:C:\aiflowy\attachment
-#      static-locations: file:/Users/michael/Desktop/test
+      static-locations: file:C:\aiflowy\${app.file.base-path}
+  #      static-locations: file:/Users/michael/Desktop/test
   mvc:
-    static-path-pattern: /static/**
+    static-path-pattern: /${app.file.base-path}/**
   quartz:
     startup-delay: 1
     job-store-type: jdbc
@@ -52,25 +55,6 @@ aiflowy:
       access-key-secret: xxx
       app-key: xxx
       voice: siyue
-  storage:
-    type: local
-    s3:
-      manufacturer: aliyun # 厂商 使用的存储地址为阿里云需要填充为 aliyun,其他厂商请忽略
-      access-key: key
-      secret-key: secret
-      endpoint: your-endpoint
-      region: your-region
-      bucket-name: your-bucket-name
-      access-policy: 2
-      prefix: attachment
-      domain: https://your-domain
-    local:
-      # 示例：windows【C:\aiflowy\attachment】 linux【/www/aiflowy/attachment】
-      root: 'C:\aiflowy\attachment'
-#      root: /Users/michael/Desktop/test
-      # 后端接口地址
-      prefix: 'http://localhost:8080/attachment'
-#      prefix: http://aiflowy.s7.tunnelfrp.com/static
   ollama:
     host: http://127.0.0.1:11434
   login:
@@ -79,6 +63,30 @@ aiflowy:
     apiKeyMasterKey: Kj9#mP2$nQ4&rT6*uY8@wE1!zX3%vC5^
   # 后台页面访问域名
   admin-page-domain: http://localhost:5090
+  storage:
+    type: local # xFileStorage / local
+    # 本地文件存储配置
+    local:
+      # 示例：windows【C:\aiflowy\attachment】 linux【/www/aiflowy/attachment】
+      root: C:\aiflowy\${app.file.base-path}
+      # root: /Users/michael/Desktop/test
+      # 后端接口地址
+      prefix: http://localhost:8080/${app.file.base-path}
+      # prefix: http://aiflowy.s7.tunnelfrp.com/static
+# xFileStorage存储文件配置
+dromara:
+  x-file-storage: #文件存储配置
+    default-platform: aliyun-oss-1 #默认使用的存储平台
+    aliyun-oss:
+      - platform: aliyun-oss-1 # 存储平台标识
+        enable-storage: true  # 启用存储
+        access-key: yourAccessKeyId
+        secret-key: yourAccessKeySecret
+        end-point: yourEndpoint # 示例：https://oss-cn-beijing.aliyuncs.com
+        bucket-name: yourBucketName
+        domain: yourDomain # 访问域名，注意“/”结尾，例如：https://bucketname.oss-cn-shanghai.aliyuncs.com/
+        base-path: ${app.file.base-path} # 基础路径
+
 node:
   reader: 'defaultReader'
   gitee:

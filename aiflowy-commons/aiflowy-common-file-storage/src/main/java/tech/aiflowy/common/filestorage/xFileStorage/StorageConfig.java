@@ -1,4 +1,4 @@
-package tech.aiflowy.common.filestorage;
+package tech.aiflowy.common.filestorage.xFileStorage;
 
 import tech.aiflowy.common.util.SpringContextUtil;
 import org.springframework.boot.context.properties.ConfigurationProperties;

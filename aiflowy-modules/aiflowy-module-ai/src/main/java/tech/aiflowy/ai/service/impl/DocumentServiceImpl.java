@@ -160,22 +160,11 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, Document> i
     public Result<?> textSplit(Integer pageNumber, Integer pageSize, String operation, BigInteger knowledgeId, String filePath, String originalFilename, String splitterName, Integer chunkSize, Integer overlapSize, String regex, Integer rowsPerChunk) {
         try {
             InputStream inputStream = storageService.readStream(filePath);
-//            if (getFileExtension(filePath) == null){
-//                Log.error("获取文件后缀失败");
-//                throw new BusinessException("获取文件后缀失败");
-//            }
-//            FileExtractor documentParser = DocumentParserFactory.getDocumentParser(filePath);
             Document aiDocument = new Document();
             List<DocumentChunk> previewList = new ArrayList<>();
             DocumentSplitter documentSplitter = getDocumentSplitter(splitterName, chunkSize, overlapSize, regex, rowsPerChunk);
-
             String content = File2TextUtil.readFromStream(inputStream, originalFilename, null);
             com.agentsflex.core.document.Document document = new com.agentsflex.core.document.Document(content);;
-//            if (documentParser != null) {
-//                TemporaryFileStreamDocumentSource fileDocumentSource = new TemporaryFileStreamDocumentSource(inputStream, originalFilename, null);
-//                String  content = documentParser.extractText(fileDocumentSource);
-//                document = new Document(content);
-//            }
             inputStream.close();
             List<com.agentsflex.core.document.Document> documents = documentSplitter.split(document);
             FlexIDKeyGenerator flexIDKeyGenerator = new FlexIDKeyGenerator();

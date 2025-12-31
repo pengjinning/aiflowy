@@ -1,22 +1,19 @@
 package tech.aiflowy.admin.controller.ai;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import cn.dev33.satoken.annotation.SaIgnore;
-import com.amazonaws.util.IOUtils;
 import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import tech.aiflowy.ai.entity.Document;
 import tech.aiflowy.ai.entity.DocumentCollection;
 import tech.aiflowy.ai.service.DocumentChunkService;
-import tech.aiflowy.ai.service.DocumentService;
 import tech.aiflowy.ai.service.DocumentCollectionService;
+import tech.aiflowy.ai.service.DocumentService;
 import tech.aiflowy.ai.service.ModelService;
 import tech.aiflowy.common.annotation.UsePermission;
 import tech.aiflowy.common.domain.Result;
@@ -27,12 +24,13 @@ import tech.aiflowy.common.web.controller.BaseCurdController;
 import tech.aiflowy.common.web.exceptions.BusinessException;
 import tech.aiflowy.common.web.jsonbody.JsonBody;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigInteger;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 控制层。
@@ -232,49 +230,5 @@ public class DocumentController extends BaseCurdController<DocumentService, Docu
             throw new RuntimeException(e);
         }
     }
-
-
-    @GetMapping("/download")
-    @SaIgnore
-    public void downloadDocument(@RequestParam String documentId, HttpServletResponse response) throws IOException {
-        // 1. 从数据库获取文件信息
-        QueryWrapper queryWrapper = QueryWrapper.create().select("*").where("id = ?", documentId);
-        Document document = service.getOne(queryWrapper);
-
-        if (document == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "文件不存在");
-            return;
-        }
-
-        // 2. 获取文件路径
-        String filePath = getRootPath() + document.getDocumentPath();
-        File file = new File(filePath);
-
-        if (!file.exists()) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "文件不存在");
-            return;
-        }
-
-        // 3. 构造文件名并设置响应头
-        String originalFilename = document.getTitle() + "." + document.getDocumentType();
-        String encodedFilename = URLEncoder.encode(originalFilename, StandardCharsets.UTF_8.name())
-                .replaceAll("\\+", "%20");
-
-        response.setContentType("application/octet-stream");
-        response.setContentLengthLong(file.length());
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + encodedFilename + "\"; filename*=UTF-8''" + encodedFilename);
-
-        // 缓存控制
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-        response.setHeader("Pragma", "no-cache");
-        response.setDateHeader("Expires", 0);
-
-        // 4. 输出文件流
-        try (FileInputStream fis = new FileInputStream(file)) {
-            IOUtils.copy(fis, response.getOutputStream());
-        }
-    }
-
 
 }

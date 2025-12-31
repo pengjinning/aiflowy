@@ -34,12 +34,7 @@ const handleView = (row: any) => {
   emits('viewDoc', row.id);
 };
 const handleDownload = (row: any) => {
-  api.download(row.documentPath).then((res) => {
-    downloadFileFromBlob({
-      fileName: `${row.title}.${row.documentType}`,
-      source: res,
-    });
-  });
+  window.open(row.documentPath, '_blank');
 };
 const handleDelete = (row: any) => {
   ElMessageBox.confirm($t('message.deleteAlert'), $t('message.noticeTitle'), {
@@ -79,7 +74,7 @@ const handleDelete = (row: any) => {
             <span class="file-name-container">
               <ElImage :src="documentIcon" class="mr-1" />
               <span class="title">
-                {{ row.title }}.{{ row.documentType }}
+                {{ row.title }}
               </span>
             </span>
           </template>

@@ -1,5 +1,6 @@
 package tech.aiflowy.common.filestorage;
 
+import tech.aiflowy.common.filestorage.xFileStorage.StorageConfig;
 import tech.aiflowy.common.util.SpringContextUtil;
 import tech.aiflowy.common.filestorage.impl.LocalFileStorageServiceImpl;
 import org.springframework.stereotype.Component;

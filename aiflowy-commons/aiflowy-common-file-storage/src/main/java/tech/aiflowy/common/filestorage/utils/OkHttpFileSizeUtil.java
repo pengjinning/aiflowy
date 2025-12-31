@@ -163,9 +163,8 @@ public class OkHttpFileSizeUtil {
     // ------------------------------ 测试示例 ------------------------------
     public static void main(String[] args) {
         // 你的测试地址（公开可访问）
-        String testUrl = "https://static.agentscenter.cn/attachment/temp/2025/10/22/bb43a6e8-6baa-42d4-a4e3-5b1296fdfffe/5485c2b48c336fc5bf9bd9faefde5ebb.mp4";
+        String testUrl = "";
 
-        // 直接调用（无需自定义头）
         long fileSize = OkHttpFileSizeUtil.getFileSize(testUrl);
         if (fileSize > 0) {
             System.out.println("最终文件大小：" + fileSize + " 字节 = " + (fileSize / 1024 / 1024) + " MB");
