@@ -1,165 +1,139 @@
 ![banner.png](docs/assets/images/banner.png)
 
-# AIFlowy： 一个 AI 产品的底座和基石
+# AIFlowy：企业级 AI 智能体开发平台
 
-AIFlowy 是一个基于 Java 开发的企业级的开源 AI 应用开发平台 ，致力于为中国开发者和企业提供高效、开放、本土化的 AI 工具与能力。我们对标字节 Coze、腾讯元器和 Dify 等产品，但更加聚焦于中国环境下的 toB 场景深度应用与落地实践。
+AIFlowy 是一个基于 Java 语言构建的**企业级开源 AI 应用（智能体）开发平台**，致力于为中国开发者与政企用户提供**高效、开放、本土化**的 AI 工具链与低门槛落地能力。
+
+我们对标 Coze、Dify、腾讯元器等国际与国内主流产品，但在架构设计、功能模块与场景适配方面，**更聚焦于中国 ToB 市场的深度需求与合规实践**，支持从 Bot 构建、RAG 知识库、AI 工作流编排到模型管理的完整 AI 应用生命周期。
+
 
 ## 通知
 
-🚀 AIFlowy v2.0 正在开发中...
+> 🚀 **AIFlowy 正在参评 Gitee 2025 年度开源项目！**
+>
+> 如您认可 AIFlowy 的价值，诚邀您为项目投出宝贵一票：
+>
+> 🔗 投票地址：https://gitee.com/activity/2025opensource?ident=INV9BE
+>
+> 💬 **投票后截图私信作者微信：`fuh99777`，即可加入 AIFlowy v2.0 专属交流群，提前参与功能规划与架构讨论！**
 
-你期待哪些新特性？
 
-- 支持 MCP 协议？
-- 更强大的 RAG 能力？
-- 采用 Vue 重构前端？
-- 内置完整可观测性（Observability）？
-- 新增多种智能体协作模式？
-- 全面提升系统性能与扩展性？
+## ✨ 核心功能
 
-💡 现在就为 AIFlowy 投上一票，直接影响 v2.0 的开发方向！
+### 🧠 AI 能力
+- ✅ 智能 Bot 构建与发布
+- ✅ 插件系统（支持自定义工具集成）
+- ✅ RAG 知识库（支持文档上传、解析与检索）
+- ✅ AI Workflow 编排（可视化工作流 + 条件/分支/循环）
+- ✅ 素材中心（AI 自动生成图片、音频、视频等）
+- ✅ 数据中枢（自定义数据表 + 工作流读写能力）
+- ✅ 多模型管理（统一接入主流大模型）
 
-🔗 投票地址：https://gitee.com/activity/2025opensource?ident=INV9BE
 
-**PS：投票后，截图私聊作者微信：fuh99777，拉你进入 AIFlowy v2.0 专有交流群，抢先参与功能设计与讨论！**
+### 🔐 系统管理
+- ✅ 用户 / 角色 / 部门 权限体系
+- ✅ 菜单与系统配置
+- ✅ 访问令牌（API Key）
+- ✅ 定时任务 & 操作日志
+- ✅ 用户反馈 & 外观定制
+- ✅ 认证方式配置（支持多种登录策略）
 
-注意：当前 main 分支为开发版本，稳定版本请切换到 v1.x 分支。
 
-## 功能列表
+### 🔜 近期路线图
+- [ ] 增强 RAG 检索精度与多模态支持
+- [ ] 优化前端交互体验与性能
+- [ ] 完善开发者文档与 SDK 生态
 
-**AI 功能**
-- [x] Bots 应用
-- [x] 业务插件
-- [x] RAG 知识库
-- [x] Workflow 智能体编排（AI 工作流）
-- [x] 素材中心（AI 自动生成图片、音频、视频等素材内容）
-- [x] 数据中枢（自定义表，以及工作流读取和存储）
-- [x] 本地模型
-- [x] 模型管理
-
-**系统管理**
-- [x] 用户管理
-- [x] 角色管理
-- [x] 菜单管理
-- [x] 部门管理
-- [x] 岗位管理
-- [x] 日志管理
-- [x] 数据字典
-- [x] 定时任务
-
-**近期计划**
-- [ ] 持续完善文档（进行中...）
-- [ ] 增强稳定性（进行中...）
-- [ ] 优化用户体验（进行中...）
 
 ## 产品截图
 
-![login.png](docs/assets/images/login.png)
-登录
-
-![bot1.png](docs/assets/images/bot1.png)
-Bots
-
-![bot2.png](docs/assets/images/bot2.png)
-Bots
-
-![cj.png](docs/assets/images/cj.png)
-插件
-
-![gzl1.png](docs/assets/images/gzl1.png)
-工作流
-
-![rag.png](docs/assets/images/rag.png)
-知识库
-
-![sck.png](docs/assets/images/sck.png)
-素材库
-
-![llm.png](docs/assets/images/llm.png)
-大模型
+| 模块 | 截图 |
+|------|------|
+| 登录页 | ![login.png](docs/assets/images/login.png) |
+| Bot 列表 | ![bot1.png](docs/assets/images/bot1.png) |
+| Bot 配置 | ![bot2.png](docs/assets/images/bot2.png) |
+| 插件中心 | ![cj.png](docs/assets/images/cj.png) |
+| 工作流编排 | ![gzl1.png](docs/assets/images/gzl1.png) |
+| 知识库管理 | ![rag.png](docs/assets/images/rag.png) |
+| 素材中心 | ![sck.png](docs/assets/images/sck.png) |
+| 大模型管理 | ![llm.png](docs/assets/images/llm.png) |
 
 
 
-## 快速开始
+## 🚀 快速启动
 
-```shell
+```bash
+# 克隆项目
 git clone https://gitee.com/aiflowy/aiflowy.git
-
 cd aiflowy
+
+# 构建后端
 mvn clean package
 
+# 启动前端（React + pnpm）
 cd aiflowy-ui-admin
 pnpm install
 pnpm dev
-
-默认用户名密码：
-admin/123456
 ```
 
-详细文档请参考： https://aiflowy.tech/zh/development/getting-started/getting-started.html
+> 默认账号：`admin` / 密码：`123456`  
+> 📚 **详细部署与开发指南**：[https://aiflowy.tech/zh/development/getting-started/getting-started.html](https://aiflowy.tech/zh/development/getting-started/getting-started.html)
 
 
-## 开发及产品文档
 
-https://aiflowy.tech
+## 📚 文档中心
+
+完整产品与开发文档请访问：  
+
+👉 [https://aiflowy.tech](https://aiflowy.tech)
 
 
 ## Star 用户专属交流群
 
 ![wechat-group.jpg](docs/assets/images/wechat-group.jpg)
 
-Star 本项目后，截图发给微信： fuh99777，拉您进群，讨论 AIFlowy 技术以及场景落地等话题。
+> 🌟 **Star 本项目后，截图私信微信 `fuh99777`，加入 AIFlowy 技术交流群**，与核心开发者和企业用户共同探讨 AI 智能体落地场景、架构设计与最佳实践。
 
 
 
-## 关于团队
-我们是一支精干高效、充满激情与创造力的团队。在推出 AIFlowy 之前，我们已经成功打造了多个备受认可的开源项目， 包括 Agents-Flex 、Tinyflow 和 AIEditor 。
+## 🏢 关于我们
 
-- Agents-Flex： https://gitee.com/agents-flex/agents-flex （对标 LangChain）
-- Tinyflow：https://gitee.com/tinyflow-ai/tinyflow
-- AIEditor：https://gitee.com/aieditor-team/aieditor
+AIFlowy 由一支深耕 AI 工程化与 Java 生态的技术团队打造。在 AIFlowy 之前，我们已成功开源多个广受社区认可的项目：
 
+- **[Agents-Flex](https://gitee.com/agents-flex/agents-flex)**：轻量级 Java AI Agent 框架
+- **[Tinyflow](https://gitee.com/tinyflow-ai/tinyflow)**：低代码 AI 工作流引擎
+- **[AIEditor](https://gitee.com/aieditor-team/aieditor)**：开源 AI 内容编辑器
 
-这些项目产品，不仅成为了 AI 技术社区中的基石工具， 更荣幸地被评选为 GVP 项目，也展现了我们在人工智能领域的踏实积累和创新能力。
-
-### 愿景 Vision
-
->成为中国最具有影响力的人工智能品牌之一，引领核心技术自主创新，推动中国 AI 技术生态繁荣发展和科技自立。
-
-### 使命 Mission
-
->为中国开发者、政企用户，提供高效、开放、本土化的 AI 开发工具与解决方案，降低技术门槛，加速人工智能在产业中的深度应用。
+这些项目不仅被广泛应用于企业生产环境，还荣获 **Gitee GVP（最有价值开源项目）** 荣誉，体现了我们在 AI 基础设施领域的技术积累与工程能力。
 
 
-### 价值观 Values
+## 🎯 愿景 · 使命 · 价值观
 
-> **“专注务实”**
->
-> 坚持聚焦核心方向，深耕垂直场景，打造极致产品体验，持续打磨每一个细节。
+### Vision 愿景
+> 成为中国最具影响力的人工智能品牌之一，引领核心技术自主创新，推动 AI 生态繁荣与科技自立。
 
-> **“自主创新”**
->
-> 立足中国 AI 生态，以自主可控为目标，持续探索前沿技术，构建国产化 AI 工具链。
+### Mission 使命
+> 为中国开发者与政企用户提供高效、开放、本土化的 AI 开发工具与解决方案，降低 AI 应用门槛，加速产业智能化。
 
-> **“开放共享”**
->
-> 秉承开源精神，积极参与开发者社区共建，推动知识传播与技术普惠。
-
-> **“责任担当”**
->
-> 以技术理想为引领，坚持长期主义，用专业与行动践行对行业与社会的责任。
+### Values 价值观
+- **专注务实**：聚焦垂直场景，打磨极致体验
+- **自主创新**：构建自主可控的国产 AI 工具链
+- **开放共享**：拥抱开源，共建开发者生态
+- **责任担当**：坚持长期主义，践行技术理想
 
 
-**请注意：**
-> AIFlowy 采用 Apache License 2.0 开源协议发布，并附加以下使用条件：
->
-> - 未经许可，不得删除、修改或隐藏产品中的 LOGO、版权信息、品牌标识及控制台中的署名或归属信息；
-> - 所有衍生版本或分发版本必须完整保留原始版权声明、许可文件及本附加条款；
->
-> 在遵守《Apache License 2.0》条款、本附加条件以及相关国家法律法规的前提下，允许用于商业用途，包括但不限于企业内部使用、产品集成、服务提供等。
->
-> **特别提示：**
->
-> 您对 AIFlowy 的任何使用行为（包括但不限于下载、安装、部署、修改或分发），即视为您已充分阅读、理解并无条件接受本许可协议及其附加条款。若您不同意上述内容，请立即停止使用，并彻底删除已获取的代码、文档及相关资源。
->
-> 我们致力于推动开源生态的发展，同时也尊重并保护项目品牌与开发者劳动成果，感谢您的理解与支持。对于恶意篡改、去标识化或冒用品牌的行为，我们将通过技术手段和法律途径坚决维权。
+## ⚖️ 开源协议与使用声明
+
+AIFlowy 采用 **Apache License 2.0** 开源协议发布，并附加以下**品牌使用条款**：
+
+> 1. **不得删除、修改或隐藏** 产品中的 LOGO、版权信息、品牌标识及控制台署名；
+> 2. 所有衍生版本或分发版本**必须完整保留**原始版权声明、LICENSE 文件及本附加条款；
+> 3. 在遵守上述条款及国家法律法规的前提下，**允许用于商业用途**（包括企业内部使用、产品集成、SaaS 服务等）。
+
+> ⚠️ **特别提示**：  
+> 您对 AIFlowy 的任何使用行为（下载、部署、修改、分发等）即视为您**已充分理解并接受**本协议及其附加条款。如不同意，请立即停止使用并删除所有相关资源。
+
+我们坚定支持开源精神，同时也**尊重并保护项目品牌与开发者劳动成果**。对于恶意去标识、冒用品牌或违反协议的行为，我们将依法维权。
+
+
+**🌟 欢迎 Star、Fork、贡献代码，一起打造中国人自己的 AI 智能体平台！**
