@@ -31,7 +31,7 @@ AIFlowy 是一个基于 Java 语言构建的**企业级开源 AI 应用（智能
 
 
 ### 🔐 系统管理
-- ✅ 用户 / 角色 / 部门 权限体系
+- ✅ 用户 / 角色 / 部门 / 职位岗位 / 权限体系
 - ✅ 菜单与系统配置
 - ✅ 访问令牌（API Key）
 - ✅ 定时任务 & 操作日志
@@ -44,6 +44,9 @@ AIFlowy 是一个基于 Java 语言构建的**企业级开源 AI 应用（智能
 - [ ] 优化前端交互体验与性能
 - [ ] 完善开发者文档与 SDK 生态
 
+## 技术栈
+- **后端**：JDK 17 + SpringBoot v3 + Agents Flex + MyBatis Flex + Redis  + Quartz
+- **前端**：Vue 3 + pnpm +  Element Plus + Vue Router
 
 ## 后台管理截图
 
