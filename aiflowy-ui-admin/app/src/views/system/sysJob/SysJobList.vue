@@ -228,7 +228,10 @@ function toLogPage(row: any) {
 
                     <template #dropdown>
                       <ElDropdownMenu>
-                        <div v-access:code="'/api/v1/sysJob/save'">
+                        <div
+                          v-if="row.status === 0"
+                          v-access:code="'/api/v1/sysJob/save'"
+                        >
                           <ElDropdownItem @click="start(row)">
                             <ElButton :icon="CaretRight" link>
                               {{ $t('button.start') }}
