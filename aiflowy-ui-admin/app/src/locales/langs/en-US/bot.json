@@ -1,3 +1,21 @@
 {
-  "problemPresupposition": "ProblemPresupposition"
+  "problemPresupposition": "ProblemPresupposition",
+  "noPermission": "NoPermission",
+  "llm": "LLM",
+  "temperature": "Temperature",
+  "maxReplyLength": "MaxReplyLength",
+  "historyCount": "HistoryCount",
+  "skill": "Skill",
+  "conversationSettings": "ConversationSettings",
+  "welcomeMessage": "WelcomeMessage",
+  "deepThinking": "DeepThinking",
+  "enableDeepThinking": "EnableDeepThinking",
+  "publish": "Publish",
+  "postToWeChatOfficialAccount": "PostToWeChatOfficialAccount",
+  "configured": "Configured",
+  "notConfigured": "NotConfigured",
+  "placeholder": {
+    "welcome": "Please enter welcome message",
+    "prompt": "You are an AI assistant. Please provide clear and accurate answers based on the user's questions."
+  }
 }

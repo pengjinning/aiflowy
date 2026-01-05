@@ -61,7 +61,7 @@ watch(
   props,
   (newValue) => {
     if (!newValue.hasSavePermission) {
-      selectedId.value = '没有权限';
+      selectedId.value = $t('bot.noPermission');
     } else if (newValue.bot?.modelId) {
       selectedId.value = newValue.bot.modelId;
     }
@@ -167,9 +167,9 @@ const handleLlmChange = async (value: string) => {
   });
 
   if (res?.errorCode === 0) {
-    ElMessage.success('保存成功');
+    ElMessage.success($t('message.saveOkMessage'));
   } else {
-    ElMessage.error(res?.message || '保存失败');
+    ElMessage.error(res?.message || $t('message.saveFailMessage'));
   }
 };
 const handleLlmOptionsChange = useDebounceFn(
@@ -377,7 +377,7 @@ const handleUpdatePublishWx = () => {
   <div class="config-container flex flex-col gap-3">
     <!-- 大模型 -->
     <div class="flex flex-col gap-3 rounded-lg bg-white p-3">
-      <h1 class="text-base font-medium text-[#1A1A1A]">大模型</h1>
+      <h1 class="text-base font-medium text-[#1A1A1A]">{{ $t('bot.llm') }}</h1>
       <div
         class="llm-back-container flex w-full flex-col justify-between gap-1 rounded-lg p-3"
       >
@@ -391,7 +391,7 @@ const handleUpdatePublishWx = () => {
         <!-- 温度 -->
         <ElRow :gutter="12" align="middle" type="flex">
           <ElCol class="options-config-item-left">
-            <span class="config-font-style">温度</span>
+            <span class="config-font-style">{{ $t('bot.temperature') }}</span>
           </ElCol>
           <ElCol class="options-config-item-middle">
             <ElSlider
@@ -480,7 +480,9 @@ const handleUpdatePublishWx = () => {
         </ElRow>
         <ElRow :gutter="12" align="middle" type="flex">
           <ElCol class="options-config-item-left">
-            <span class="config-font-style">最大回复长度</span>
+            <span class="config-font-style">{{
+              $t('bot.maxReplyLength')
+            }}</span>
           </ElCol>
           <ElCol class="options-config-item-middle">
             <ElSlider
@@ -511,7 +513,7 @@ const handleUpdatePublishWx = () => {
         </ElRow>
         <ElRow :gutter="12" align="middle" type="flex">
           <ElCol class="options-config-item-left">
-            <span class="config-font-style">携带历史条数</span>
+            <span class="config-font-style">{{ $t('bot.historyCount') }}</span>
           </ElCol>
           <ElCol class="options-config-item-middle">
             <ElSlider
@@ -545,13 +547,15 @@ const handleUpdatePublishWx = () => {
 
     <!-- 技能 -->
     <div class="flex flex-col gap-3 rounded-lg bg-white p-3">
-      <h1 class="text-base font-medium text-[#1A1A1A]">技能</h1>
+      <h1 class="text-base font-medium text-[#1A1A1A]">
+        {{ $t('bot.skill') }}
+      </h1>
       <div class="flex w-full flex-col justify-between">
         <ElCollapse expand-icon-position="left">
-          <ElCollapseItem title="工作流">
+          <ElCollapseItem>
             <template #title>
               <div class="flex items-center justify-between pr-2">
-                <span>工作流</span>
+                <span>{{ $t('menus.ai.workflow') }}</span>
                 <div class="collapse-right-container">
                   <span class="badge-circle">
                     {{ workflowData.length }}
@@ -566,10 +570,10 @@ const handleUpdatePublishWx = () => {
             </template>
             <CollapseViewItem :data="workflowData" @delete="deleteWorkflow" />
           </ElCollapseItem>
-          <ElCollapseItem title="知识库">
+          <ElCollapseItem>
             <template #title>
               <div class="flex items-center justify-between pr-2">
-                <span>知识库</span>
+                <span>{{ $t('menus.ai.documentCollection') }}</span>
                 <div class="collapse-right-container">
                   <span class="badge-circle">
                     {{ knowledgeData.length }}
@@ -584,10 +588,10 @@ const handleUpdatePublishWx = () => {
             </template>
             <CollapseViewItem :data="knowledgeData" @delete="deleteKnowledge" />
           </ElCollapseItem>
-          <ElCollapseItem title="插件">
+          <ElCollapseItem>
             <template #title>
               <div class="flex items-center justify-between pr-2">
-                <span>插件</span>
+                <span>{{ $t('menus.ai.plugin') }}</span>
                 <div class="collapse-right-container">
                   <span class="badge-circle">
                     {{ pluginToolData.length }}
@@ -612,13 +616,15 @@ const handleUpdatePublishWx = () => {
 
     <!-- 对话设置 -->
     <div class="flex flex-col gap-3 rounded-lg bg-white p-3">
-      <h1 class="text-base font-medium text-[#1A1A1A]">对话设置</h1>
+      <h1 class="text-base font-medium text-[#1A1A1A]">
+        {{ $t('bot.conversationSettings') }}
+      </h1>
       <div class="flex w-full flex-col justify-between rounded-lg">
         <ElCollapse expand-icon-position="left">
-          <ElCollapseItem title="问题预设">
+          <ElCollapseItem>
             <template #title>
               <div class="flex items-center justify-between pr-2">
-                <span>问题预设</span>
+                <span>{{ $t('bot.problemPresupposition') }}</span>
                 <span @click="handleAddPresetQuestion()">
                   <ElIcon>
                     <Plus />
@@ -645,11 +651,11 @@ const handleUpdatePublishWx = () => {
               </div>
             </div>
           </ElCollapseItem>
-          <ElCollapseItem title="欢迎语">
+          <ElCollapseItem :title="$t('bot.welcomeMessage')">
             <div class="bg-[#f5f5f5] p-2.5">
               <ElInput
                 v-model="dialogueSettings.welcomeMessage"
-                placeholder="请输入欢迎语"
+                :placeholder="$t('bot.placeholder.welcome')"
                 type="textarea"
                 @change="
                   (value) =>
@@ -658,9 +664,9 @@ const handleUpdatePublishWx = () => {
               />
             </div>
           </ElCollapseItem>
-          <ElCollapseItem title="深度思考">
+          <ElCollapseItem :title="$t('bot.deepThinking')">
             <div class="enable-think-container">
-              <div>是否启用深度思考</div>
+              <div>{{ $t('bot.enableDeepThinking') }}</div>
               <ElSwitch
                 v-model="dialogueSettings.enableDeepThinking"
                 @change="
@@ -676,14 +682,18 @@ const handleUpdatePublishWx = () => {
 
     <!-- 发布 -->
     <div class="publish-container flex flex-col gap-3 rounded-lg bg-white p-3">
-      <h1 class="text-base font-medium text-[#1A1A1A]">发布</h1>
+      <h1 class="text-base font-medium text-[#1A1A1A]">
+        {{ $t('bot.publish') }}
+      </h1>
       <div class="flex w-full flex-col justify-between rounded-lg">
         <ElCollapse expand-icon-position="left">
-          <ElCollapseItem title="发布到微信公众号">
+          <ElCollapseItem :title="$t('bot.postToWeChatOfficialAccount')">
             <div class="publish-wx-container">
               <div class="publish-wx">
-                <span v-if="botInfo?.options?.weChatMpAppId">已配置</span>
-                <span v-else>未配置</span>
+                <span v-if="botInfo?.options?.weChatMpAppId">{{
+                  $t('bot.configured')
+                }}</span>
+                <span v-else>{{ $t('bot.notConfigured') }}</span>
                 <div class="publish-config-operation">
                   <div
                     class="publish-wx-right-container"
@@ -758,53 +768,56 @@ const handleUpdatePublishWx = () => {
 
 <style scoped>
 .config-container {
+  width: 100%;
   height: 100%;
   min-height: 100%;
   overflow-y: auto;
-  width: 100%;
   border-radius: 8px;
 }
+
 .collapse-right-container {
   display: flex;
   flex-direction: row;
-  align-items: center;
   gap: 5px;
+  align-items: center;
 }
+
 .badge-circle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 18px;
   height: 18px;
-  border-radius: 50%;
-  color: var(--el-color-white);
-  background-color: var(--el-color-primary);
   font-size: 12px;
   font-weight: 500;
   line-height: 1;
   vertical-align: middle;
+  color: var(--el-color-white);
+  background-color: var(--el-color-primary);
+  border-radius: 50%;
 }
+
 .presetQues-container {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background-color: var(--el-bg-color);
+  justify-content: space-between;
   padding: 12px 24px 12px 12px;
+  background-color: var(--el-bg-color);
   border-radius: 8px;
 }
+
 .preset-delete {
   cursor: pointer;
 }
 
 .config-font-style {
+  font-family: PingFangSC, 'PingFang SC';
   font-size: 14px;
   font-weight: 500;
-  color: var(--el-text-color-primary);
-  font-family:
-    PingFangSC,
-    PingFang SC;
   line-height: 22px;
+  color: var(--el-text-color-primary);
 }
+
 .options-config-item-left {
   flex: 0 0 auto;
 }
@@ -812,67 +825,79 @@ const handleUpdatePublishWx = () => {
 :deep(.el-collapse-item__title) {
   font-size: 14px;
   font-weight: 500;
-  color: var(--el-text-color-primary);
   line-height: 22px;
+  color: var(--el-text-color-primary);
 }
+
 .options-config-item-middle {
   flex: 1;
   margin: 0 12px;
 }
+
 .options-config-item-right {
   flex: 0 0 auto;
   width: auto;
 }
+
 :deep(.el-slider__runway) {
   height: 4px;
 }
+
 :deep(.el-slider__bar) {
   height: 4px;
 }
+
 :deep(.el-slider__button) {
   width: 14px;
   height: 14px;
 }
+
 .enable-think-container {
-  background-color: #f5f5f5 !important;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 12px 12px 12px;
+  padding: 0 12px 12px;
+  background-color: #f5f5f5 !important;
 }
+
 .publish-wx-container {
-  background-color: #f5f5f5 !important;
   padding: 12px;
+  background-color: #f5f5f5 !important;
 }
+
 .publish-wx {
-  padding: 0 8px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background-color: var(--el-bg-color);
+  justify-content: space-between;
   height: 45px;
+  padding: 0 8px;
+  background-color: var(--el-bg-color);
   border-radius: 8px;
 }
+
 .publish-wx-right-container {
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
   gap: 5px;
+  align-items: center;
+  justify-content: flex-end;
   cursor: pointer;
 }
+
 .publish-config-operation {
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
   gap: 5px;
+  align-items: center;
+  justify-content: flex-end;
 }
+
 :deep(.el-collapse-item__header) {
   background-color: var(--bot-collapse-itme-back);
 }
+
 :deep(.el-collapse) {
-  border-radius: 8px !important;
-  overflow: hidden !important;
   box-sizing: border-box;
+  overflow: hidden !important;
+  border-radius: 8px !important;
 }
 
 :deep(.el-collapse-item__header) {
@@ -883,31 +908,36 @@ const handleUpdatePublishWx = () => {
 :deep(.el-collapse-item:last-child .el-collapse-item__header) {
   border-bottom: none;
 }
+
 :deep(.el-collapse-icon-position-left .el-collapse-item__header) {
   padding: 8px;
 }
+
 .llm-back-container {
   background-color: var(--bot-collapse-itme-back);
 }
+
 .publish-container {
   flex: 1;
 }
+
 .el-list-item-delete-container {
   cursor: pointer;
 }
+
 :deep(.el-collapse-item__content) {
   height: 100%;
   padding: 0;
 }
 
 .question-container {
-  background-color: #f5f5f5 !important;
-  width: 100%;
-  height: auto;
-  padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 100%;
+  height: auto;
+  padding: 10px;
+  background-color: #f5f5f5 !important;
 }
 
 :deep(.el-collapse) {

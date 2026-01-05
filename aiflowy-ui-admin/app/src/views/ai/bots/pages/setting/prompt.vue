@@ -8,15 +8,14 @@ import { ElIcon, ElInput } from 'element-plus';
 
 import { updateLlmOptions } from '#/api';
 import MagicStaffIcon from '#/components/icons/MagicStaffIcon.vue';
+import { $t } from '#/locales';
 import PromptChoreChatModal from '#/views/ai/bots/pages/setting/PromptChoreChatModal.vue';
 
 const props = defineProps<{
   bot?: BotInfo;
   hasSavePermission?: boolean;
 }>();
-const systemPrompt = ref(
-  '你是一个AI助手，请根据用户的问题给出清晰、准确的回答。',
-);
+const systemPrompt = ref($t('bot.placeholder.prompt'));
 const promptChoreChatModalRef = ref();
 watch(
   () => props.bot?.modelOptions.systemPrompt,
@@ -82,13 +81,14 @@ const handelReplacePrompt = (value: string) => {
 
 <style lang="css" scoped>
 .el-textarea :deep(.el-textarea__inner) {
-  padding: 12px;
-  box-shadow: none;
+  --el-input-text-color: #1a1a1a;
+  --el-input-bg-color: #f7f7f7;
+
   height: 100%;
+  padding: 12px;
   font-size: 12px;
   line-height: 1.25;
   border-radius: 8px;
-  --el-input-text-color: #1a1a1a;
-  --el-input-bg-color: #f7f7f7;
+  box-shadow: none;
 }
 </style>
