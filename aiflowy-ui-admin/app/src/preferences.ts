@@ -22,6 +22,6 @@ export const overridesPreferences = defineOverridesPreferences({
     mode: 'light',
   },
   auth: {
-    sloganImage: '/slogan.webp',
+    sloganImage: '/slogan.png',
   },
 });
