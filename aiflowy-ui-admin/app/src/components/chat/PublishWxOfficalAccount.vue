@@ -101,7 +101,7 @@ const handleConfirm = () => {
 <template>
   <ElDialog
     v-model="dialogVisible"
-    title="微信公众号配置"
+    :title="$t('bot.weChatOfficialAccountConfiguration')"
     width="700"
     align-center
   >

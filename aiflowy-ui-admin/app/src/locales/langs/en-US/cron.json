@@ -1,0 +1,18 @@
+{
+  "cronExpressionGenerator": "CronExpressionGenerator",
+  "GenerateResult": "GenerateResult",
+  "CronExpression": "CronExpression",
+  "UseThisValue": "UseThisValue",
+  "CheckLast5ExecutionTimes": "CheckLast5ExecutionTimes",
+  "Last5ExecutionTimes": "Last5ExecutionTimes",
+  "ClickGenerate": "ClickGenerate",
+  "Per": "Per",
+  "NotSpecified": "NotSpecified",
+  "Cycle": "Cycle",
+  "From": "From",
+  "StartPer": "Start, Per",
+  "ExecuteOnce": "ExecuteOnce",
+  "Rang": "Rang",
+  "To": "To",
+  "Specify": "Specify"
+}

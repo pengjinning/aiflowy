@@ -9,6 +9,8 @@ import { useAccessStore } from '@aiflowy/stores';
 import { Plus } from '@element-plus/icons-vue';
 import { ElIcon, ElImage, ElMessage, ElUpload } from 'element-plus';
 
+import { $t } from '#/locales';
+
 const props = defineProps({
   action: {
     type: String,
@@ -58,10 +60,14 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
         return parts[1] ? parts[1].toUpperCase() : '';
       })
       .filter(Boolean);
-    ElMessage.error(`头像只能是${formatTypes.join(', ')}格式`);
+    ElMessage.error(
+      $t('cropper.message.avatarFormat', { format: formatTypes.join(', ') }),
+    );
     return false;
   } else if (rawFile.size / 1024 / 1024 > props.fileSize) {
-    ElMessage.error(`头像限制 ${props.fileSize} M`);
+    ElMessage.error(
+      $t('cropper.message.avatarSize', { limit: props.fileSize }),
+    );
     return false;
   }
   return true;
@@ -89,19 +95,19 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
 
 <style scoped>
 .avatar-uploader .avatar {
+  display: block;
   width: 100px;
   height: 100px;
-  display: block;
 }
 </style>
 
 <style>
 .avatar-uploader .el-upload {
-  border: 1px solid #e6e9ee;
-  border-radius: 50%;
-  cursor: pointer;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
+  border: 1px solid #e6e9ee;
+  border-radius: 50%;
   transition: var(--el-transition-duration-fast);
 }
 
@@ -110,10 +116,10 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
 }
 
 .el-icon.avatar-uploader-icon {
-  font-size: 28px;
-  color: var(--el-text-color-secondary);
   width: 100px;
   height: 100px;
+  font-size: 28px;
+  color: var(--el-text-color-secondary);
   text-align: center;
 }
 </style>

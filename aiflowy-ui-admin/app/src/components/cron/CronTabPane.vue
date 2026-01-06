@@ -69,18 +69,18 @@ const specificOptions = computed(() => {
     <ElRadioGroup class="cron-radio-group" v-model="radioType">
       <!-- 1. 每 xxx -->
       <div class="radio-line">
-        <ElRadio value="every">每{{ label }} (*)</ElRadio>
+        <ElRadio value="every">{{ $t('cron.Per') }}{{ label }} (*)</ElRadio>
       </div>
 
       <!-- 2. 不指定 (?) - 仅用于日和周 -->
       <div class="radio-line" v-if="weekModeCheck || dayModeCheck">
-        <ElRadio value="none">不指定 (?)</ElRadio>
+        <ElRadio value="none">{{ $t('cron.NotSpecified') }} (?)</ElRadio>
       </div>
 
       <!-- 3. 周期 (Loop) -->
       <div class="radio-line">
-        <ElRadio value="loop">周期</ElRadio>
-        <span class="text">从</span>
+        <ElRadio value="loop">{{ $t('cron.Cycle') }}</ElRadio>
+        <span class="text">{{ $t('cron.From') }}</span>
         <ElInputNumber
           :model-value="modelValue.loopStart"
           @update:model-value="(v) => updateVal('loopStart', v)"
@@ -89,7 +89,7 @@ const specificOptions = computed(() => {
           size="small"
           controls-position="right"
         />
-        <span class="text">{{ label }}开始，每</span>
+        <span class="text">{{ label }}{{ $t('cron.StartPer') }}</span>
         <ElInputNumber
           :model-value="modelValue.loopStep"
           @update:model-value="(v) => updateVal('loopStep', v)"
@@ -98,13 +98,13 @@ const specificOptions = computed(() => {
           size="small"
           controls-position="right"
         />
-        <span class="text">{{ label }}执行一次</span>
+        <span class="text">{{ label }}{{ $t('cron.ExecuteOnce') }}</span>
       </div>
 
       <!-- 4. 区间 (Range) -->
       <div class="radio-line">
-        <ElRadio value="range">区间</ElRadio>
-        <span class="text">从</span>
+        <ElRadio value="range">{{ $t('cron.Rang') }}</ElRadio>
+        <span class="text">{{ $t('cron.From') }}</span>
         <ElInputNumber
           :model-value="modelValue.rangeStart"
           @update:model-value="(v) => updateVal('rangeStart', v)"
@@ -113,7 +113,7 @@ const specificOptions = computed(() => {
           size="small"
           controls-position="right"
         />
-        <span class="text">至</span>
+        <span class="text">{{ $t('cron.To') }}</span>
         <ElInputNumber
           :model-value="modelValue.rangeEnd"
           @update:model-value="(v) => updateVal('rangeEnd', v)"
@@ -127,12 +127,12 @@ const specificOptions = computed(() => {
 
       <!-- 5. 指定 (Specific) -->
       <div class="radio-line">
-        <ElRadio value="specific">指定</ElRadio>
+        <ElRadio value="specific">{{ $t('cron.Specify') }}</ElRadio>
         <ElSelect
           :model-value="modelValue.specificList"
           @update:model-value="(v) => updateVal('specificList', v)"
           multiple
-          placeholder="请选择"
+          :placeholder="$t('dictSelect.placeholder')"
           style="width: 100%; min-width: 200px; margin-left: 10px"
           size="small"
         >
@@ -155,16 +155,19 @@ const specificOptions = computed(() => {
   align-items: flex-start;
   width: 100%;
 }
+
 .radio-line {
-  margin-bottom: 12px;
   display: flex;
-  align-items: center;
   flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 12px;
 }
+
 .text {
   margin: 0 5px;
   font-size: 14px;
 }
+
 :deep(.ElInputNumber) {
   width: 100px;
 }

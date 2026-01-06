@@ -16,6 +16,10 @@
   "notConfigured": "NotConfigured",
   "placeholder": {
     "welcome": "Please enter welcome message",
-    "prompt": "You are an AI assistant. Please provide clear and accurate answers based on the user's questions."
-  }
+    "prompt": "You are an AI assistant. Please provide clear and accurate answers based on the user's questions.",
+    "permission": "No permission to configure the bot!"
+  },
+  "systemPrompt": "System Prompt",
+  "aiOptimization": "AI Optimization",
+  "weChatOfficialAccountConfiguration": "WeChat Official Account configuration"
 }

@@ -22,5 +22,14 @@
     "requestMethod": "RequestMethod",
     "runResult": "Run result",
     "run": "run"
-  }
+  },
+  "parameterName": "Name",
+  "parameterDescription": "Description",
+  "parameterType": "Type",
+  "inputMethod": "InputMethod",
+  "required": "Required",
+  "defaultValue": "DefaultValue",
+  "enabledStatus": "EnabledStatus",
+  "addChildNode": "AddChildNode",
+  "addParameter": "Add Parameter"
 }

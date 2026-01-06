@@ -46,7 +46,7 @@ const handelReplacePrompt = (value: string) => {
   <div class="flex h-full flex-col gap-2 rounded-lg bg-white p-3">
     <div class="flex justify-between">
       <h1 class="text-base font-medium text-[#1A1A1A]">
-        系统提示词（System Prompt）
+        {{ $t('bot.systemPrompt') }}
       </h1>
       <button
         @click="promptChoreChatModalRef.open(props.bot?.id, systemPrompt)"
@@ -57,7 +57,7 @@ const handelReplacePrompt = (value: string) => {
         <span
           class="bg-[linear-gradient(106.75666073298856deg,#F17E47,#D85ABF,#717AFF)] bg-clip-text text-sm text-transparent"
         >
-          AI优化
+          {{ $t('bot.aiOptimization') }}
         </span>
       </button>
     </div>
@@ -66,7 +66,7 @@ const handelReplacePrompt = (value: string) => {
       type="textarea"
       resize="none"
       v-model="systemPrompt"
-      :title="!hasSavePermission ? '你没有配置bot的权限！' : ''"
+      :title="!hasSavePermission ? $t('bot.placeholder.permission') : ''"
       :disabled="!hasSavePermission"
       @input="handleInput"
     />

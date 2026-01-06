@@ -1,0 +1,20 @@
+{
+  "ImageCropping": "图片裁剪",
+  "message": {
+    "onlyImage": "只能上传图片文件!",
+    "imgSize": "图片大小不能超过 {limit}MB！",
+    "uploadFailed": "上传失败",
+    "notUrl": "上传成功但未返回图片URL",
+    "uploadSuccessful": "上传成功!",
+    "reuploadSuccessful": "重新上传成功!",
+    "notInitialized": "裁剪器未初始化",
+    "cropFailed": "裁剪失败，无法获取裁剪后的图片",
+    "fileCount": "最多只能上传 {count} 个文件",
+    "avatarFormat": "头像只能是{format}格式",
+    "avatarSize": "头像限制 {limit} MB"
+  },
+  "Uploading": "上传中...",
+  "ConfirmCrop": "确认裁剪",
+  "Re-upload": "重新上传",
+  "ClickToUpload": "点击上传"
+}

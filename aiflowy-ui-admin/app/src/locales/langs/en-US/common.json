@@ -6,5 +6,18 @@
   "noDataAvailable": "No data available",
   "isRequired": " is required",
   "avatar": "Avatar",
-  "otherLoginType": "Other login methods"
+  "otherLoginType": "Other login methods",
+  "Sun": "Sun",
+  "Mon": "Mon",
+  "Tue": "Tue",
+  "Wed": "Wed",
+  "Thu": "Thu",
+  "Fri": "Fri",
+  "Sat": "Sat",
+  "Second": "Second",
+  "Min": "Min",
+  "Hour": "Hour",
+  "Day": "Day",
+  "Month": "Month",
+  "Week": "Week"
 }

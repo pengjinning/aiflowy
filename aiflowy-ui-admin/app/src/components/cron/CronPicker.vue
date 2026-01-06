@@ -29,7 +29,9 @@ function useCron(value: string) {
     <ElDialog draggable title="Cron" v-model="showCron" width="60%">
       <CronGenerator @use-cron="useCron" />
     </ElDialog>
-    <ElButton class="mt-2" @click="showCron = true">点击生成</ElButton>
+    <ElButton class="mt-2" @click="showCron = true">
+      {{ $t('cron.ClickGenerate') }}
+    </ElButton>
   </div>
 </template>
 

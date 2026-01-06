@@ -16,6 +16,10 @@
   "notConfigured": "未配置",
   "placeholder": {
     "welcome": "请输入欢迎语",
-    "prompt": "你是一个AI助手，请根据用户的问题给出清晰、准确的回答。"
-  }
+    "prompt": "你是一个AI助手，请根据用户的问题给出清晰、准确的回答。",
+    "permission": "你没有配置bot的权限！"
+  },
+  "systemPrompt": "系统提示词",
+  "aiOptimization": "AI优化",
+  "weChatOfficialAccountConfiguration": "微信公众号配置"
 }

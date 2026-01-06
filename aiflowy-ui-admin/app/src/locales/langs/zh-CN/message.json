@@ -30,5 +30,13 @@
   },
   "uploadFileFirst": "请先上传文件",
   "deleteModelAlert": "该操作会删除大模型，确定删除吗？",
-  "deleteModelGroupAlert": "该操作会删除该分组下所有大模型，确定删除吗？"
+  "deleteModelGroupAlert": "该操作会删除该分组下所有大模型，确定删除吗？",
+  "cannotBeEmpty": {
+    "name": "参数名称不能为空",
+    "description": "参数描述不能为空",
+    "method": "传入方法不能为空",
+    "type": "参数类型不能为空",
+    "all": "请完善所有必填项后提交",
+    "error": "参数校验失败，请完善必填项"
+  }
 }

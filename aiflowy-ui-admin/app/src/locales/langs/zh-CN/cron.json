@@ -1,0 +1,18 @@
+{
+  "cronExpressionGenerator": "Cron 表达式生成器",
+  "GenerateResult": "生成结果",
+  "CronExpression": "Cron 表达式",
+  "UseThisValue": "使用该值",
+  "CheckLast5ExecutionTimes": "查看最近5次执行时间",
+  "Last5ExecutionTimes": "最近5次执行时间",
+  "ClickGenerate": "点击生成",
+  "Per": "每",
+  "NotSpecified": "不指定",
+  "Cycle": "周期",
+  "From": "从",
+  "StartPer": "开始，每",
+  "ExecuteOnce": "执行一次",
+  "Rang": "区间",
+  "To": "至",
+  "Specify": "指定"
+}

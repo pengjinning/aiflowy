@@ -201,15 +201,15 @@ const isSvgString = (icon: any) => {
 <style scoped>
 .list-item {
   display: flex;
-  align-items: center;
   gap: 10px;
+  align-items: center;
   justify-content: space-between;
   padding: 10px;
   margin-bottom: 4px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
   font-size: 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
 }
 
 .list-item:hover {
@@ -217,18 +217,19 @@ const isSvgString = (icon: any) => {
 }
 
 .list-item.selected {
-  background-color: hsl(var(--primary) / 15%);
   color: hsl(var(--primary));
+  background-color: hsl(var(--primary) / 15%);
 }
 
 .list-item.selected:where(.dark, .dark *) {
-  background-color: hsl(var(--accent));
   color: hsl(var(--accent-foreground));
+  background-color: hsl(var(--accent));
 }
+
 .svg-container :deep(svg) {
   width: 100%;
-  height: 100%;
   max-width: 100%;
+  height: 100%;
   max-height: 100%;
   object-fit: contain;
 }

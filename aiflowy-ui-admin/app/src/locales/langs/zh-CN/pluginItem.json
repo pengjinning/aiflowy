@@ -22,5 +22,14 @@
     "requestMethod": "请求方法",
     "runResult": "运行结果",
     "run": "运行"
-  }
+  },
+  "parameterName": "参数名称",
+  "parameterDescription": "参数描述",
+  "parameterType": "参数类型",
+  "inputMethod": "传入方法",
+  "required": "是否必填",
+  "defaultValue": "默认值",
+  "enabledStatus": "启用状态",
+  "addChildNode": "添加子节点",
+  "addParameter": "新增参数"
 }

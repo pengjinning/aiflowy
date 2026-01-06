@@ -15,6 +15,7 @@ import {
 } from 'element-plus';
 
 import { api } from '#/api/request';
+import { $t } from '#/locales';
 
 import CrontabPane from './CronTabPane.vue';
 
@@ -41,13 +42,13 @@ const state = reactive({
 });
 
 const weekAlias: Record<number, string> = {
-  1: '周日',
-  2: '周一',
-  3: '周二',
-  4: '周三',
-  5: '周四',
-  6: '周五',
-  7: '周六',
+  1: $t('common.Sun'),
+  2: $t('common.Mon'),
+  3: $t('common.Tue'),
+  4: $t('common.Wed'),
+  5: $t('common.Thu'),
+  6: $t('common.Fri'),
+  7: $t('common.Sat'),
 };
 
 // 核心：格式化单个字段
@@ -140,50 +141,70 @@ function getNextTimes() {
     <ElCard class="box-card" shadow="never">
       <template #header>
         <div class="card-header">
-          <span>Cron 表达式生成器</span>
+          <span>{{ $t('cron.cronExpressionGenerator') }}</span>
         </div>
       </template>
 
       <ElTabs v-model="activeTab" type="border-card">
         <!-- 秒 -->
-        <ElTabPane label="秒" name="second">
-          <CrontabPane v-model="state.second" :min="0" :max="59" label="秒" />
+        <ElTabPane :label="$t('common.Second')" name="second">
+          <CrontabPane
+            v-model="state.second"
+            :min="0"
+            :max="59"
+            :label="$t('common.Second')"
+          />
         </ElTabPane>
 
         <!-- 分 -->
-        <ElTabPane label="分" name="minute">
-          <CrontabPane v-model="state.minute" :min="0" :max="59" label="分" />
+        <ElTabPane :label="$t('common.Min')" name="minute">
+          <CrontabPane
+            v-model="state.minute"
+            :min="0"
+            :max="59"
+            :label="$t('common.Min')"
+          />
         </ElTabPane>
 
         <!-- 时 -->
-        <ElTabPane label="时" name="hour">
-          <CrontabPane v-model="state.hour" :min="0" :max="23" label="时" />
+        <ElTabPane :label="$t('common.Hour')" name="hour">
+          <CrontabPane
+            v-model="state.hour"
+            :min="0"
+            :max="23"
+            :label="$t('common.Hour')"
+          />
         </ElTabPane>
 
         <!-- 日 -->
-        <ElTabPane label="日" name="day">
+        <ElTabPane :label="$t('common.Day')" name="day">
           <CrontabPane
             v-model="state.day"
             :min="1"
             :max="31"
-            label="日"
+            :label="$t('common.Day')"
             week-mode-check
             @change="handleDayChange"
           />
         </ElTabPane>
 
         <!-- 月 -->
-        <ElTabPane label="月" name="month">
-          <CrontabPane v-model="state.month" :min="1" :max="12" label="月" />
+        <ElTabPane :label="$t('common.Month')" name="month">
+          <CrontabPane
+            v-model="state.month"
+            :min="1"
+            :max="12"
+            :label="$t('common.Month')"
+          />
         </ElTabPane>
 
         <!-- 周 -->
-        <ElTabPane label="周" name="week">
+        <ElTabPane :label="$t('common.Week')" name="week">
           <CrontabPane
             v-model="state.week"
             :min="1"
             :max="7"
-            label="周"
+            :label="$t('common.Week')"
             :alias-map="weekAlias"
             day-mode-check
             @change="handleWeekChange"
@@ -193,20 +214,26 @@ function getNextTimes() {
 
       <!-- 结果展示区域 -->
       <div class="result-area">
-        <ElDivider content-position="left">生成结果</ElDivider>
+        <ElDivider content-position="left">
+          {{ $t('cron.GenerateResult') }}
+        </ElDivider>
         <div class="result-row">
-          <ElInput v-model="cronResult" readonly placeholder="Cron 表达式">
-            <template #prepend>Cron 表达式</template>
+          <ElInput
+            v-model="cronResult"
+            readonly
+            :placeholder="$t('cron.CronExpression')"
+          >
+            <template #prepend>{{ $t('cron.CronExpression') }}</template>
           </ElInput>
           <ElButton type="primary" @click="copyCron" style="margin-left: 10px">
-            使用该值
+            {{ $t('cron.UseThisValue') }}
           </ElButton>
           <ElButton
             type="primary"
             @click="getNextTimes"
             style="margin-left: 10px"
           >
-            查看最近5次执行时间
+            {{ $t('cron.CheckLast5ExecutionTimes') }}
           </ElButton>
         </div>
 
@@ -217,15 +244,17 @@ function getNextTimes() {
             style="width: 100%"
             size="small"
           >
-            <ElTableColumn prop="second" label="秒" />
-            <ElTableColumn prop="minute" label="分" />
-            <ElTableColumn prop="hour" label="时" />
-            <ElTableColumn prop="day" label="日" />
-            <ElTableColumn prop="month" label="月" />
-            <ElTableColumn prop="week" label="周" />
+            <ElTableColumn prop="second" :label="$t('common.Second')" />
+            <ElTableColumn prop="minute" :label="$t('common.Min')" />
+            <ElTableColumn prop="hour" :label="$t('common.Hour')" />
+            <ElTableColumn prop="day" :label="$t('common.Day')" />
+            <ElTableColumn prop="month" :label="$t('common.Month')" />
+            <ElTableColumn prop="week" :label="$t('common.Week')" />
           </ElTable>
         </div>
-        <ElDivider content-position="left">最近5次执行时间</ElDivider>
+        <ElDivider content-position="left">
+          {{ $t('cron.Last5ExecutionTimes') }}
+        </ElDivider>
         <div v-for="(item, idx) in nextTimes" :key="idx">
           {{ item }}
         </div>
@@ -240,9 +269,11 @@ function getNextTimes() {
   max-width: 800px;
   margin: 0 auto;
 }
+
 .result-area {
   margin-top: 20px;
 }
+
 .result-row {
   display: flex;
   margin-bottom: 15px;

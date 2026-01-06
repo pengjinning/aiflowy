@@ -30,5 +30,13 @@
   },
   "uploadFileFirst": "Please upload the file first",
   "deleteModelAlert": "This operation will delete the large model. Are you sure to delete it?",
-  "deleteModelGroupAlert": "This operation will delete all large models under this group. Are you sure to delete them?"
+  "deleteModelGroupAlert": "This operation will delete all large models under this group. Are you sure to delete them?",
+  "cannotBeEmpty": {
+    "name": "Parameter name cannot be empty",
+    "description": "Parameter description cannot be empty",
+    "method": "Input method cannot be empty",
+    "type": "Parameter type cannot be empty",
+    "all": "Please complete all required fields before submitting",
+    "error": "Parameter validation failed. Please complete all required fields"
+  }
 }

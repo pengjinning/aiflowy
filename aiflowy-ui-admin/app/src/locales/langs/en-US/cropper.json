@@ -1,0 +1,20 @@
+{
+  "ImageCropping": "ImageCropping",
+  "message": {
+    "onlyImage": "Only image files can be uploaded!",
+    "imgSize": "Image size must not exceed {limit}MB!",
+    "uploadFailed": "Upload failed",
+    "notUrl": "Upload successful but no image URL returned",
+    "uploadSuccessful": "Upload successful!",
+    "reuploadSuccessful": "Re-upload successful!",
+    "notInitialized": "Cropper not initialized",
+    "cropFailed": "Crop failed, unable to get cropped image",
+    "fileCount": "Maximum {count} files allowed",
+    "avatarFormat": "Avatar must be {format} format only",
+    "avatarSize": "Avatar limit {limit} MB"
+  },
+  "Uploading": "Uploading...",
+  "ConfirmCrop": "ConfirmCrop",
+  "Re-upload": "Re-upload",
+  "ClickToUpload": "ClickToUpload"
+}

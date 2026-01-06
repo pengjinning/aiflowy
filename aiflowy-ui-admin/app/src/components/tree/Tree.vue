@@ -230,10 +230,10 @@ onMounted(() => {
 
 <style scoped>
 .tree-select {
+  width: 100%;
   background-color: #fff;
   border: 1px solid #e4e7ed;
   border-radius: 6px;
-  width: 100%;
 }
 
 .tree-header {
@@ -244,6 +244,7 @@ onMounted(() => {
   background-color: #f8f9fa;
   border-bottom: 1px solid #e4e7ed;
 }
+
 .tree-wrapper {
   padding: 8px;
 }

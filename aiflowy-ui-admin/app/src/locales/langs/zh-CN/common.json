@@ -6,5 +6,18 @@
   "noDataAvailable": "暂无数据",
   "isRequired": "不能为空",
   "avatar": "头像",
-  "otherLoginType": "其他登录方式"
+  "otherLoginType": "其他登录方式",
+  "Sun": "周日",
+  "Mon": "周一",
+  "Tue": "周二",
+  "Wed": "周三",
+  "Thu": "周四",
+  "Fri": "周五",
+  "Sat": "周六",
+  "Second": "秒",
+  "Min": "分",
+  "Hour": "时",
+  "Day": "日",
+  "Month": "月",
+  "Week": "周"
 }

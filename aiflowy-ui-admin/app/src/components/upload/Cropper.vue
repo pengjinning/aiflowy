@@ -18,6 +18,7 @@ import {
 } from 'element-plus';
 
 import { api } from '#/api/request';
+import { $t } from '#/locales';
 
 // 定义组件props
 interface Props {
@@ -76,7 +77,7 @@ const headers = computed(() => ({
 
 // 默认裁剪配置
 const defaultCropConfig: CropConfig = {
-  title: '图片裁剪',
+  title: $t('cropper.ImageCropping'),
   outputSize: 1,
   outputType: 'png',
   info: true,
@@ -133,13 +134,13 @@ const handleFileSelect = (file: File) => {
   // 验证文件
   const isImage = file.type.startsWith('image/');
   if (!isImage) {
-    ElMessage.error('只能上传图片文件!');
+    ElMessage.error($t('cropper.message.onlyImage'));
     return;
   }
 
   const isLtLimit = file.size / 1024 / 1024 < props.limit;
   if (!isLtLimit) {
-    ElMessage.error(`图片大小不能超过 ${props.limit}MB!`);
+    ElMessage.error($t('cropper.message.imgSize', { limit: props.limit }));
     return;
   }
 
@@ -159,13 +160,13 @@ const handleFileSelect = (file: File) => {
 const beforeUpload: UploadProps['beforeUpload'] = (rawFile) => {
   const isImage = rawFile.type.startsWith('image/');
   if (!isImage) {
-    ElMessage.error('只能上传图片文件!');
+    ElMessage.error($t('cropper.message.onlyImage'));
     return false;
   }
 
   const isLtLimit = rawFile.size / 1024 / 1024 < props.limit;
   if (!isLtLimit) {
-    ElMessage.error(`图片大小不能超过 ${props.limit}MB!`);
+    ElMessage.error($t('cropper.message.imgSize', { limit: props.limit }));
     return false;
   }
 
@@ -197,21 +198,26 @@ const uploadFile = async (file: File) => {
     });
 
     if (response.errorCode !== 0) {
-      throw new Error(`上传失败: ${response.message}`);
+      throw new Error(
+        `${$t('cropper.message.uploadFailed')}: ${response.message}`,
+      );
     }
 
     const imageUrl = response.data.path;
 
     if (!imageUrl) {
-      throw new Error('上传成功但未返回图片URL');
+      throw new Error($t('cropper.message.notUrl'));
     }
 
     emit('update:modelValue', imageUrl);
     emit('uploadSuccess', imageUrl);
 
-    ElMessage.success('上传成功!');
+    ElMessage.success($t('cropper.message.uploadSuccessful'));
   } catch (error) {
-    const err = error instanceof Error ? error : new Error('上传失败');
+    const err =
+      error instanceof Error
+        ? error
+        : new Error($t('cropper.message.uploadFailed'));
     emit('uploadError', err);
     ElMessage.error(err.message);
   } finally {
@@ -230,13 +236,13 @@ const handleUpload: UploadRequestHandler = async (options) => {
 // 处理裁剪 - 修复：使用正确的裁剪逻辑
 const handleCrop = () => {
   if (!cropperRef.value) {
-    ElMessage.error('裁剪器未初始化');
+    ElMessage.error($t('cropper.message.notInitialized'));
     return;
   }
 
   cropperRef.value.getCropBlob(async (blob: Blob | null) => {
     if (!blob) {
-      ElMessage.error('裁剪失败，无法获取裁剪后的图片');
+      ElMessage.error($t('cropper.message.cropFailed'));
       return;
     }
 
@@ -253,7 +259,10 @@ const handleCrop = () => {
       await uploadFile(file);
       showCropDialog.value = false;
     } catch (error) {
-      const err = error instanceof Error ? error : new Error('上传失败');
+      const err =
+        error instanceof Error
+          ? error
+          : new Error($t('cropper.message.uploadFailed'));
       emit('uploadError', err);
       ElMessage.error(err.message);
     } finally {
@@ -265,7 +274,7 @@ const handleCrop = () => {
 // 删除图片
 const handleRemove = () => {
   emit('update:modelValue', '');
-  ElMessage.success('删除成功!');
+  ElMessage.success($t('message.deleteOkMessage'));
 };
 
 // 清理URL对象
@@ -352,10 +361,12 @@ watch(showCropDialog, (newVal) => {
       <template #footer>
         <span class="dialog-footer">
           <ElButton @click="showCropDialog = false" :disabled="uploading">
-            取消
+            {{ $t('button.cancel') }}
           </ElButton>
           <ElButton type="primary" @click="handleCrop" :loading="uploading">
-            {{ uploading ? '上传中...' : '确认裁剪' }}
+            {{
+              uploading ? $t('cropper.Uploading') : $t('cropper.ConfirmCrop')
+            }}
           </ElButton>
         </span>
       </template>
@@ -371,22 +382,22 @@ watch(showCropDialog, (newVal) => {
 
 .upload-area {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 }
 
 .avatar-uploader {
-  width: 100px;
-  height: 100px;
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
   position: relative;
-  overflow: hidden;
-  transition: border-color 0.3s;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  transition: border-color 0.3s;
 }
 
 .avatar-uploader:hover {
@@ -394,13 +405,13 @@ watch(showCropDialog, (newVal) => {
 }
 
 .avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 100%;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 28px;
+  color: #8c939d;
 }
 
 .preview-area {
@@ -412,16 +423,16 @@ watch(showCropDialog, (newVal) => {
 .preview-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 12px;
+  align-items: center;
 }
 
 .preview-image {
   width: 100px;
   height: 100px;
-  border-radius: 6px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
 }
 
 .preview-actions {
@@ -430,11 +441,11 @@ watch(showCropDialog, (newVal) => {
 }
 
 .cropper-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 400px;
   background: #f5f7fa;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .edit-actions {

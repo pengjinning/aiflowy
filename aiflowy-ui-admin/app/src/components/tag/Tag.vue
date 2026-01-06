@@ -144,17 +144,17 @@ const sizeMap = {
 
 <style scoped>
 .tag {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  box-sizing: border-box;
-  white-space: nowrap;
-  user-select: none;
-  transition: all 0.2s ease-in-out;
   font-family:
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
     Arial, sans-serif;
+  white-space: nowrap;
+  user-select: none;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
 }
 
 .tag--small {
@@ -197,18 +197,18 @@ const sizeMap = {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: 4px;
-  cursor: pointer;
   width: 16px;
   height: 16px;
+  margin-left: 4px;
   font-size: 12px;
   line-height: 1;
+  cursor: pointer;
   border-radius: 50%;
   transition: background-color 0.2s;
 }
 
 .tag__close:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgb(0 0 0 / 10%);
 }
 
 /* 为可关闭标签调整内边距 */

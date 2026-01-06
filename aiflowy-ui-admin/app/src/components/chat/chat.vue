@@ -321,6 +321,7 @@ const handleRefresh = () => {
         ref="senderRef"
         class="w-full"
         v-model="senderValue"
+        :placeholder="$t('message.pleaseInputContent')"
         variant="updown"
         :auto-size="{ minRows: 3, maxRows: 6 }"
         allow-speech
@@ -362,25 +363,27 @@ const handleRefresh = () => {
 
 <style scoped>
 .questions-preset-container {
-  width: 100%;
   display: flex;
-  flex-wrap: nowrap;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
+  flex-flow: row nowrap;
   gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
   overflow: auto;
 }
+
 .message-container {
+  padding: 8px;
   background-color: var(--bot-chat-message-container);
   border-radius: 8px;
-  padding: 8px;
 }
+
 :deep(.el-bubble-content-wrapper .el-bubble-content-filled[data-v-a52d8fe0]) {
   background-color: var(--bot-chat-message-item-back);
 }
+
 .chat-bubble-item-time-style {
-  color: var(--common-font-placeholder-color);
   font-size: 12px;
+  color: var(--common-font-placeholder-color);
 }
 </style>

@@ -183,8 +183,8 @@ defineExpose({
 
 <style scoped>
 .dict-select__prefix {
-  color: #909399;
-  font-size: 12px;
   margin-right: 4px;
+  font-size: 12px;
+  color: #909399;
 }
 </style>

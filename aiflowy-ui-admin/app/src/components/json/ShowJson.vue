@@ -35,8 +35,8 @@ watch(
 
 <style scoped>
 .res-container {
+  padding: 10px;
   border: 1px solid var(--el-border-color);
   border-radius: var(--el-border-radius-base);
-  padding: 10px;
 }
 </style>

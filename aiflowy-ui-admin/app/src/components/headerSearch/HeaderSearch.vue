@@ -12,6 +12,7 @@ import {
 } from 'element-plus';
 
 import { hasPermission } from '#/api/common/hasPermission.ts';
+import { $t } from '#/locales';
 
 // 定义组件属性
 const props = defineProps({
@@ -36,7 +37,7 @@ const props = defineProps({
   // 搜索框占位符
   searchPlaceholder: {
     type: String,
-    default: '请输入搜索内容',
+    default: $t('common.searchPlaceholder'),
   },
 });
 
@@ -143,7 +144,8 @@ const handleDropdownClick = (button) => {
         @command="handleDropdownClick"
       >
         <ElButton>
-          更多<ElIcon class="el-icon--right"><ArrowDown /></ElIcon>
+          {{ $t('button.more')
+          }}<ElIcon class="el-icon--right"><ArrowDown /></ElIcon>
         </ElButton>
         <template #dropdown>
           <ElDropdownMenu>
@@ -166,11 +168,34 @@ const handleDropdownClick = (button) => {
 </template>
 
 <style scoped>
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .custom-header {
+    flex-direction: column;
+    gap: 16px;
+    padding: 12px 16px;
+  }
+
+  .header-left,
+  .header-right {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .search-container {
+    width: 100%;
+  }
+
+  .header-right {
+    flex-wrap: wrap;
+  }
+}
+
 .custom-header {
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
 }
 
 .header-left {
@@ -184,36 +209,13 @@ const handleDropdownClick = (button) => {
 }
 
 .search-input {
-  border-radius: 4px;
   width: 300px;
+  border-radius: 4px;
 }
 
 .header-right {
   display: flex;
-  align-items: center;
   gap: 12px;
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .custom-header {
-    flex-direction: column;
-    gap: 16px;
-    padding: 12px 16px;
-  }
-
-  .header-left,
-  .header-right {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .search-container {
-    width: 100%;
-  }
-
-  .header-right {
-    flex-wrap: wrap;
-  }
+  align-items: center;
 }
 </style>

@@ -13,6 +13,8 @@ import {
   ElTableColumn,
 } from 'element-plus';
 
+import { $t } from '#/locales';
+
 export interface TreeTableNode {
   key: string;
   name: string;
@@ -281,28 +283,28 @@ const validateFields = (): boolean => {
 
     // 校验参数名称
     if (!name?.trim()) {
-      nodeErrors.name = '参数名称不能为空';
+      nodeErrors.name = $t('message.cannotBeEmpty.name');
       nodeIsValid = false;
       isValid = false;
     }
 
     // 校验参数描述
     if (!description?.trim()) {
-      nodeErrors.description = '参数描述不能为空';
+      nodeErrors.description = $t('message.cannotBeEmpty.description');
       nodeIsValid = false;
       isValid = false;
     }
 
     // 校验传入方法（仅根节点+输入参数）
     if (isRootNode(node) && !method && !props.isEditOutput) {
-      nodeErrors.method = '传入方法不能为空';
+      nodeErrors.method = $t('message.cannotBeEmpty.method');
       nodeIsValid = false;
       isValid = false;
     }
 
     // 校验参数类型
     if (!type) {
-      nodeErrors.type = '参数类型不能为空';
+      nodeErrors.type = $t('message.cannotBeEmpty.type');
       nodeIsValid = false;
       isValid = false;
     }
@@ -345,7 +347,7 @@ const handleSubmitParams = () => {
   const isFormValid = validateFields();
 
   if (!isFormValid) {
-    ElMessage.error('请完善所有必填项后提交');
+    ElMessage.error($t('message.cannotBeEmpty.all'));
 
     // 找到第一个错误的输入框/选择器
     const firstErrorInput = document.querySelector('.error-border');
@@ -361,7 +363,7 @@ const handleSubmitParams = () => {
         if (selectInput) (selectInput as HTMLInputElement).focus();
       }
     }
-    throw new Error('参数校验失败，请完善必填项');
+    throw new Error($t('message.cannotBeEmpty.error'));
   }
 
   // 校验通过，提交数据
@@ -397,10 +399,10 @@ const handleInputBlur = (row: TreeTableNode, field: keyof TreeTableNode) => {
       style="width: 100%; overflow-x: auto"
     >
       <!-- 参数名称列 -->
-      <ElTableColumn prop="name" label="参数名称" class-name="first-column">
+      <ElTableColumn prop="name" class-name="first-column">
         <template #header>
           <div class="header-with-asterisk">
-            参数名称
+            {{ $t('pluginItem.parameterName') }}
             <span class="required-asterisk">*</span>
           </div>
         </template>
@@ -432,10 +434,10 @@ const handleInputBlur = (row: TreeTableNode, field: keyof TreeTableNode) => {
       </ElTableColumn>
 
       <!-- 参数描述列 -->
-      <ElTableColumn prop="description" label="参数描述">
+      <ElTableColumn prop="description">
         <template #header>
           <div class="header-with-asterisk">
-            参数描述
+            {{ $t('pluginItem.parameterDescription') }}
             <span class="required-asterisk">*</span>
           </div>
         </template>
@@ -458,7 +460,11 @@ const handleInputBlur = (row: TreeTableNode, field: keyof TreeTableNode) => {
       </ElTableColumn>
 
       <!-- 参数类型列 -->
-      <ElTableColumn prop="type" label="参数类型" width="150px">
+      <ElTableColumn
+        prop="type"
+        :label="$t('pluginItem.parameterType')"
+        width="150px"
+      >
         <template #default="{ row }">
           <span v-if="!props.editable">{{ row.type || '' }}</span>
           <div v-else>
@@ -484,7 +490,7 @@ const handleInputBlur = (row: TreeTableNode, field: keyof TreeTableNode) => {
       <ElTableColumn
         v-if="!props.isEditOutput"
         prop="method"
-        label="传入方法"
+        :label="$t('pluginItem.inputMethod')"
         width="120px"
       >
         <template #default="{ row }">
@@ -508,7 +514,7 @@ const handleInputBlur = (row: TreeTableNode, field: keyof TreeTableNode) => {
       <ElTableColumn
         v-if="!props.isEditOutput"
         prop="required"
-        label="是否必填"
+        :label="$t('pluginItem.required')"
         width="120px"
       >
         <template #default="{ row }">
@@ -524,7 +530,7 @@ const handleInputBlur = (row: TreeTableNode, field: keyof TreeTableNode) => {
       <ElTableColumn
         v-if="!props.isEditOutput"
         prop="defaultValue"
-        label="默认值"
+        :label="$t('pluginItem.defaultValue')"
         width="150px"
       >
         <template #default="{ row }">
@@ -540,7 +546,11 @@ const handleInputBlur = (row: TreeTableNode, field: keyof TreeTableNode) => {
       </ElTableColumn>
 
       <!-- 启用状态列 -->
-      <ElTableColumn prop="enabled" label="启用状态" width="120px">
+      <ElTableColumn
+        prop="enabled"
+        :label="$t('pluginItem.enabledStatus')"
+        width="120px"
+      >
         <template #default="{ row }">
           <ElSwitch
             v-model="row.enabled"
@@ -551,7 +561,11 @@ const handleInputBlur = (row: TreeTableNode, field: keyof TreeTableNode) => {
       </ElTableColumn>
 
       <!-- 操作列 (仅可编辑时显示) -->
-      <ElTableColumn v-if="props.editable" label="操作" width="130px">
+      <ElTableColumn
+        v-if="props.editable"
+        :label="$t('common.handle')"
+        width="130px"
+      >
         <template #default="{ row }">
           <div class="action-buttons">
             <ElButton
@@ -560,7 +574,7 @@ const handleInputBlur = (row: TreeTableNode, field: keyof TreeTableNode) => {
               link
               :icon="Plus"
               @click="handleAddChild(row.key)"
-              title="添加子节点"
+              :title="$t('pluginItem.addChildNode')"
             />
             <ElButton
               type="danger"
@@ -568,7 +582,7 @@ const handleInputBlur = (row: TreeTableNode, field: keyof TreeTableNode) => {
               :icon="Delete"
               @click="deleteNode(row.key)"
             >
-              删除
+              {{ $t('button.delete') }}
             </ElButton>
           </div>
         </template>
@@ -578,7 +592,7 @@ const handleInputBlur = (row: TreeTableNode, field: keyof TreeTableNode) => {
     <!-- 新增参数按钮 -->
     <div v-if="props.editable" class="add-button-container">
       <ElButton type="default" @click="addNewRootNode" :icon="Plus">
-        新增参数
+        {{ $t('pluginItem.addParameter') }}
       </ElButton>
     </div>
   </div>
@@ -609,10 +623,10 @@ const handleInputBlur = (row: TreeTableNode, field: keyof TreeTableNode) => {
 }
 
 .error-message {
-  color: #ff4d4f;
-  font-size: 12px;
   margin-top: 2px;
+  font-size: 12px;
   line-height: 1.2;
+  color: #ff4d4f;
 }
 
 .action-buttons {
@@ -623,11 +637,11 @@ const handleInputBlur = (row: TreeTableNode, field: keyof TreeTableNode) => {
 }
 
 .action-buttons .el-button {
-  width: 36px;
-  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 36px;
+  padding: 0;
 }
 
 .add-button-container {
@@ -639,11 +653,13 @@ const handleInputBlur = (row: TreeTableNode, field: keyof TreeTableNode) => {
   position: relative;
   width: 100%;
 }
+
 :deep(.el-table td.el-table__cell.first-column > div) {
   display: flex;
-  align-items: center;
   gap: 2px;
+  align-items: center;
 }
+
 .el-table__header-wrapper,
 .el-table__body-wrapper {
   min-width: 100%;
@@ -656,31 +672,32 @@ const handleInputBlur = (row: TreeTableNode, field: keyof TreeTableNode) => {
 }
 
 .required-asterisk {
-  color: #ff4d4f;
-  font-size: 12px;
-  font-weight: bold;
   position: absolute;
   right: -8px;
+  font-size: 12px;
+  font-weight: bold;
   line-height: 1;
+  color: #ff4d4f;
 }
 
 /* 输入框/选择器错误样式 */
 :deep(.el-input__inner.error-border),
 :deep(.el-select .el-input__inner.error-border) {
   border-color: #ff4d4f !important;
-  box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2) !important;
+  box-shadow: 0 0 0 2px rgb(255 77 79 / 20%) !important;
 }
 
 /* 下拉选择器的触发框错误样式 */
 :deep(.el-select__wrapper.error-border) {
   border-color: #ff4d4f !important;
-  box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2) !important;
+  box-shadow: 0 0 0 2px rgb(255 77 79 / 20%) !important;
 }
+
 .name-input-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  flex-direction: column;
   width: 100%;
 }
 </style>

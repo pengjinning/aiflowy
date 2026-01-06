@@ -61,7 +61,9 @@ const hiddenActions = computed(() => {
       :key="index"
       shadow="hover"
       footer-class="foot-c"
-      style="--el-box-shadow-light: 0px 2px 12px 0px rgba(100, 121, 153, 0.1)"
+      :style="{
+        '--el-box-shadow-light': '0px 2px 12px 0px rgb(100 121 153 10%)',
+      }"
     >
       <div class="flex flex-col gap-3">
         <div class="flex items-center gap-3">
@@ -84,10 +86,10 @@ const hiddenActions = computed(() => {
             <ElButton
               :icon="action.icon"
               size="small"
-              style="
-                --el-button-text-color: hsl(220, 9.68%, 63.53%);
-                --el-button-font-weight: 400;
-              "
+              :style="{
+                '--el-button-text-color': 'hsl(220deg 9.68% 63.53%)',
+                '--el-button-font-weight': 400,
+              }"
               link
               @click="action.onClick(item)"
             >
@@ -105,10 +107,10 @@ const hiddenActions = computed(() => {
 
           <ElDropdown v-if="hiddenActions.length > 0" trigger="click">
             <ElButton
-              style="
-                --el-button-text-color: hsl(220, 9.68%, 63.53%);
-                --el-button-font-weight: 400;
-              "
+              :style="{
+                '--el-button-text-color': 'hsl(220deg 9.68% 63.53%)',
+                '--el-button-font-weight': 400,
+              }"
               :icon="MoreFilled"
               link
             />
@@ -138,36 +140,6 @@ const hiddenActions = computed(() => {
 </template>
 
 <style scoped>
-:deep(.el-card__footer) {
-  border-top: none;
-}
-.footer-div {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 20px;
-  border-radius: 8px;
-  background-color: hsl(var(--background-deep));
-}
-.handle-div {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0;
-}
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  min-width: max(100%, 600px); /* 确保至少显示2个卡片 */
-}
-
-.item-desc {
-  font-size: clamp(8px, 1vw, 14px);
-  line-height: 20px;
-  height: 40px;
-  color: #75808d;
-}
-
 /* 响应式调整 */
 @media (max-width: 1024px) {
   .card-grid {
@@ -186,6 +158,40 @@ const hiddenActions = computed(() => {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
 }
+
+:deep(.el-card__footer) {
+  border-top: none;
+}
+
+.footer-div {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 20px;
+  background-color: hsl(var(--background-deep));
+  border-radius: 8px;
+}
+
+.handle-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  min-width: max(100%, 600px); /* 确保至少显示2个卡片 */
+}
+
+.item-desc {
+  height: 40px;
+  font-size: clamp(8px, 1vw, 14px);
+  line-height: 20px;
+  color: #75808d;
+}
+
 .item-danger {
   color: var(--el-color-danger);
 }
