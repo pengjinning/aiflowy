@@ -48,8 +48,8 @@ const vecotrDatabaseList = ref<any>([
   { value: 'redis', label: 'Redis' },
   { value: 'opensearch', label: 'OpenSearch' },
   { value: 'elasticsearch', label: 'ElasticSearch' },
-  { value: 'aliyun', label: '阿里云' },
-  { value: 'qcloud', label: '腾讯云' },
+  { value: 'aliyun', label: $t('documentCollection.alibabaCloud') },
+  { value: 'qcloud', label: $t('documentCollection.tencentCloud') },
 ]);
 const entity = ref<any>({
   alias: '',

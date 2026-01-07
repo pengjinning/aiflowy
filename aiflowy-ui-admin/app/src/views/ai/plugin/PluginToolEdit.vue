@@ -368,7 +368,7 @@ const handleOpenRunModal = () => {
                   >
                     <ElSelect
                       v-model="pluginToolInfo.requestMethod"
-                      placeholder="请选择"
+                      :placeholder="$t('ui.placeholder.select')"
                     >
                       <ElOption
                         v-for="option in requestMethodOptions"
@@ -559,175 +559,6 @@ const handleOpenRunModal = () => {
 </template>
 
 <style scoped>
-.accordion-container {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-.controls-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.title {
-  text-align: center;
-  color: var(--el-text-color-secondary);
-  margin-bottom: 8px;
-  font-size: 2rem;
-  font-weight: 600;
-}
-
-.subtitle {
-  text-align: center;
-  color: var(--el-text-color-secondary);
-  margin-bottom: 30px;
-  font-size: 1.1rem;
-}
-
-/* 控制面板样式 */
-.controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  padding: 20px;
-  background: var(--el-bg-color);
-  border-radius: 8px;
-  border: 1px solid #e9ecef;
-}
-
-.control-group {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  color: var(--el-text-color-secondary);
-  cursor: pointer;
-}
-
-.checkbox {
-  width: 16px;
-  height: 16px;
-}
-
-.control-btn {
-  padding: 8px 16px;
-  background: var(--el-bg-color);
-  color: var(--el-text-color-secondary);
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.3s ease;
-}
-
-.control-btn:hover {
-  background: #3498db;
-  background: var(--el-color-primary-light-9);
-}
-
-/* 折叠面板列表 */
-.accordion-list {
-  padding-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.accordion-item {
-  border: 1px solid hsl(var(--border));
-  border-radius: 8px;
-  overflow: hidden;
-  background: hsl(var(--background));
-  transition: all 0.3s ease;
-}
-
-.accordion-item:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.accordion-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  background: hsl(var(--background));
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  user-select: none;
-}
-
-.accordion-title {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 500;
-  padding-left: 12px;
-}
-
-.accordion-icon {
-  transition: transform 0.3s ease;
-  color: #7f8c8d;
-  font-size: 12px;
-}
-
-.accordion-icon--rotated {
-  transform: rotate(180deg);
-}
-
-.accordion-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.4s ease;
-  background: hsl(var(--background));
-}
-
-.accordion-content--open {
-  max-height: 2000px;
-}
-
-.accordion-content-inner {
-  padding: 20px;
-  border-top: 1px solid hsl(var(--border));
-}
-
-.accordion-content-inner p {
-  margin: 0;
-  line-height: 1.6;
-  color: var(--el-text-color-secondary);
-  font-size: 14px;
-}
-
-.column-header-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.plugin-tool-info-view-container {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
-}
-
-.plugin-tool-view-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-}
-
-.view-item-title {
-  width: 70px;
-  /* text-align: right; */
-  /* margin-right: 12px; */
-}
-
 /* 响应式设计 */
 @media (max-width: 768px) {
   .accordion-container {
@@ -755,5 +586,178 @@ const handleOpenRunModal = () => {
   .accordion-title {
     font-size: 1rem;
   }
+}
+
+.accordion-container {
+  max-width: 100%;
+  padding: 20px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.controls-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  margin-bottom: 8px;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--el-text-color-secondary);
+  text-align: center;
+}
+
+.subtitle {
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+  color: var(--el-text-color-secondary);
+  text-align: center;
+}
+
+/* 控制面板样式 */
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  margin-bottom: 30px;
+  background: var(--el-bg-color);
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+}
+
+.control-group {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.checkbox-label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+  color: var(--el-text-color-secondary);
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+}
+
+.control-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  color: var(--el-text-color-secondary);
+  cursor: pointer;
+  background: var(--el-bg-color);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.control-btn:hover {
+  background: #3498db;
+  background: var(--el-color-primary-light-9);
+}
+
+/* 折叠面板列表 */
+.accordion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 20px;
+}
+
+.accordion-item {
+  overflow: hidden;
+  background: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.accordion-item:hover {
+  box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+}
+
+.accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  cursor: pointer;
+  user-select: none;
+  background: hsl(var(--background));
+  transition: background-color 0.3s ease;
+}
+
+.accordion-title {
+  padding-left: 12px;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.accordion-icon {
+  font-size: 12px;
+  color: #7f8c8d;
+  transition: transform 0.3s ease;
+}
+
+.accordion-icon--rotated {
+  transform: rotate(180deg);
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  background: hsl(var(--background));
+  transition: max-height 0.4s ease;
+}
+
+.accordion-content--open {
+  max-height: 2000px;
+}
+
+.accordion-content-inner {
+  padding: 20px;
+  border-top: 1px solid hsl(var(--border));
+}
+
+.accordion-content-inner p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--el-text-color-secondary);
+}
+
+.column-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.plugin-tool-info-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.plugin-tool-view-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.view-item-title {
+  width: 70px;
+
+  /* text-align: right; */
+
+  /* margin-right: 12px; */
 }
 </style>

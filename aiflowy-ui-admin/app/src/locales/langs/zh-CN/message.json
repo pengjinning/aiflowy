@@ -17,6 +17,7 @@
   "notEmpty": "不能为空",
   "success": "成功",
   "fail": "失败",
+  "pleaseSelect": "请选择{name}",
   "pleaseInputContent": "请输入内容",
   "notSupported": "暂不支持",
   "englishNameRule": "请输入由字母、数字、下划线、连字符组成的字符，且长度不超过64位",
@@ -38,5 +39,8 @@
     "type": "参数类型不能为空",
     "all": "请完善所有必填项后提交",
     "error": "参数校验失败，请完善必填项"
-  }
+  },
+  "completeForm": "请完善表单信息",
+  "notVideo": "您的浏览器不支持 video 元素。",
+  "notAudio": "您的浏览器不支持 audio 元素。"
 }

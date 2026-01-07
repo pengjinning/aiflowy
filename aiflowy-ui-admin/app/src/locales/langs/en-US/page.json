@@ -5,11 +5,19 @@
     "codeLogin": "Code Login",
     "qrcodeLogin": "Qr Code Login",
     "forgetPassword": "Forget Password",
-    "profile": "Profile"
+    "profile": "Profile",
+    "accountPassword": "Account Password",
+    "systemMessage": "System Message",
+    "todoTasks": "Todo Tasks"
   },
   "dashboard": {
     "title": "Dashboard",
     "analytics": "Analytics",
     "workspace": "Workspace"
+  },
+  "description": {
+    "accountPassword": "Messages from other users will be notified via site message",
+    "systemMessage": "System messages will be notified via site message",
+    "todoTasks": "Todo tasks will be notified via site message."
   }
 }

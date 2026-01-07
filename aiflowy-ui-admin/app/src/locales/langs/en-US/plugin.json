@@ -27,5 +27,7 @@
     "categorize": "categorize",
     "tools": "tools"
   },
-  "toolsManagement": "Tools Management"
+  "toolsManagement": "Tools Management",
+  "searchUsers": "Search Users",
+  "parameterValue": "ParameterValue"
 }

@@ -106,7 +106,7 @@ defineExpose({
           :style="{ minWidth: '100px', height: '36px' }"
           click="onCancel"
         >
-          {{ $t('documentCollection.confirmImport') }}
+          {{ $t('documentCollection.actions.confirmImport') }}
         </ElButton>
         <ElButton
           type="primary"
@@ -114,7 +114,7 @@ defineExpose({
           :loading="disabledConfirm"
           click="onConfirm"
         >
-          {{ $t('documentCollection.cancelImport') }}
+          {{ $t('documentCollection.actions.cancelImport') }}
         </ElButton>
       </div>
     </div>
@@ -124,11 +124,12 @@ defineExpose({
 <style scoped>
 .preview-container {
   width: 100%;
-  border-radius: 8px;
-  background-color: var(--el-bg-color);
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
-  overflow: hidden;
   height: 100%;
+  overflow: hidden;
+  background-color: var(--el-bg-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 8%);
+
   .preview-header {
     display: flex;
     align-items: center;
@@ -137,13 +138,13 @@ defineExpose({
     border-bottom: 1px solid var(--el-border-color);
 
     h3 {
+      display: flex;
+      gap: 8px;
+      align-items: center;
       margin: 0;
       font-size: 16px;
       font-weight: 500;
       color: var(--el-text-color-primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
 
       .header-icon {
         color: var(--el-color-primary);
@@ -157,21 +158,21 @@ defineExpose({
   }
 
   .preview-content {
-    overflow-y: auto;
     padding: 20px;
+    overflow-y: auto;
 
     .preview-list {
       .segment-badge {
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        background-color: var(--el-color-primary-light-9);
-        color: var(--el-color-primary);
         display: flex;
         align-items: center;
         justify-content: center;
+        width: 24px;
+        height: 24px;
         font-size: 12px;
         font-weight: 500;
+        color: var(--el-color-primary);
+        background-color: var(--el-color-primary-light-9);
+        border-radius: 50%;
       }
 
       .similarity-score {
@@ -185,50 +186,50 @@ defineExpose({
       }
 
       .content-desc {
-        background-color: var(--el-bg-color);
+        width: 100%;
+        padding: 12px;
         font-size: 14px;
         line-height: 1.6;
         white-space: pre-wrap;
         background-color: var(--el-bg-color);
-        padding: 12px;
-        border-radius: 6px;
         border-left: 3px solid #e2e8f0;
+        border-radius: 6px;
         transition: all 0.2s;
-        width: 100%;
+
         &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(67, 97, 238, 0.08);
           border-color: #4361ee;
+          box-shadow: 0 4px 12px rgb(67 97 238 / 8%);
+          transform: translateY(-2px);
         }
       }
 
       .el-list-item {
         display: flex;
-        align-items: center;
         gap: 12px;
+        align-items: center;
         padding: 18px;
         border-radius: 8px;
       }
 
       .el-list-item-meta {
-        align-items: flex-start;
         display: flex;
+        flex: 1;
         flex-direction: column;
         gap: 12px;
-        flex: 1;
+        align-items: flex-start;
       }
     }
   }
 
   .preview-actions {
     padding: 16px 20px;
-    border-top: 1px solid var(--el-border-color);
     background-color: var(--el-bg-color-page);
+    border-top: 1px solid var(--el-border-color);
 
     .action-buttons {
       display: flex;
-      justify-content: flex-end;
       gap: 12px;
+      justify-content: flex-end;
     }
   }
 }
@@ -239,9 +240,10 @@ defineExpose({
 }
 
 .el-list-item {
-  border: 1px solid var(--el-border-color-lighter);
-  margin-top: 12px;
   width: 100%;
+  margin-top: 12px;
+  border: 1px solid var(--el-border-color-lighter);
+
   &:hover {
     border-color: var(--el-color-primary);
   }

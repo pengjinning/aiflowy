@@ -212,7 +212,7 @@ const handleClickCategory = (item) => {
     <div class="knowledge-header">
       <HeaderSearch
         :buttons="headerButtons"
-        search-placeholder="搜索用户"
+        :search-placeholder="$t('plugin.searchUsers')"
         @search="handleSearch"
         @button-click="handleButtonClick"
       />
@@ -279,16 +279,17 @@ const handleClickCategory = (item) => {
 
 <style scoped>
 .knowledge-container {
-  padding: 24px;
   width: 100%;
+  padding: 24px;
   margin: 0 auto;
 }
 
 h1 {
-  text-align: center;
   margin-bottom: 30px;
   color: #303133;
+  text-align: center;
 }
+
 .plugin-content-container {
   display: flex;
   gap: 24px;
@@ -298,6 +299,7 @@ h1 {
 
 .plugin-content-data-container {
   /* padding: 20px; */
+
   /* background-color: var(--el-bg-color); */
   width: 100%;
   border-top-right-radius: var(--el-border-radius-base);

@@ -22,10 +22,10 @@
   "englishName": "EnglishName",
   "documentType": "DocumentType",
   "fileName": "fileName",
-  "knowledgeCount":  "Number of knowledge items",
-  "createdModifyTime":  "Creation/update time",
-  "documentList":  "documentList",
-  "knowledgeRetrieval":  "knowledgeRetrieval",
+  "knowledgeCount": "Number of knowledge items",
+  "createdModifyTime": "Creation/update time",
+  "documentList": "documentList",
+  "knowledgeRetrieval": "knowledgeRetrieval",
   "sorting": "Sorting",
   "content": "Content",
   "placeholder": {
@@ -75,5 +75,7 @@
   "documentPreview": "DocumentPreview",
   "total": "Total",
   "segments": "Segments",
-  "similarityScore": "SimilarityScore"
+  "similarityScore": "SimilarityScore",
+  "alibabaCloud": "AlibabaCloud",
+  "tencentCloud": "tencentCloud"
 }

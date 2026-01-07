@@ -251,7 +251,7 @@ const save = async () => {
         emit('reload');
         closeDialog();
       } else {
-        ElMessage.error(res.message || $t('message.operationFailed'));
+        ElMessage.error(res.message || $t('ui.actionMessage.operationFailed'));
       }
     } else {
       const res = await api.post('/api/v1/model/update', submitData);
@@ -260,12 +260,12 @@ const save = async () => {
         emit('reload');
         closeDialog();
       } else {
-        ElMessage.error(res.message || $t('message.operationFailed'));
+        ElMessage.error(res.message || $t('ui.actionMessage.operationFailed'));
       }
     }
   } catch (error) {
     console.error('Save model error:', error);
-    ElMessage.error($t('message.operationFailed'));
+    ElMessage.error($t('ui.actionMessage.operationFailed'));
   } finally {
     btnLoading.value = false;
   }
@@ -364,8 +364,8 @@ const showMoreFields = ref(false);
 .model-ability {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
   gap: 8px;
+  align-items: center;
   margin-top: 4px;
 }
 

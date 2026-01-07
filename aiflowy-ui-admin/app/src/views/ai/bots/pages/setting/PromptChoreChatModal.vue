@@ -60,7 +60,7 @@ defineExpose({
 <template>
   <ElDialog
     v-model="dialogVisible"
-    title="AI优化提示词"
+    :title="$t('bot.aiOptimizedPrompts')"
     draggable
     align-center
     width="550px"

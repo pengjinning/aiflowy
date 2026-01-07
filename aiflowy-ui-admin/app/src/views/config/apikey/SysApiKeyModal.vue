@@ -95,11 +95,11 @@ function getResourcePermissionList() {
       if (res.errorCode === 0) {
         resourcePermissionList.value = res.data;
       } else {
-        ElMessage.error(res.message || $t('message.fetchFail'));
+        ElMessage.error(res.message || $t('message.getDataError'));
       }
     })
     .catch(() => {
-      ElMessage.error($t('message.fetchFail'));
+      ElMessage.error($t('message.getDataError'));
     });
 }
 
@@ -116,16 +116,16 @@ function save() {
         .then((res) => {
           btnLoading.value = false;
           if (res.errorCode === 0) {
-            ElMessage.success(res.message || $t('message.operateSuccess'));
+            ElMessage.success(res.message || $t('message.saveOkMessage'));
             emit('reload');
             closeDialog();
           } else {
-            ElMessage.error(res.message || $t('message.operateFail'));
+            ElMessage.error(res.message || $t('message.saveFailMessage'));
           }
         })
         .catch(() => {
           btnLoading.value = false;
-          ElMessage.error($t('message.operateFail'));
+          ElMessage.error($t('message.saveFailMessage'));
         });
     }
   });
@@ -232,8 +232,8 @@ defineExpose({
 <style scoped>
 .form-container {
   max-height: 60vh;
-  overflow-y: auto;
   padding-right: 10px;
+  overflow-y: auto;
 }
 
 .permission-form-item .el-form-item__content {
@@ -243,14 +243,15 @@ defineExpose({
 }
 
 .permission-checkbox {
-  margin: 4px 0;
   display: flex;
   align-items: flex-start;
+  margin: 4px 0;
 }
 
 .form-container::-webkit-scrollbar {
   width: 6px;
 }
+
 .form-container::-webkit-scrollbar-thumb {
   background-color: #e5e7eb;
   border-radius: 3px;

@@ -3,25 +3,27 @@ import { computed } from 'vue';
 
 import { ProfileNotificationSetting } from '@aiflowy/common-ui';
 
+import { $t } from '#/locales';
+
 const formSchema = computed(() => {
   return [
     {
       value: true,
       fieldName: 'accountPassword',
-      label: '账户密码',
-      description: '其他用户的消息将以站内信的形式通知',
+      label: $t('page.auth.accountPassword'),
+      description: $t('page.description.accountPassword'),
     },
     {
       value: true,
       fieldName: 'systemMessage',
-      label: '系统消息',
-      description: '系统消息将以站内信的形式通知',
+      label: $t('page.auth.systemMessage'),
+      description: $t('page.description.systemMessage'),
     },
     {
       value: true,
       fieldName: 'todoTask',
-      label: '待办任务',
-      description: '待办任务将以站内信的形式通知',
+      label: $t('page.auth.todoTasks'),
+      description: $t('page.description.todoTasks'),
     },
   ];
 });

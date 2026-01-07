@@ -17,6 +17,7 @@
   "notEmpty": "Can not be empty",
   "success": "Success",
   "fail": "Fail",
+  "pleaseSelect": "Please Select {name}",
   "pleaseInputContent": "Please input content",
   "notSupported": "Not supported yet",
   "englishNameRule": "Rural subsistence allowance please enter characters consisting of letters, numbers, underscores, and hyphens, with a length not exceeding 64 characters",
@@ -38,5 +39,8 @@
     "type": "Parameter type cannot be empty",
     "all": "Please complete all required fields before submitting",
     "error": "Parameter validation failed. Please complete all required fields"
-  }
+  },
+  "completeForm": "Please complete the form information",
+  "notVideo": "Your browser does not support the video element.",
+  "notAudio": "Your browser does not support the audio element."
 }

@@ -35,10 +35,10 @@ function closeDialog() {
       />
       <video v-if="data.resourceType === 1" controls width="640" height="360">
         <source :src="data.resourceUrl" type="video/mp4" />
-        您的浏览器不支持 video 元素。
+        {{ $t('message.notVideo') }}
       </video>
       <audio v-if="data.resourceType === 2" controls :src="data.resourceUrl">
-        您的浏览器不支持 audio 元素。
+        {{ $t('message.notAudio') }}
       </audio>
     </div>
   </ElDialog>

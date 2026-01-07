@@ -3,6 +3,8 @@ import { ref, watch } from 'vue';
 
 import { ElInput, ElMessage, ElTable, ElTableColumn } from 'element-plus';
 
+import { $t } from '#/locales';
+
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => [],
   editable: false,
@@ -75,22 +77,22 @@ const validateFields = (): boolean => {
     const nodeErrors: Partial<Record<keyof TreeTableNode, string>> = {};
 
     if (!name?.trim()) {
-      nodeErrors.name = '参数名称不能为空';
+      nodeErrors.name = $t('message.cannotBeEmpty.name');
       isValid = false;
     }
 
     if (!description?.trim()) {
-      nodeErrors.description = '参数描述不能为空';
+      nodeErrors.description = $t('message.cannotBeEmpty.description');
       isValid = false;
     }
 
     if (isRootNode(node) && !method && !props.isEditOutput) {
-      nodeErrors.method = '传入方法不能为空';
+      nodeErrors.method = $t('message.cannotBeEmpty.method');
       isValid = false;
     }
 
     if (!type) {
-      nodeErrors.type = '参数类型不能为空';
+      nodeErrors.type = $t('message.cannotBeEmpty.type');
       isValid = false;
     }
 
@@ -123,7 +125,7 @@ const isRootNode = (record: TreeTableNode): boolean => {
 // 提交参数
 const handleSubmitParams = () => {
   if (!validateFields()) {
-    ElMessage.error('请完善表单信息');
+    ElMessage.error($t('message.completeForm'));
     return;
   }
   return data.value;
@@ -150,7 +152,11 @@ interface Emits {
       @expand-change="onExpand"
       style="width: 100%; overflow-x: auto"
     >
-      <ElTableColumn prop="name" label="参数名称" class-name="first-column">
+      <ElTableColumn
+        prop="name"
+        :label="$t('pluginItem.parameterName')"
+        class-name="first-column"
+      >
         <template #default="{ row }">
           <div class="name-cell">
             <div
@@ -181,7 +187,11 @@ interface Emits {
       </ElTableColumn>
 
       <!-- 参数值-->
-      <ElTableColumn prop="defaultValue" label="参数值" width="150px">
+      <ElTableColumn
+        prop="defaultValue"
+        :label="$t('plugin.parameterValue')"
+        width="150px"
+      >
         <template #default="{ row }">
           <span v-if="row.type === 'Object'"></span>
           <span v-else-if="!props.editable">{{ row.defaultValue || '' }}</span>
@@ -199,9 +209,9 @@ interface Emits {
 
 <style scoped>
 .tree-table-container {
+  box-sizing: border-box;
   width: 100%;
   overflow-x: auto;
-  box-sizing: border-box;
 }
 
 .name-cell {
@@ -227,23 +237,23 @@ interface Emits {
 }
 
 .error-message {
-  color: #ff4d4f;
-  font-size: 12px;
   margin-top: 2px;
+  font-size: 12px;
   line-height: 1.2;
+  color: #ff4d4f;
 }
 
 .action-buttons .el-button {
-  width: 36px;
-  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 36px;
+  padding: 0;
 }
 
 :deep(.el-table td.el-table__cell.first-column div) {
   display: flex;
-  align-items: center;
   gap: 2px;
+  align-items: center;
 }
 </style>

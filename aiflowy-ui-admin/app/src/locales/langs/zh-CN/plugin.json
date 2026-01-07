@@ -27,5 +27,7 @@
     "categorize": "归类",
     "tools": "工具"
   },
-  "toolsManagement": "工具管理"
+  "toolsManagement": "工具管理",
+  "searchUsers": "搜索用户",
+  "parameterValue": "参数值"
 }

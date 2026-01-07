@@ -51,7 +51,7 @@ const provider = computed(() => ({
   searchEngine: (): any => [
     {
       value: 'bocha-search',
-      label: '博查搜索',
+      label: $t('aiWorkflow.bochaSearch'),
     },
   ],
 }));
@@ -292,16 +292,20 @@ function onAsyncExecute(info: any) {
   height: calc(100vh - 365px) !important;
   overflow-y: auto;
 }
+
 :deep(.agentsflow) {
   height: calc(100vh - 130px) !important;
 }
+
 .head-div {
   background-color: var(--el-bg-color);
 }
+
 .tiny-flow-container {
-  height: calc(100vh - 150px);
   width: 100%;
+  height: calc(100vh - 150px);
 }
+
 .load-div {
   margin: 20px;
 }

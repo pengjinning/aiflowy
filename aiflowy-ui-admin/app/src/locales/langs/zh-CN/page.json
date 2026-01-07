@@ -5,11 +5,19 @@
     "codeLogin": "验证码登录",
     "qrcodeLogin": "二维码登录",
     "forgetPassword": "忘记密码",
-    "profile": "个人中心"
+    "profile": "个人中心",
+    "accountPassword": "账户密码",
+    "systemMessage": "系统消息",
+    "todoTasks": "待办任务"
   },
   "dashboard": {
     "title": "概览",
     "analytics": "分析页",
     "workspace": "工作台"
+  },
+  "description": {
+    "accountPassword": "其他用户的消息将以站内信的形式通知",
+    "systemMessage": "系统消息将以站内信的形式通知",
+    "todoTasks": "待办任务将以站内信的形式通知"
   }
 }
