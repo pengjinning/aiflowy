@@ -1,7 +1,9 @@
 package tech.aiflowy.core.chat.protocol.sse;
 
 import com.alibaba.fastjson.JSON;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import tech.aiflowy.common.util.SpringContextUtil;
 import tech.aiflowy.core.chat.protocol.ChatEnvelope;
 
 import java.io.IOException;
@@ -44,7 +46,15 @@ public class ChatSseEmitter {
     /** 🔥 新增：发送并立即关闭 */
     public void sendAndClose(ChatEnvelope<?> envelope) {
         send("message", envelope);
-        complete();
+        ThreadPoolTaskExecutor threadPoolTaskExecutor = SpringContextUtil.getBean("sseThreadPool");
+        threadPoolTaskExecutor.execute(() -> {
+            try {
+                Thread.sleep(500);
+                complete();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     /** 通知前端保存该消息 */

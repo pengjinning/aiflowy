@@ -151,6 +151,8 @@ const handleSubmit = async (refreshContent: string) => {
   sseClient.post('/api/v1/bot/chat', data, {
     onMessage(message) {
       const event = message.event;
+      const lastBubbleItem = bubbleItems.value[bubbleItems.value.length - 1];
+
       //  finish
       if (event === 'done') {
         sending.value = false;
@@ -159,11 +161,27 @@ const handleSubmit = async (refreshContent: string) => {
       if (!message.data) {
         return;
       }
+      // 处理系统错误
       const sseData = JSON.parse(message.data);
+      if (
+        sseData?.domain === 'SYSTEM' &&
+        sseData.payload?.code === 'SYSTEM_ERROR'
+      ) {
+        const errorMessage = sseData.payload.message;
+        const lastBubbleItem = bubbleItems.value[bubbleItems.value.length - 1];
+        if (!lastBubbleItem) return;
+        bubbleItems.value[bubbleItems.value.length - 1] = {
+          ...lastBubbleItem,
+          content: errorMessage,
+          loading: false,
+          typing: true,
+        };
+        return;
+      }
+
+      // 处理流式消息
       const delta = sseData.payload?.delta;
       const role = sseData.payload?.role;
-      const lastBubbleItem = bubbleItems.value[bubbleItems.value.length - 1];
-
       if (lastBubbleItem && delta) {
         if (delta === lastBubbleItem.content) {
           sending.value = false;
@@ -176,7 +194,7 @@ const handleSubmit = async (refreshContent: string) => {
           };
         }
       }
-
+      // 是否需要保存聊天记录
       if (event === 'needSaveMessage') {
         messages.value.push({
           role,

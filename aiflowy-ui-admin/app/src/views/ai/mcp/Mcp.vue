@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import type { FormInstance } from 'element-plus';
 
-import { ref } from 'vue';
+import { markRaw, ref } from 'vue';
 
-import { Delete, Edit, Plus } from '@element-plus/icons-vue';
+import { Delete, Edit, MoreFilled, Plus } from '@element-plus/icons-vue';
 import {
   ElButton,
-  ElForm,
-  ElFormItem,
-  ElIcon,
-  ElInput,
+  ElDropdown,
+  ElDropdownItem,
+  ElDropdownMenu,
   ElMessage,
   ElMessageBox,
   ElSwitch,
   ElTable,
-  ElTableColumn
+  ElTableColumn,
 } from 'element-plus';
 
 import { api } from '#/api/request';
+import HeaderSearch from '#/components/headerSearch/HeaderSearch.vue';
 import PageData from '#/components/page/PageData.vue';
 import { $t } from '#/locales';
 
@@ -26,16 +26,6 @@ import McpModal from './McpModal.vue';
 const formRef = ref<FormInstance>();
 const pageDataRef = ref();
 const saveDialog = ref();
-const formInline = ref({
-  title: '',
-});
-function search(formEl: FormInstance | undefined) {
-  formEl?.validate((valid) => {
-    if (valid) {
-      pageDataRef.value.setQuery(formInline.value);
-    }
-  });
-}
 function reset(formEl: FormInstance | undefined) {
   formEl?.resetFields();
   pageDataRef.value.setQuery({});
@@ -77,74 +67,95 @@ const handleUpdate = (row: any) => {
     }
   });
 };
+const headerButtons = [
+  {
+    key: 'create',
+    type: 'primary',
+    text: $t('button.add'),
+    icon: markRaw(Plus),
+    data: { action: 'create' },
+  },
+];
+const handleSearch = (params: string) => {
+  pageDataRef.value.setQuery({ packageName: params, isQueryOr: true });
+};
+const handleHeaderButtonClick = (button: any) => {
+  if (button.key === 'create') {
+    showDialog({});
+  }
+};
 </script>
 
 <template>
-  <div class="page-container">
+  <div class="flex h-full flex-col gap-6 p-6">
     <McpModal ref="saveDialog" @reload="reset" />
-    <ElForm ref="formRef" :inline="true" :model="formInline">
-      <ElFormItem :label="$t('mcp.title')" prop="title">
-        <ElInput v-model="formInline.title" :placeholder="$t('mcp.title')" />
-      </ElFormItem>
-      <ElFormItem>
-        <ElButton @click="search(formRef)" type="primary">
-          {{ $t('button.query') }}
-        </ElButton>
-        <ElButton @click="reset(formRef)">
-          {{ $t('button.reset') }}
-        </ElButton>
-      </ElFormItem>
-    </ElForm>
-    <div class="handle-div">
-      <ElButton @click="showDialog({ status: true })" type="primary">
-        <ElIcon class="mr-1">
-          <Plus />
-        </ElIcon>
-        {{ $t('button.add') }}
-      </ElButton>
+    <HeaderSearch
+      :buttons="headerButtons"
+      @search="handleSearch"
+      @button-click="handleHeaderButtonClick"
+    />
+    <div class="bg-background border-border flex-1 rounded-lg border p-5">
+      <PageData ref="pageDataRef" page-url="/api/v1/mcp/page" :page-size="10">
+        <template #default="{ pageList }">
+          <ElTable :data="pageList" border>
+            <ElTableColumn prop="title" :label="$t('mcp.title')">
+              <template #default="{ row }">
+                {{ row.title }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn prop="description" :label="$t('mcp.description')">
+              <template #default="{ row }">
+                {{ row.description }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn prop="created" :label="$t('mcp.created')">
+              <template #default="{ row }">
+                {{ row.created }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn prop="status" :label="$t('mcp.status')">
+              <template #default="{ row }">
+                <ElSwitch v-model="row.status" @change="handleUpdate(row)" />
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              :label="$t('common.handle')"
+              width="120"
+              align="right"
+            >
+              <template #default="{ row }">
+                <div class="flex items-center gap-3">
+                  <div v-access:code="'/api/v1/mcp/save'">
+                    <ElButton
+                      type="primary"
+                      :icon="Edit"
+                      link
+                      @click="showDialog(row)"
+                    >
+                      {{ $t('button.edit') }}
+                    </ElButton>
+                  </div>
+                  <ElDropdown>
+                    <ElButton link :icon="MoreFilled" />
+                    <template #dropdown>
+                      <ElDropdownMenu>
+                        <div v-access:code="'/api/v1/mcp/remove'">
+                          <ElDropdownItem @click="remove(row)">
+                            <ElButton type="danger" :icon="Delete" link>
+                              {{ $t('button.delete') }}
+                            </ElButton>
+                          </ElDropdownItem>
+                        </div>
+                      </ElDropdownMenu>
+                    </template>
+                  </ElDropdown>
+                </div>
+              </template>
+            </ElTableColumn>
+          </ElTable>
+        </template>
+      </PageData>
     </div>
-    <PageData ref="pageDataRef" page-url="/api/v1/mcp/page" :page-size="10">
-      <template #default="{ pageList }">
-        <ElTable :data="pageList" border>
-          <ElTableColumn prop="title" :label="$t('mcp.title')">
-            <template #default="{ row }">
-              {{ row.title }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="description" :label="$t('mcp.description')">
-            <template #default="{ row }">
-              {{ row.description }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="created" :label="$t('mcp.created')">
-            <template #default="{ row }">
-              {{ row.created }}
-            </template>
-          </ElTableColumn>
-          <ElTableColumn prop="status" :label="$t('mcp.status')">
-            <template #default="{ row }">
-              <ElSwitch v-model="row.status" @change="handleUpdate(row)" />
-            </template>
-          </ElTableColumn>
-          <ElTableColumn :label="$t('common.handle')" width="150">
-            <template #default="{ row }">
-              <ElButton @click="showDialog(row)" link type="primary">
-                <ElIcon class="mr-1">
-                  <Edit />
-                </ElIcon>
-                {{ $t('button.edit') }}
-              </ElButton>
-              <ElButton @click="remove(row)" link type="danger">
-                <ElIcon class="mr-1">
-                  <Delete />
-                </ElIcon>
-                {{ $t('button.delete') }}
-              </ElButton>
-            </template>
-          </ElTableColumn>
-        </ElTable>
-      </template>
-    </PageData>
   </div>
 </template>
 
