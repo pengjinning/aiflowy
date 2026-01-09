@@ -123,12 +123,9 @@ public class DocumentCollectionServiceImpl extends ServiceImpl<DocumentCollectio
 
                 return Collections.emptyList();
             }
+            Model modelRerank = llmService.getModelInstance(knowledge.getRerankModelId());
 
-            if (!knowledge.getSearchEngineEnable()) {
-                return formatDocuments(needRerankDocuments);
-            }
-
-            RerankModel rerankModel = model.toRerankModel();
+            RerankModel rerankModel = modelRerank.toRerankModel();
             if (rerankModel == null) {
                 return formatDocuments(needRerankDocuments);
             }
