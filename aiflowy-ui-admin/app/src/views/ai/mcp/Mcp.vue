@@ -63,7 +63,7 @@ function remove(row: any) {
 const handleUpdate = (row: any) => {
   api.post('/api/v1/mcp/update', { ...row }).then((res) => {
     if (res.errorCode === 0) {
-      ElMessage.success(res.message);
+      ElMessage.success($t('message.updateOkMessage'));
     }
   });
 };

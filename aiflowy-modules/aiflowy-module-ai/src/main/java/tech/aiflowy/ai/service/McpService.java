@@ -19,11 +19,13 @@ public interface McpService extends IService<Mcp> {
 
     void saveMcp(Mcp entity);
 
-    Result<Page<Mcp>> pageMcpTools(Result<Page<Mcp>> page);
-
     void updateMcp(Mcp entity);
 
     void removeMcp(Serializable id);
 
     Tool toFunction(BotMcp botMcp);
+
+    Result<Page<Mcp>> pageMcp(Result<Page<Mcp>> page);
+
+    Mcp getMcpTools(String id);
 }

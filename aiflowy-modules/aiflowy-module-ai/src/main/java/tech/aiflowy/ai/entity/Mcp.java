@@ -18,7 +18,17 @@ import java.util.List;
 public class Mcp extends McpBase {
 
     @Column(ignore = true)
-    List<McpSchema.Tool> tools;
+    private List<McpSchema.Tool> tools;
+
+    /**
+     * 该MCP服务是否存活
+     */
+    @Column(ignore = true)
+    private boolean alive;
+
+    public boolean isAlive() {return alive;}
+
+    public void setAlive(boolean alive) {this.alive = alive;}
 
     public List<McpSchema.Tool> getTools() {
         return tools;

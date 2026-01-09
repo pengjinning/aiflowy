@@ -103,9 +103,19 @@ const rules = ref({
 function openDialog(row: Partial<McpEntity> = {}) {
   isAdd.value = !row.id;
   entity.value = { ...defaultEntity, ...row };
+  if (!isAdd.value) {
+    getMcpTools(row);
+  }
   dialogVisible.value = true;
 }
 
+function getMcpTools(row: Partial<McpEntity>) {
+  api.post('api/v1/mcp/getMcpTools', { id: row.id }).then((res) => {
+    if (res.errorCode === 0) {
+      entity.value.tools = res.data.tools;
+    }
+  });
+}
 function save() {
   saveForm.value?.validate((valid) => {
     if (valid) {
@@ -118,7 +128,11 @@ function save() {
         .then((res) => {
           btnLoading.value = false;
           if (res.errorCode === 0) {
-            ElMessage.success(res.message);
+            if (isAdd.value) {
+              ElMessage.success($t('message.saveOkMessage'));
+            } else {
+              ElMessage.success($t('message.updateOkMessage'));
+            }
             emit('reload');
             closeDialog();
           }
@@ -175,65 +189,68 @@ const activeName = ref('config');
           </ElFormItem>
         </ElForm>
       </ElTabPane>
-      <ElTabPane :label="$t('mcp.modal.tool')" name="tool">
-        <ElTable :data="entity.tools" border :preserve-expanded-content="true">
-          <ElTableColumn type="expand">
-            <template #default="scope">
-              <!-- 解构获取properties和required，同时做空值保护 -->
-              <div
-                v-if="scope.row?.inputSchema?.properties"
-                class="params-list"
-              >
+      <div v-if="!isAdd">
+        <ElTabPane :label="$t('mcp.modal.tool')" name="tool">
+          <ElTable :data="entity.tools" border :preserve-expanded-content="true">
+            <ElTableColumn type="expand">
+              <template #default="scope">
+                <!-- 解构获取properties和required，同时做空值保护 -->
                 <div
-                  v-for="([propKey, propValue], index) in Object.entries(
+                  v-if="scope.row?.inputSchema?.properties"
+                  class="params-list"
+                >
+                  <div
+                    v-for="([propKey, propValue], index) in Object.entries(
                     scope.row.inputSchema.properties,
                   )"
-                  :key="index"
-                  class="params-content-container"
-                >
-                  <div class="params-left-title-container">
-                    <div class="content-title">
-                      {{ propKey }}
-                      <span
-                        v-if="
+                    :key="index"
+                    class="params-content-container"
+                  >
+                    <div class="params-left-title-container">
+                      <div class="content-title">
+                        {{ propKey }}
+                        <span
+                          v-if="
                           scope.row.inputSchema.required &&
                           scope.row.inputSchema.required.includes(propKey)
                         "
-                        class="required-mark"
-                      >
+                          class="required-mark"
+                        >
                         *
                       </span>
+                      </div>
                     </div>
-                  </div>
-                  <div class="params-desc-container">
-                    <div class="content-title">
-                      {{ (propValue as PropValue).type || '未知类型' }}
-                    </div>
-                    <div class="content-desc">
-                      {{ (propValue as PropValue).description || '无描述' }}
+                    <div class="params-desc-container">
+                      <div class="content-title">
+                        {{ (propValue as PropValue).type || '未知类型' }}
+                      </div>
+                      <div class="content-desc">
+                        {{ (propValue as PropValue).description || '无描述' }}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div v-else class="params-name">暂无属性配置</div>
-            </template>
-          </ElTableColumn>
+                <div v-else class="params-name">暂无属性配置</div>
+              </template>
+            </ElTableColumn>
 
-          <ElTableColumn :label="$t('mcp.modal.table.availableTools')">
-            <template #default="{ row }">
-              <div class="content-left">
-                <span class="content-title">{{ row.name }}</span>
-                <span class="content-desc">{{ row.description }}</span>
-              </div>
-            </template>
-          </ElTableColumn>
-          <!--          <ElTableColumn :label="$t('mcp.status')">
-            <template #default="{ row }">
-              <ElSwitch v-model="row.status" />
-            </template>
-          </ElTableColumn>-->
-        </ElTable>
-      </ElTabPane>
+            <ElTableColumn :label="$t('mcp.modal.table.availableTools')">
+              <template #default="{ row }">
+                <div class="content-left">
+                  <span class="content-title">{{ row.name }}</span>
+                  <span class="content-desc">{{ row.description }}</span>
+                </div>
+              </template>
+            </ElTableColumn>
+            <!--          <ElTableColumn :label="$t('mcp.status')">
+              <template #default="{ row }">
+                <ElSwitch v-model="row.status" />
+              </template>
+            </ElTableColumn>-->
+          </ElTable>
+        </ElTabPane>
+
+      </div>
     </ElTabs>
     <template #footer>
       <ElButton @click="closeDialog">

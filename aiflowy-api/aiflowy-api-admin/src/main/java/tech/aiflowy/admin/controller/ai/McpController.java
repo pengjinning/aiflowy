@@ -4,6 +4,8 @@ import com.mybatisflex.core.paginate.Page;
 import com.mybatisflex.core.query.QueryWrapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tech.aiflowy.ai.entity.BotMcp;
@@ -12,6 +14,7 @@ import tech.aiflowy.ai.service.BotMcpService;
 import tech.aiflowy.ai.service.McpService;
 import tech.aiflowy.common.domain.Result;
 import tech.aiflowy.common.web.controller.BaseCurdController;
+import tech.aiflowy.common.web.jsonbody.JsonBody;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
@@ -54,6 +57,12 @@ public class McpController extends BaseCurdController<McpService, Mcp> {
     @Override
     public Result<Page<Mcp>> page(HttpServletRequest request, String sortKey, String sortType, Long pageNumber, Long pageSize) {
         Result<Page<Mcp>> page = super.page(request, sortKey, sortType, pageNumber, pageSize);
-        return service.pageMcpTools(page);
+        return service.pageMcp(page);
+    }
+
+    @PostMapping("/getMcpTools")
+    public Result<Mcp> getMcpTools(@JsonBody("id") String id) {
+
+        return Result.ok(service.getMcpTools(id));
     }
 }

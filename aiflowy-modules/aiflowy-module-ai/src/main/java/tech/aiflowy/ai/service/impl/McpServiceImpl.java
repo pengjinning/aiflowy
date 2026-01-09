@@ -60,16 +60,8 @@ public class McpServiceImpl extends ServiceImpl<McpMapper, Mcp>  implements McpS
         if (entity.getStatus()) {
             mcpClientManager.registerFromJson(entity.getConfigJson());
         } else {
-            Optional<String> serverName = getFirstMcpServerName(entity.getConfigJson());
-            if (serverName.isPresent()) {
-                try {
-                    McpSyncClient mcpClient = mcpClientManager.getMcpClient(serverName.get());
-                    mcpClient.close();
-                } catch (Exception e) {
-                    Log.error("MCP 服务器关闭失败", e);
-                }
-
-            }
+            McpSyncClient mcpClient = getMcpClient(entity, mcpClientManager);
+            mcpClient.close();
         }
         LoginAccount loginAccount = SaTokenUtil.getLoginAccount();
         CommonFiledUtil.commonFiled(entity, loginAccount.getId(), loginAccount.getTenantId(), loginAccount.getDeptId());
@@ -80,13 +72,32 @@ public class McpServiceImpl extends ServiceImpl<McpMapper, Mcp>  implements McpS
     public void removeMcp(Serializable id) {
         Mcp mcp = this.getById(id);
         if (mcp != null && mcp.getStatus()) {
-            Optional<String> serverName = getFirstMcpServerName(mcp.getConfigJson());
-            if (serverName.isPresent()) {
-                McpSyncClient mcpClient = mcpClientManager.getMcpClient(serverName.get());
-                mcpClient.close();
-            }
+            McpSyncClient mcpClient = getMcpClient(mcp, mcpClientManager);
+            mcpClient.close();
         }
         this.removeById(id);
+    }
+
+    @Override
+    public Result<Page<Mcp>> pageMcp(Result<Page<Mcp>> page) {
+        return page;
+    }
+
+    @Override
+    public Mcp getMcpTools(String id) {
+        Mcp mcp = this.getById(id);
+        if (mcp != null && mcp.getStatus()) {
+            McpSyncClient mcpClient = getMcpClient(mcp, mcpClientManager);
+            List<McpSchema.Tool> tools = mcpClient.listTools().tools();
+            mcp.setTools(tools);
+        }
+        return mcp;
+    }
+
+    public static McpSyncClient getMcpClient(Mcp mcp, McpClientManager mcpClientManager) {
+        String configJson = mcp.getConfigJson();
+        Optional<String> mcpServerName = getFirstMcpServerName(configJson);
+        return mcpServerName.map(mcpClientManager::getMcpClient).orElse(null);
     }
 
     @Override
@@ -130,28 +141,6 @@ public class McpServiceImpl extends ServiceImpl<McpMapper, Mcp>  implements McpS
             }
         }
         return null;
-    }
-
-    @Override
-    public Result<Page<Mcp>> pageMcpTools(Result<Page<Mcp>> page) {
-        page.getData().getRecords().forEach(mcp -> {
-            // mcp 未启用，不查询工具
-                if (!mcp.getStatus()) {
-                return;
-            }
-            String configJson = mcp.getConfigJson();
-            Optional<String> firstServerName = getFirstMcpServerName(configJson);
-            if (firstServerName.isPresent()) {
-                String serverName = firstServerName.get();
-                mcpClientManager.registerFromJson(configJson);
-                McpSyncClient mcpClient = mcpClientManager.getMcpClient(serverName);
-                List<McpSchema.Tool> tools = mcpClient.listTools().tools();
-                mcp.setTools(tools);
-            } else {
-                throw new BusinessException("MCP 配置 JSON 中没有找到任何 MCP 服务名称");
-            }
-        });
-        return page;
     }
 
     public static Set<String> getMcpServerNames(String mcpJson) {
