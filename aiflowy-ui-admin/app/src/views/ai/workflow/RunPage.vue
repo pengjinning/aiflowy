@@ -2,14 +2,15 @@
 import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
-import { preferences } from '@aiflowy/preferences';
 import { sortNodes } from '@aiflowy/utils';
 
-import { ElAvatar, ElCard, ElCol, ElRow } from 'element-plus';
+import { ArrowLeft } from '@element-plus/icons-vue';
+import { ElAvatar, ElButton, ElCard, ElCol, ElRow } from 'element-plus';
 
 import { api } from '#/api/request';
 import workflowIcon from '#/assets/ai/workflow/workflowIcon.png';
 import { $t } from '#/locales';
+import { router } from '#/router';
 import ExecResult from '#/views/ai/workflow/components/ExecResult.vue';
 import WorkflowForm from '#/views/ai/workflow/components/WorkflowForm.vue';
 import WorkflowSteps from '#/views/ai/workflow/components/WorkflowSteps.vue';
@@ -57,16 +58,21 @@ function onAsyncExecute(info: any) {
 <template>
   <div
     v-loading="pageLoading"
-    class="bg-background-deep flex h-full w-full flex-col gap-6 overflow-hidden p-6"
+    class="bg-background-deep flex h-full max-h-[calc(100vh-90px)] w-full flex-col gap-6 overflow-hidden p-6"
   >
-    <img
-      :src="`/logo${preferences.theme.mode === 'dark' ? 'Dark' : ''}.svg`"
-      class="w-[100px]"
-    />
+    <div>
+      <ElButton :icon="ArrowLeft" @click="router.back()">
+        {{ $t('button.back') }}
+      </ElButton>
+    </div>
     <div
       class="flex h-[150px] shrink-0 items-center gap-6 rounded-lg border border-[var(--el-border-color)] bg-[var(--el-bg-color)] pl-11"
     >
-      <ElAvatar :src="workflowInfo.icon ?? workflowIcon" :size="72" />
+      <ElAvatar
+        class="shrink-0"
+        :src="workflowInfo.icon ?? workflowIcon"
+        :size="72"
+      />
       <div class="flex flex-col gap-5">
         <span class="text-2xl font-medium">{{ workflowInfo.title }}</span>
         <span class="text-base text-[#75808d]">{{
@@ -74,14 +80,10 @@ function onAsyncExecute(info: any) {
         }}</span>
       </div>
     </div>
-    <ElRow class="flex-1" :gutter="10">
-      <ElCol :span="10">
-        <div class="flex h-full flex-col gap-2.5">
-          <ElCard
-            shadow="never"
-            class="flex-1"
-            body-class="overflow-auto h-full"
-          >
+    <ElRow class="h-full overflow-hidden" :gutter="10">
+      <ElCol :span="10" class="h-full overflow-hidden">
+        <div class="grid h-full grid-rows-2 gap-2.5">
+          <ElCard shadow="never" style="height: 100%; overflow: auto">
             <div class="mb-2.5 font-semibold">
               {{ $t('aiWorkflow.params') }}：
             </div>
@@ -95,11 +97,7 @@ function onAsyncExecute(info: any) {
               :tiny-flow-data="tinyFlowData"
             />
           </ElCard>
-          <ElCard
-            shadow="never"
-            class="flex-1"
-            body-class="overflow-auto h-full"
-          >
+          <ElCard shadow="never" style="height: 100%; overflow: auto">
             <div class="mb-2.5 font-semibold">
               {{ $t('aiWorkflow.steps') }}：
             </div>
@@ -115,7 +113,7 @@ function onAsyncExecute(info: any) {
         </div>
       </ElCol>
       <ElCol :span="14">
-        <ElCard shadow="never" class="h-full" body-class="h-full overflow-auto">
+        <ElCard shadow="never" style="height: 100%; overflow: auto">
           <div class="mb-2.5 mt-2.5 font-semibold">
             {{ $t('aiWorkflow.result') }}：
           </div>

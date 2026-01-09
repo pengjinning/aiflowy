@@ -3,7 +3,7 @@ import type { FormInstance } from 'element-plus';
 
 import { markRaw, ref } from 'vue';
 
-import { Delete, Edit, MoreFilled, Plus } from '@element-plus/icons-vue';
+import { Delete, MoreFilled, Plus } from '@element-plus/icons-vue';
 import {
   ElButton,
   ElDropdown,
@@ -126,12 +126,7 @@ const handleHeaderButtonClick = (button: any) => {
               <template #default="{ row }">
                 <div class="flex items-center gap-3">
                   <div v-access:code="'/api/v1/mcp/save'">
-                    <ElButton
-                      type="primary"
-                      :icon="Edit"
-                      link
-                      @click="showDialog(row)"
-                    >
+                    <ElButton type="primary" link @click="showDialog(row)">
                       {{ $t('button.edit') }}
                     </ElButton>
                   </div>

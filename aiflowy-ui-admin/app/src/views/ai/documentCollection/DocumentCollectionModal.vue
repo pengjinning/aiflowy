@@ -32,7 +32,7 @@ const getEmbeddingLlmListData = async () => {
 };
 onMounted(() => {
   getEmbeddingLlmListData();
-  api.get('/api/v1/model/list?modelType=embeddingModel').then((res) => {
+  api.get('/api/v1/model/list?modelType=rerankModel').then((res) => {
     rerankerLlmList.value = res.data;
   });
 });
@@ -243,11 +243,11 @@ function closeDialog() {
         </ElSelect>
       </ElFormItem>
       <ElFormItem
-        prop="rerankLlmId"
+        prop="rerankModelId"
         :label="$t('documentCollection.rerankLlmId')"
       >
         <ElSelect
-          v-model="entity.rerankLlmId"
+          v-model="entity.rerankModelId"
           :placeholder="$t('documentCollection.placeholder.rerankLlm')"
         >
           <ElOption

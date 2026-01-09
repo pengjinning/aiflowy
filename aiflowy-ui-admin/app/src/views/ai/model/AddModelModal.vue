@@ -299,6 +299,20 @@ const showMoreFields = ref(false);
       <ElFormItem prop="groupName" :label="$t('llm.groupName')">
         <ElInput v-model.trim="formData.groupName" />
       </ElFormItem>
+      <ElFormItem prop="ability" :label="$t('llm.ability')">
+        <div class="model-ability">
+          <ElTag
+            class="model-ability-tag"
+            v-for="item in modelAbility"
+            :key="item.value"
+            :type="item.selected ? item.activeType : item.defaultType"
+            @click="handleTagClick(item)"
+            :class="{ 'tag-selected': item.selected }"
+          >
+            {{ item.label }}
+          </ElTag>
+        </div>
+      </ElFormItem>
       <ElFormItem label=" " v-if="!showMoreFields">
         <ElButton @click="showMoreFields = !showMoreFields" type="primary">
           {{ showMoreFields ? $t('button.hide') : $t('button.more') }}
@@ -324,24 +338,6 @@ const showMoreFields = ref(false);
         v-show="showMoreFields"
       >
         <ElInput v-model.trim="formData.requestPath" />
-      </ElFormItem>
-      <ElFormItem
-        prop="ability"
-        :label="$t('llm.ability')"
-        v-show="showMoreFields"
-      >
-        <div class="model-ability">
-          <ElTag
-            class="model-ability-tag"
-            v-for="item in modelAbility"
-            :key="item.value"
-            :type="item.selected ? item.activeType : item.defaultType"
-            @click="handleTagClick(item)"
-            :class="{ 'tag-selected': item.selected }"
-          >
-            {{ item.label }}
-          </ElTag>
-        </div>
       </ElFormItem>
     </ElForm>
     <template #footer>

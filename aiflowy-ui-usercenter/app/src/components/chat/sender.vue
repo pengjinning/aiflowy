@@ -55,6 +55,23 @@ function sendMessage() {
         btnLoading.value = false;
         getSessionList();
       }
+
+      // 处理系统错误
+      if (
+        sseData?.domain === 'SYSTEM' &&
+        sseData.payload?.code === 'SYSTEM_ERROR'
+      ) {
+        const errorMessage = sseData.payload.message;
+        props.addMessage?.({
+          key: msgKey,
+          role: 'assistant',
+          placement: 'start',
+          content: errorMessage,
+          typing: false,
+        });
+        return;
+      }
+
       if (str !== res.data && res.event !== 'done') {
         props.addMessage?.(msg);
       }

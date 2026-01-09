@@ -175,7 +175,6 @@ public class UcBotController extends BaseCurdController<BotService, Bot> {
         Bot aiBot = service.getById(botId);
         if (aiBot == null) {
             return ChatSseUtil.sendSystemError(conversationIdStr, "机器人不存在");
-
         }
 
         boolean login = StpUtil.isLogin();
