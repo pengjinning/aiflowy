@@ -18,9 +18,10 @@ const routes: RouteRecordRaw[] = [
   {
     meta: {
       title: '运行',
-      openInNewWindow: true,
-      noBasicLayout: true,
       hideInMenu: true,
+      hideInTab: true,
+      hideInBreadcrumb: true,
+      activePath: '/ai/workflow',
     },
     name: 'RunPage',
     path: '/ai/workflow/run',
