@@ -4,6 +4,7 @@ package tech.aiflowy.ai.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.agentsflex.core.document.Document;
 import com.agentsflex.core.model.chat.ChatModel;
+import com.agentsflex.core.model.chat.ChatOptions;
 import com.agentsflex.core.model.embedding.EmbeddingModel;
 import com.agentsflex.core.model.rerank.RerankModel;
 import com.agentsflex.core.store.VectorData;
@@ -154,7 +155,9 @@ public class ModelServiceImpl extends ServiceImpl<ModelMapper, Model> implements
             throw new BusinessException("chatModel为空");
         }
         try {
-            String response = chatModel.chat("我在对模型配置进行校验，你收到这条消息无需做任何思考，直接回复一个“你好”即可!");
+            ChatOptions options=new ChatOptions();
+            options.setThinkingEnabled(false);
+            String response = chatModel.chat("我在对模型配置进行校验，你收到这条消息无需做任何思考，直接回复一个“你好”即可!",options);
             if (response == null) {
                 throw new BusinessException("校验未通过，请前往后端日志查看详情！");
             }
