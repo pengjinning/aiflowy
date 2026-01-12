@@ -1,184 +1,184 @@
 # AIFlowy 更新记录
 
 ## v2.0.4 2025-01-09
-新增: 新增 MCP 功能
-新增: 为 bots 模块添加多语言配置
-新增: 更新岗位菜单图标并新增 SVG 图标，添加 OAuth 菜单并优化岗位管理菜单 UI
-新增: 新增岗位管理功能模块
-优化: 更新 tb_sys_menu 表排序值，调整样式（运行页面布局、文本溢出显示等）
-优化: 更新 slogan 图片，移除 logo 自定义配置
-优化: 清理未使用的脚本和工作空间，删除过期的岗位管理菜单 SQL 初始化脚本
-优化: 更新依赖版本（agents-flex 多版本迭代、统一 netty 版本、升级 Java 至 17）
-优化: 移除冗余编译配置，迁移至 jakarta 包并更新依赖至 Spring Boot 3
-优化: 重构验证码模块（重命名包 / 模块、格式化代码），移除废弃 OAuth 配置及相关菜单映射
-优化: 更新 Dockerfile，使用 eclipse-temurin 作为基础镜像，支持 macos arm64，适配 JDK 17 和 V2 版本
-修复: 修正模型供应商删除验证逻辑，补充缺失异常处理并增加删除约束校验
-修复: 修正 Bot 删除接口路径，修复知识库重排模型 bug
-修复: 修复 Bot 相关问题（微信公众号发布异常、用户反馈查询无权限）
-修复: 修复复选框显示不清晰、岗位管理国际化显示异常问题
-修复: 修复 Bot 删除失败问题，删除大模型之前供应商先删除所有关联模型
-修复: 限制仅状态为 0 的定时任务可执行启动操作，更新 netty 依赖版本
-修复: 修正登出 API 请求中使用的客户端实例
-文档: 更新 README 文档，补充新增功能、路线图、岗位功能及技术栈相关内容
-文档: 调整快速入门文档目录结构，更新联系人组引用及快速入门指南
+- 新增: 新增 MCP 功能
+- 新增: 为 bots 模块添加多语言配置
+- 新增: 更新岗位菜单图标并新增 SVG 图标，添加 OAuth 菜单并优化岗位管理菜单 UI
+- 新增: 新增岗位管理功能模块
+- 优化: 更新 tb_sys_menu 表排序值，调整样式（运行页面布局、文本溢出显示等）
+- 优化: 更新 slogan 图片，移除 logo 自定义配置
+- 优化: 清理未使用的脚本和工作空间，删除过期的岗位管理菜单 SQL 初始化脚本
+- 优化: 更新依赖版本（agents-flex 多版本迭代、统一 netty 版本、升级 Java 至 17）
+- 优化: 移除冗余编译配置，迁移至 jakarta 包并更新依赖至 Spring Boot 3
+- 优化: 重构验证码模块（重命名包 / 模块、格式化代码），移除废弃 OAuth 配置及相关菜单映射
+- 优化: 更新 Dockerfile，使用 eclipse-temurin 作为基础镜像，支持 macos arm64，适配 JDK 17 和 V2 版本
+- 修复: 修正模型供应商删除验证逻辑，补充缺失异常处理并增加删除约束校验
+- 修复: 修正 Bot 删除接口路径，修复知识库重排模型 bug
+- 修复: 修复 Bot 相关问题（微信公众号发布异常、用户反馈查询无权限）
+- 修复: 修复复选框显示不清晰、岗位管理国际化显示异常问题
+- 修复: 修复 Bot 删除失败问题，删除大模型之前供应商先删除所有关联模型
+- 修复: 限制仅状态为 0 的定时任务可执行启动操作，更新 netty 依赖版本
+- 修复: 修正登出 API 请求中使用的客户端实例
+- 文档: 更新 README 文档，补充新增功能、路线图、岗位功能及技术栈相关内容
+- 文档: 调整快速入门文档目录结构，更新联系人组引用及快速入门指南
 
 ## v2.0.3 2025-12-31
-- feat：新增 OkHttpUtil
-- feat：新增用户反馈模块，包含反馈提交、列表查看与详情页功能
-- feat：实现第三方 OAuth 登录，支持微信和钉钉，并添加相关角色配置
-- feat：新增系统外观配置页面
-- feat：新增公共 API 以检索 UI 配置，并将默认 UI 配置添加到系统选项
-- feat：为聊天对话和助手列表中的条目添加标题属性
-- feat：在管理后台和用户中心应用中添加 Analytics 跟踪脚本
-- chore：更新多个模块的样式，包括登录页、工作流标题溢出处理及其他页面样式调整
-- chore：更新中文国际化文件，涉及菜单、认证页面、模型项及 API 密钥标签等
-- chore：优化代码，包括模型弹窗非必填字段的显示方式、文件存储模块、聊天协议及设置页面
-- chore：移除系统中未使用的 SnowFlakeIDKeyGenerator 实例化代码
-- chore：更新前端依赖库 agents-flex 的版本至 beta.6
-- chore：修复中文 README 文档中的 Markdown 格式问题
-- refactor：重构文件存储模块
-- fix：修复插件更新出错的问题
-- fix：修复 resource 查询接口，限制其仅能查询当前用户的数据
-- fix：修复系统日志列表在未记录用户信息时可能报错的问题
-- fix：修复机器人调用知识库、插件和工作流时存在的缺陷
-- fix：更新数据库 SQL 脚本
-- docs：更新 README 文档，增加用户中心功能截图和增强的平台描述
-- docs：更新认证相关文档及页面的中文本地化内容
+- 新增：新增 OkHttpUtil
+- 新增：新增用户反馈模块，包含反馈提交、列表查看与详情页功能
+- 新增：实现第三方 OAuth 登录，支持微信和钉钉，并添加相关角色配置
+- 新增：新增系统外观配置页面
+- 新增：新增公共 API 以检索 UI 配置，并将默认 UI 配置添加到系统选项
+- 新增：为聊天对话和助手列表中的条目添加标题属性
+- 新增：在管理后台和用户中心应用中添加 Analytics 跟踪脚本
+- 优化：更新多个模块的样式，包括登录页、工作流标题溢出处理及其他页面样式调整
+- 优化：更新中文国际化文件，涉及菜单、认证页面、模型项及 API 密钥标签等
+- 优化：优化代码，包括模型弹窗非必填字段的显示方式、文件存储模块、聊天协议及设置页面
+- 优化：移除系统中未使用的 SnowFlakeIDKeyGenerator 实例化代码
+- 优化：更新前端依赖库 agents-flex 的版本至 beta.6
+- 优化：修复中文 README 文档中的 Markdown 格式问题
+- 优化：重构文件存储模块
+- 修复：修复插件更新出错的问题
+- 修复：修复 resource 查询接口，限制其仅能查询当前用户的数据
+- 修复：修复系统日志列表在未记录用户信息时可能报错的问题
+- 修复：修复机器人调用知识库、插件和工作流时存在的缺陷
+- 修复：更新数据库 SQL 脚本
+- 文档：更新 README 文档，增加用户中心功能截图和增强的平台描述
+- 文档：更新认证相关文档及页面的中文本地化内容
 
 ## v2.0.2 2025-12-26
-- feat：更新列表、网格和折叠图标
-- feat：为大模型功能增加标签能力
-- feat：新增 AIFlowy 聊天协议规范与实现
-- feat：新增数据库表 tb_resource_category，用于资源分类
-- feat：在登录流程中集成 TAC 图形验证码
-- feat：新增资源分类管理功能并集成到系统中
-- feat：为 BotModel 实体添加选项检索方法
-- feat：更新任务模块的代码生成配置
-- feat：在项目中新增代码生成模块
-- feat：移除 iframe 嵌入令牌功能
-- feat：更新聊天组件的属性和内部逻辑
-- feat：新增 FileUtil、IdUtil、SSEUtil 等工具类
-- feat：为 AI 模块增加对默认重排序模型和供应商配置的支持
-- chore：更新 tinyflow-java 依赖至 beta.6 版本
-- chore：将协议名称从 aiflowy-chat-sse 更新为 aiflowy-chat
-- chore：更新助手市场详情页的路由模式
-- chore：替换菜单中的图标
-- chore：优化插件必填参数和知识库导入逻辑
-- chore：移除路由配置中重复的路由项
-- chore：清理知识库和插件相关的控制台警告
-- chore：优化知识库相关代码
-- chore：移除未使用的 common-util 模块依赖
-- chore：对多个界面（UI、登录页、菜单）进行样式、图标、布局和文案的调整
-- fix：修复可能存在的空指针异常问题
-- fix：修正中文欢迎信息的空格问题
-- fix：更新 AI 实体时间戳，并重构对话初始化逻辑
-- fix：修正 BotApiKeyServiceImpl 中 botId 的类型转换错误
-- fix：恢复 ChainEventListenerForSave 中递归查找祖先状态的功能
-- fix：修复添加大模型后，编辑并更改供应商名称会报错的问题
-- fix：修复大模型终端点设置不正确的问题
-- fix：修复文档集合相关的问题
-- fix：修复工作流相关的问题
-- fix：修复插件相关的问题
-- fix：修复机器人、模型、聊天相关的问题
-- docs：在导航菜单中新增公司新闻链接
-- refactor：Knowledge.vue 更名为 DocumentCollection.vue
-- refactor：llm.vue 更名为 Model.vue
-- refactor：将 Sender、BubbleList 和 Conversations 注册为全局组件
-- refactor：更新数据中心标签页的切换行为和标签文本
-- refactor：移除 RagRerankModelUtil 类，并将其移至 utils 包
-- refactor：重组 AI 监听器包，并移除未使用的工具类
-- refactor：将工具和记忆实体移动到 agentsflex 包中
-- refactor：将 ai 前缀的 API 端点重命名为 core 资源路径
-- refactor：重命名 AI 控制器以保持命名一致性
-- refactor：重组并增强数据库表结构的定义
-- refactor：将 BotBase 实体中的 llm 字段重命名为 model
-- refactor：更新模型和供应商实体结构
-- refactor：更新实体基类，增加公共字段和类型修改
-- refactor：将 TinyFlowConfigService 移动到 service 包
-- refactor：在系统服务中用类型化 Mapper 替换原始 SQL 操作
-- refactor：将聊天模块中的 sessionId 统一重命名为 conversationId
-- refactor：更新菜单顺序，并将 “bots” 重命名为 “workflow”
-- refactor：统一并优化数据库 Schema 类型和命名规范
-- refactor：生成新的基础实体
-- refactor：更新 AI 实体基类，增加类型处理器和字段变更
-- refactor：新增数据库变更文档 v2_db_changes.md
-- refactor：将代码生成拆分为独立的模块类
-- refactor：将 BotApiKeyMapperMapper 重命名为 BotApiKeyMapper
-- refactor：重命名数据中心表的字段、实体和服务类
-- refactor：更新 API 端点以使用新的命名规范
-- refactor：移除旧数据库表并更新 LLM 模型 Schema
-- refactor：重命名系统控制器以获得更清晰的命名
-- refactor：重命名 API Key 资源权限相关实体和服务
-- refactor：移除聊天消息主题和插件的基础实体类
-- refactor：重命名数据表和实体，移除 ai 前缀并更新命名约定
-- refactor：重命名 AI 控制器类以移除冗余前缀
-- refactor：重命名 AI 服务类以移除冗余的 Ai 前缀
-- refactor：重命名 Mapper 接口以遵循一致的命名约定
-- refactor：移除第三方消息处理组件
-- refactor：移除 OpenAI 请求/响应实体和平台枚举
-- refactor：重命名模型名称
-- refactor：将表 tb_bot_knowledge 重命名为 tb_bot_document_collection
-- refactor：将表 tb_workflow_record_step 重命名为 tb_workflow_exec_step
-- refactor：将工作流执行结果表重命名为 tb_workflow_exec_result
-- refactor：重命名 API Key 资源关系表
-- refactor：重命名 API Key 资源权限表和关系
-- refactor：将知识库表重命名为 document_collection
-- refactor：将插件分类关系表重命名为映射表
-- refactor：将对话消息表重命名为 conversation
-- refactor：重命名 AI 相关数据表和列名为通用名称
-- refactor：移除外部消息标识并更新聊天组件逻辑，简化代码
-- refactor：用 IdUtil 替换 UUIDGenerator 来生成令牌
-- refactor：替换已弃用的文件提取逻辑
-- refactor：用 SSEUtil 替换 ChatManager 来处理 SSE 响应
-- refactor：重组 AI 模块包结构，移除未使用的类
-- refactor：移除未使用的前端配置和工具类
-- refactor：将消息解析逻辑移至 AiBotMessage 实体
-- remove：移除未使用的 AI 控制器文件
-- remove：移除未使用的 AI 实体和服务类
+- 新增：更新列表、网格和折叠图标
+- 新增：为大模型功能增加标签能力
+- 新增：新增 AIFlowy 聊天协议规范与实现
+- 新增：新增数据库表 tb_resource_category，用于资源分类
+- 新增：在登录流程中集成 TAC 图形验证码
+- 新增：新增资源分类管理功能并集成到系统中
+- 新增：为 BotModel 实体添加选项检索方法
+- 新增：更新任务模块的代码生成配置
+- 新增：在项目中新增代码生成模块
+- 新增：移除 iframe 嵌入令牌功能
+- 新增：更新聊天组件的属性和内部逻辑
+- 新增：新增 FileUtil、IdUtil、SSEUtil 等工具类
+- 新增：为 AI 模块增加对默认重排序模型和供应商配置的支持
+- 优化：更新 tinyflow-java 依赖至 beta.6 版本
+- 优化：将协议名称从 aiflowy-chat-sse 更新为 aiflowy-chat
+- 优化：更新助手市场详情页的路由模式
+- 优化：替换菜单中的图标
+- 优化：优化插件必填参数和知识库导入逻辑
+- 优化：移除路由配置中重复的路由项
+- 优化：清理知识库和插件相关的控制台警告
+- 优化：优化知识库相关代码
+- 优化：移除未使用的 common-util 模块依赖
+- 优化：对多个界面（UI、登录页、菜单）进行样式、图标、布局和文案的调整
+- 修复：修复可能存在的空指针异常问题
+- 修复：修正中文欢迎信息的空格问题
+- 修复：更新 AI 实体时间戳，并重构对话初始化逻辑
+- 修复：修正 BotApiKeyServiceImpl 中 botId 的类型转换错误
+- 修复：恢复 ChainEventListenerForSave 中递归查找祖先状态的功能
+- 修复：修复添加大模型后，编辑并更改供应商名称会报错的问题
+- 修复：修复大模型终端点设置不正确的问题
+- 修复：修复文档集合相关的问题
+- 修复：修复工作流相关的问题
+- 修复：修复插件相关的问题
+- 修复：修复机器人、模型、聊天相关的问题
+- 文档：在导航菜单中新增公司新闻链接
+- 优化：Knowledge.vue 更名为 DocumentCollection.vue
+- 优化：llm.vue 更名为 Model.vue
+- 优化：将 Sender、BubbleList 和 Conversations 注册为全局组件
+- 优化：更新数据中心标签页的切换行为和标签文本
+- 优化：移除 RagRerankModelUtil 类，并将其移至 utils 包
+- 优化：重组 AI 监听器包，并移除未使用的工具类
+- 优化：将工具和记忆实体移动到 agentsflex 包中
+- 优化：将 ai 前缀的 API 端点重命名为 core 资源路径
+- 优化：重命名 AI 控制器以保持命名一致性
+- 优化：重组并增强数据库表结构的定义
+- 优化：将 BotBase 实体中的 llm 字段重命名为 model
+- 优化：更新模型和供应商实体结构
+- 优化：更新实体基类，增加公共字段和类型修改
+- 优化：将 TinyFlowConfigService 移动到 service 包
+- 优化：在系统服务中用类型化 Mapper 替换原始 SQL 操作
+- 优化：将聊天模块中的 sessionId 统一重命名为 conversationId
+- 优化：更新菜单顺序，并将 “bots” 重命名为 “workflow”
+- 优化：统一并优化数据库 Schema 类型和命名规范
+- 优化：生成新的基础实体
+- 优化：更新 AI 实体基类，增加类型处理器和字段变更
+- 优化：新增数据库变更文档 v2_db_changes.md
+- 优化：将代码生成拆分为独立的模块类
+- 优化：将 BotApiKeyMapperMapper 重命名为 BotApiKeyMapper
+- 优化：重命名数据中心表的字段、实体和服务类
+- 优化：更新 API 端点以使用新的命名规范
+- 优化：移除旧数据库表并更新 LLM 模型 Schema
+- 优化：重命名系统控制器以获得更清晰的命名
+- 优化：重命名 API Key 资源权限相关实体和服务
+- 优化：移除聊天消息主题和插件的基础实体类
+- 优化：重命名数据表和实体，移除 ai 前缀并更新命名约定
+- 优化：重命名 AI 控制器类以移除冗余前缀
+- 优化：重命名 AI 服务类以移除冗余的 Ai 前缀
+- 优化：重命名 Mapper 接口以遵循一致的命名约定
+- 优化：移除第三方消息处理组件
+- 优化：移除 OpenAI 请求/响应实体和平台枚举
+- 优化：重命名模型名称
+- 优化：将表 tb_bot_knowledge 重命名为 tb_bot_document_collection
+- 优化：将表 tb_workflow_record_step 重命名为 tb_workflow_exec_step
+- 优化：将工作流执行结果表重命名为 tb_workflow_exec_result
+- 优化：重命名 API Key 资源关系表
+- 优化：重命名 API Key 资源权限表和关系
+- 优化：将知识库表重命名为 document_collection
+- 优化：将插件分类关系表重命名为映射表
+- 优化：将对话消息表重命名为 conversation
+- 优化：重命名 AI 相关数据表和列名为通用名称
+- 优化：移除外部消息标识并更新聊天组件逻辑，简化代码
+- 优化：用 IdUtil 替换 UUIDGenerator 来生成令牌
+- 优化：替换已弃用的文件提取逻辑
+- 优化：用 SSEUtil 替换 ChatManager 来处理 SSE 响应
+- 优化：重组 AI 模块包结构，移除未使用的类
+- 优化：移除未使用的前端配置和工具类
+- 优化：将消息解析逻辑移至 AiBotMessage 实体
+- 优化：移除未使用的 AI 控制器文件
+- 优化：移除未使用的 AI 实体和服务类
 
 ## v2.0.1 2025-12-19
-- feat：用户中心对话编辑和删除。
-- feat：新增用户中心主页聊天、助手市场聊天、用户中心机器人聊天功能。
-- feat：新增保存聊天消息到数据库、设置提示词为会话标题的功能。
-- feat：为 Bot 添加深度思考开关。
-- feat：新增最近使用的 AI 助手列表管理功能。
-- feat：更新 AI 工作流和 Bot 模态框的状态显示逻辑。
-- feat：新增 Bot 分类及最近使用实体，并支持完整 CRUD 操作。
-- feat：新增 AI 工作流执行记录和步骤追踪页面。
-- feat：新增工作流执行记录与步骤。
-- feat：提取 TinyFlowService 中获取 chain 状态的方法。
-- feat：重构 LLM 模块。
-- feat：实现用户中心资源列表、工作流列表与执行页面。
-- feat：新增用户中心 AI 助手市场和聊天机器人管理功能。
-- feat：新增用户中心退出、个人资料信息更新功能。
-- feat：新增执行记录列表、详情页。
-- feat：初始化 AIFlowy webSDK 项目。
-- feat：为 PageSide 组件添加图片支持。
-- feat：为聊天助手添加默认头像。
-- feat：新增验证码 API。
-- feat：新增工作流任务（job）功能。
-- chore：调整 AI 设置面板布局、表格操作栏、内容容器边框、侧边栏最大高度等 UI 样式。
-- chore：更新菜单图标，优化主题相关 UI 和发送图标。
-- chore：清理无用导入和组件 props 默认值，移除非必要的 defineExpose、defineEmits 导入。
-- chore：更新 agents-flex、tinyflow-java 依赖版本。
-- chore：更新项目配置和版权信息。
-- chore：更新 LLM 选择选项和相关代码，更新 SQL 文件。
-- chore：添加并优化 PageSide 组件，调整侧边栏默认选中状态。
-- chore：展示字典标签。
-- fix：修复 getChatModel 方法中的 modelId 处理。
-- fix：修复聊天相关的小问题。
-- fix：修复 Bot 配置中的可选链问题。
-- fix：修复自定义节点。
-- fix：修复 pom.xml 中依赖排除问题。
-- fix：修复下载节点功能。
-- fix：修复新增字段的添加。
-- fix：修复用户中心中状态字段的过滤与重命名以正确显示。
-- fix：修复依赖问题。
-- docs：更新 UI 管理模块的安装说明。
-- docs：更新 AI 插件开发文档中的标点符号。
-- docs：更新 README 文件结构，增加中文 README。
-- docs：更新导航栏和侧边栏链接。
-- docs：将 README 横幅图片更新为英文版。
+- 新增：用户中心对话编辑和删除。
+- 新增：新增用户中心主页聊天、助手市场聊天、用户中心机器人聊天功能。
+- 新增：新增保存聊天消息到数据库、设置提示词为会话标题的功能。
+- 新增：为 Bot 添加深度思考开关。
+- 新增：新增最近使用的 AI 助手列表管理功能。
+- 新增：更新 AI 工作流和 Bot 模态框的状态显示逻辑。
+- 新增：新增 Bot 分类及最近使用实体，并支持完整 CRUD 操作。
+- 新增：新增 AI 工作流执行记录和步骤追踪页面。
+- 新增：新增工作流执行记录与步骤。
+- 新增：提取 TinyFlowService 中获取 chain 状态的方法。
+- 新增：重构 LLM 模块。
+- 新增：实现用户中心资源列表、工作流列表与执行页面。
+- 新增：新增用户中心 AI 助手市场和聊天机器人管理功能。
+- 新增：新增用户中心退出、个人资料信息更新功能。
+- 新增：新增执行记录列表、详情页。
+- 新增：初始化 AIFlowy webSDK 项目。
+- 新增：为 PageSide 组件添加图片支持。
+- 新增：为聊天助手添加默认头像。
+- 新增：新增验证码 API。
+- 新增：新增工作流任务（job）功能。
+- 优化：调整 AI 设置面板布局、表格操作栏、内容容器边框、侧边栏最大高度等 UI 样式。
+- 优化：更新菜单图标，优化主题相关 UI 和发送图标。
+- 优化：清理无用导入和组件 props 默认值，移除非必要的 defineExpose、defineEmits 导入。
+- 优化：更新 agents-flex、tinyflow-java 依赖版本。
+- 优化：更新项目配置和版权信息。
+- 优化：更新 LLM 选择选项和相关代码，更新 SQL 文件。
+- 优化：添加并优化 PageSide 组件，调整侧边栏默认选中状态。
+- 优化：展示字典标签。
+- 修复：修复 getChatModel 方法中的 modelId 处理。
+- 修复：修复聊天相关的小问题。
+- 修复：修复 Bot 配置中的可选链问题。
+- 修复：修复自定义节点。
+- 修复：修复 pom.xml 中依赖排除问题。
+- 修复：修复下载节点功能。
+- 修复：修复新增字段的添加。
+- 修复：修复用户中心中状态字段的过滤与重命名以正确显示。
+- 修复：修复依赖问题。
+- 文档：更新 UI 管理模块的安装说明。
+- 文档：更新 AI 插件开发文档中的标点符号。
+- 文档：更新 README 文件结构，增加中文 README。
+- 文档：更新导航栏和侧边栏链接。
+- 文档：将 README 横幅图片更新为英文版。
 
 ## v1.1.7 2025-11-05
 **开源版：**
