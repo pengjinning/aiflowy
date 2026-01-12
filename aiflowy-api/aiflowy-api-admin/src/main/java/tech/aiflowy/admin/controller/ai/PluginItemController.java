@@ -137,7 +137,7 @@ public class PluginItemController extends BaseCurdController<PluginItemService, 
     protected Result<?> onRemoveBefore(Collection<Serializable> ids) {
 
         QueryWrapper queryWrapper = QueryWrapper.create();
-        queryWrapper.in("plugin_tool_id", ids);
+        queryWrapper.in("plugin_item_id", ids);
 
         boolean exists = botPluginService.exists(queryWrapper);
         if (exists){
